@@ -24,6 +24,6 @@ Library& Library::operator+(Song &song) {
     return *this;
 }
 
-std::ostream& Library::operator<<(std::ostream &ostream, Library const &library) {
-    return this->print(ostream);
-}
+// std::ostream& Library::operator<<(std::ostream &ostream, Library const &library) {
+//     return this->print(ostream);
+// }

@@ -20,7 +20,7 @@ class Library {
 
     Library& operator+(Song &song);
 
-    std::ostream& operator<<(std::ostream &ostream, Library const &library);
+    // std::ostream& operator<<(std::ostream &ostream, Library const &library);
 };
 
 #endif
