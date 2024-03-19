@@ -19,6 +19,7 @@ class Library {
     void print(std::ostream &ostream);
 
     Library& operator+(Song &song);
+    Library& operator+(Song *song);
 
     friend std::ostream& operator<<(std::ostream &ostream, Library &library);
 };

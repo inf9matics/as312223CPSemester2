@@ -10,7 +10,7 @@ int main() {
     Library library{};
     library.add(song1);
     library + song2;
-    // library + Song{32, "abc", "cba"};
+    library + new Song{32, "abc", "cba"};
 
     library.print(std::cout);
     std::cout << std::endl << std::endl;

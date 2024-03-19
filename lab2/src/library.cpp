@@ -14,12 +14,18 @@ void Library::print(std::ostream &ostream) {
     std::vector<Song>::iterator songsIterator = this->songs.begin();
     while(songsIterator != this->songs.end()) {
         ostream.write(songsIterator->getName().c_str(), songsIterator->getName().size());
+        ostream << " ";
         songsIterator++;
     }
 }
 
 Library& Library::operator+(Song &song) {
     this->add(song);
+    return *this;
+}
+
+Library& Library::operator+(Song *song) {
+    this->add(*song);
     return *this;
 }
 
