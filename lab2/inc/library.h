@@ -16,11 +16,11 @@ class Library {
 
     void add(Song song);
 
-    std::ostream& print(std::ostream &ostream);
+    void print(std::ostream &ostream);
 
     Library& operator+(Song &song);
 
-    // std::ostream& operator<<(std::ostream &ostream, Library const &library);
+    friend std::ostream& operator<<(std::ostream &ostream, Library &library);
 };
 
 #endif
