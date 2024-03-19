@@ -16,4 +16,6 @@ int main() {
     std::cout << std::endl << std::endl;
     std::cout << library;
     std::cout << std::endl;
+
+    return 0;
 }
