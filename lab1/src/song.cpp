@@ -15,3 +15,7 @@ Song::Song(int id, std::string name, std::string artistName) {
     this->name = name;
     this->artistName = artistName;
 }
+
+std::string Song::getName() {
+    return this->name;
+}

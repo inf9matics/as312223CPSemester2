@@ -13,6 +13,8 @@ class Song {
       public:
     Song();
     Song(int id, std::string name, std::string artistName);
+
+    std::string getName();
 };
 
 #endif
