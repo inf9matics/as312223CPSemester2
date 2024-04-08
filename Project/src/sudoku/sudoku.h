@@ -11,7 +11,7 @@ class SudokuSubMatrix;
 class SudokuMatrix {
       protected:
 	int size;
-    int subMatrixSize;
+	int subMatrixSize;
 
 	std::vector<std::vector<SudokuCell>> cells;
 
@@ -26,16 +26,16 @@ class SudokuMatrix {
 
 	SudokuCell &getCellAtPosition(std::pair<int, int> position);
 
-    SudokuSubMatrix &getSubMatrixAtPosition(std::pair<int, int> position);
+	SudokuSubMatrix &getSubMatrixAtPosition(std::pair<int, int> position);
 
-    SudokuSubMatrix &getSubMatrixAtCellPosition(std::pair<int, int> position);
+	SudokuSubMatrix &getSubMatrixAtCellPosition(std::pair<int, int> position);
 
 	bool checkViableAtPosition(std::pair<int, int> position);
 };
 
 class SudokuSubMatrix {
       protected:
-    SudokuMatrix *parentMatrix;
+	SudokuMatrix *parentMatrix;
 
 	int size;
 	bool viable;
@@ -44,8 +44,8 @@ class SudokuSubMatrix {
 
 	std::vector<std::vector<SudokuCell *>> cells;
 
-    friend class SudokuMatrix;
-    SudokuSubMatrix &setCellAt(std::pair<int, int> position);
+	friend class SudokuMatrix;
+	SudokuSubMatrix &setCellAt(std::pair<int, int> position);
 
       public:
 	SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix &parentMatrix);
@@ -65,7 +65,7 @@ class SudokuCell {
 	int value;
 	bool viable;
 
-    bool calledParity;
+	bool calledParity;
 
       public:
 	SudokuCell(std::pair<int, int> position, SudokuMatrix &parentMatrix);
@@ -76,7 +76,7 @@ class SudokuCell {
 
 	int getValue();
 
-    bool getCalledParity();
+	bool getCalledParity();
 };
 
 #endif

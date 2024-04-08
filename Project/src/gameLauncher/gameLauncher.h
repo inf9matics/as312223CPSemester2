@@ -4,12 +4,12 @@
 #include <QMainWindow>
 
 class GameLauncher : public QMainWindow {
-    Q_OBJECT
+	Q_OBJECT
 
-    public:
-    GameLauncher(QWidget *parent = nullptr);
+      public:
+	GameLauncher(QWidget *parent = nullptr);
 
-    ~GameLauncher();
+	~GameLauncher();
 };
 
 #endif
