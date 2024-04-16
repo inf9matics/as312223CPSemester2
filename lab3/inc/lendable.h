@@ -21,7 +21,6 @@ class Lendable {
     Lendable(long id, std::string title, std::string author, long length);
 
     Lendable& operator=(const Lendable& lendable);
-    Lendable& operator=(Lendable&& lendable);
 
     Lendable& setId(long id);
     long getId();
