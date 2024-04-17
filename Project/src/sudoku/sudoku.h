@@ -17,17 +17,26 @@ class SudokuMatrix {
 
 	std::vector<std::vector<SudokuSubMatrix>> subMatrices;
 
-	std::pair<bool, std::vector<SudokuMatrix> *> solve(std::vector<SudokuMatrix> &subMatrices);
+	SudokuMatrix &prepareCells();
+
+	SudokuMatrix &prepareSubMatrices();
 
       public:
-	SudokuMatrix(int size);
+	SudokuMatrix();
+	SudokuMatrix(int subMatrixSize);
+	SudokuMatrix(SudokuMatrix &&sudokuMatrix);
+	SudokuMatrix(const SudokuMatrix &sudokuMatrix);
+
+	SudokuMatrix& operator=(const SudokuMatrix& sudokuMatrix);
+
+	int getSize();
+	int getSubMatrixSize();
 
 	SudokuCell &setValueAt(std::pair<int, int> position, int value);
 
 	SudokuCell &getCellAtPosition(std::pair<int, int> position);
 
 	SudokuSubMatrix &getSubMatrixAtPosition(std::pair<int, int> position);
-
 	SudokuSubMatrix &getSubMatrixAtCellPosition(std::pair<int, int> position);
 
 	bool checkViableAtPosition(std::pair<int, int> position);
@@ -44,11 +53,15 @@ class SudokuSubMatrix {
 
 	std::vector<std::vector<SudokuCell *>> cells;
 
-	friend class SudokuMatrix;
-	SudokuSubMatrix &setCellAt(std::pair<int, int> position);
+	friend SudokuMatrix;
+	SudokuSubMatrix &setParent(SudokuMatrix &parentMatrix);
 
       public:
 	SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix &parentMatrix);
+
+	SudokuMatrix &getParent();
+
+	int getSize();
 
 	bool checkIfViable();
 };
@@ -56,8 +69,6 @@ class SudokuSubMatrix {
 class SudokuCell {
       protected:
 	SudokuMatrix *parentMatrix;
-	SudokuSubMatrix *parentSubMatrix;
-
 	SudokuCell *parityCell;
 
 	std::pair<int, int> position;
@@ -67,16 +78,25 @@ class SudokuCell {
 
 	bool calledParity;
 
+	bool getCalledParity();
+
+	friend SudokuMatrix;
+	SudokuCell &setParent(SudokuMatrix &parentMatrix);
+	
       public:
-	SudokuCell(std::pair<int, int> position, SudokuMatrix &parentMatrix);
+	SudokuCell(std::pair<int, int> position);
+
+	bool operator==(SudokuCell &sudokuCell);
+	bool operator!=(SudokuCell &sudokuCell);
+
+	SudokuMatrix &getParent();
 
 	SudokuCell &setValue(int value);
+	int getValue();
 
 	SudokuCell &setParityCell(SudokuCell &parityCell);
 
-	int getValue();
-
-	bool getCalledParity();
+	SudokuCell &getParityCell();
 };
 
 #endif

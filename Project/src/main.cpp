@@ -6,7 +6,7 @@
 #include "sudoku.h"
 
 int main(int argc, char *argv[]) {
-	SudokuMatrix sudokuMatrix{9};
+	SudokuMatrix sudokuMatrix{};
 
 	sudokuMatrix.setValueAt({0, 0}, 1);
 	sudokuMatrix.setValueAt({0, 1}, 2);
@@ -30,5 +30,11 @@ int main(int argc, char *argv[]) {
 	// gameLauncherWindow.show();
 
 	// return sudokuApp.exec();
+	SudokuMatrix sudokuMatrix2{};
+	sudokuMatrix2 = sudokuMatrix;
+	sudokuMatrix.~SudokuMatrix();
+	sudokuMatrix2.setValueAt({0, 0}, 6);
+	SudokuMatrix sudokuMatrix3{std::move(sudokuMatrix2)};
+
 	return 0;
 }
