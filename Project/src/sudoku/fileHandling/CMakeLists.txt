@@ -1,0 +1,3 @@
+add_library(sudoku_fileHandling STATIC fileHandling.cpp)
+
+target_include_directories(sudoku_fileHandling INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
