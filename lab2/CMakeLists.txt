@@ -1,6 +1,6 @@
 project(lab2)
 
-include_directories(inc ../lab1/inc)
+include_directories(inc)
 
 file(GLOB SOURCES src/*.cpp)
 
