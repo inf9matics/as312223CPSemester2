@@ -46,11 +46,7 @@ SudokuMatrix &SudokuMatrix::operator=(const SudokuMatrix &sudokuMatrix) {
 	while (cellsRowIterator != this->cells.end()) {
 		std::vector<SudokuCell>::iterator cellsColumnIterator = cellsRowIterator->begin();
 		while (cellsColumnIterator != cellsRowIterator->end()) {
-			SudokuCell &currentCell = *cellsColumnIterator.base();
-			SudokuCell &parityCell = currentCell.getParityCell();
-			if (currentCell != parityCell) {
-				cellsColumnIterator->getParityCell().setParityCell(*cellsColumnIterator.base());
-			}
+			cellsColumnIterator->setParityCell(this->getCellAtPosition(cellsColumnIterator->getParityCell().position));
 			cellsColumnIterator->setParent(*this);
 
 			cellsColumnIterator++;
