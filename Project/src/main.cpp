@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	// return sudokuApp.exec();
 	SudokuMatrix sudokuMatrix2{};
 	sudokuMatrix2 = sudokuMatrix;
-	sudokuMatrix.~SudokuMatrix();
+	// sudokuMatrix.~SudokuMatrix();
 	sudokuMatrix2.setValueAt({0, 0}, 6);
 	SudokuMatrix sudokuMatrix3{std::move(sudokuMatrix2)};
 
