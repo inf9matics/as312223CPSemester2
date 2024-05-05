@@ -1,0 +1,6 @@
+add_library(sudoku_backsolver STATIC backsolver.cpp)
+
+target_include_directories(sudoku_backsolver INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(sudoku_backsolver sudoku)
+target_include_directories(sudoku_backsolver INTERFACE sudoku)

@@ -4,6 +4,7 @@
 
 #include "gameLauncher.h"
 #include "sudoku.h"
+#include "backsolver.h"
 
 int main(int argc, char *argv[]) {
 	SudokuMatrix sudokuMatrix{};

@@ -4,11 +4,15 @@
 #include <memory>
 #include <vector>
 
+class SudokuMatrixMasked;
+
 class SudokuCell;
 
 class SudokuSubMatrix;
 
 class SudokuMatrix {
+	friend class SudokuMatrixMasked;
+
       protected:
 	int size;
 	int subMatrixSize;
