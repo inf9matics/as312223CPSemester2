@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 	sudokuMatrix.setValueAt({2, 1}, 8);
 	sudokuMatrix.setValueAt({2, 2}, 9);
 
-	sudokuMatrix.getCellAtPosition({0, 0}).setParityCell(sudokuMatrix.getCellAtPosition({3, 0}));
+	sudokuMatrix.getCellAtPosition({0, 0}).addParityCell(sudokuMatrix.getCellAtPosition({3, 0}));
 	sudokuMatrix.setValueAt({3, 0}, 2);
 
 	// QApplication sudokuApp(argc, argv);

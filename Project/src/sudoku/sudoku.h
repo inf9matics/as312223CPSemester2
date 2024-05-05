@@ -27,7 +27,7 @@ class SudokuMatrix {
 	SudokuMatrix(SudokuMatrix &&sudokuMatrix);
 	SudokuMatrix(const SudokuMatrix &sudokuMatrix);
 
-	SudokuMatrix& operator=(const SudokuMatrix& sudokuMatrix);
+	SudokuMatrix &operator=(const SudokuMatrix &sudokuMatrix);
 
 	int getSize();
 	int getSubMatrixSize();
@@ -69,8 +69,6 @@ class SudokuSubMatrix {
 class SudokuCell {
       protected:
 	SudokuMatrix *parentMatrix;
-	SudokuCell *parityCell;
-
 	std::pair<int, int> position;
 
 	int value;
@@ -82,7 +80,7 @@ class SudokuCell {
 
 	friend SudokuMatrix;
 	SudokuCell &setParent(SudokuMatrix &parentMatrix);
-	
+
       public:
 	SudokuCell(std::pair<int, int> position);
 
@@ -94,9 +92,9 @@ class SudokuCell {
 	SudokuCell &setValue(int value);
 	int getValue();
 
-	SudokuCell &setParityCell(SudokuCell &parityCell);
+	std::vector<SudokuCell *> parityCells;
 
-	SudokuCell &getParityCell();
+	SudokuCell &addParityCell(SudokuCell &parityCell);
 };
 
 #endif
