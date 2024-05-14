@@ -9,20 +9,28 @@ class SudokuMatrixMasked : public SudokuMatrix {
 
 	std::vector<std::vector<SudokuCell *>> cellsMasked;
 
+	std::vector<SudokuCell *> cellsManaged;
+
 	SudokuMatrix *parentMatrix;
 
 	bool root;
+
+	SudokuMatrixMasked *prepareCellsMasked();
     
       public:
 	SudokuMatrixMasked(SudokuMatrix sudokuMatrix);
 	SudokuMatrixMasked(SudokuMatrixMasked &&sudokuMatrixMasked);
 	SudokuMatrixMasked(const SudokuMatrixMasked &sudokuMatrixMasked);
 
+	~SudokuMatrixMasked();
+
 	SudokuMatrixMasked &operator=(const SudokuMatrixMasked &sudokuMatrixMasked);
 
 	operator SudokuMatrix();
 
-	SudokuCell &getCellAtPosition(std::pair<int, int> position);
+	SudokuCell *setValueAt(std::pair<int, int> position, int value);
+
+	SudokuCell *getCellAtPosition(std::pair<int, int> position);
 };
 
 class SudokuBacksolver {};

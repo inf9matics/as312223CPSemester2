@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 	sudokuMatrix.setValueAt({2, 1}, 8);
 	sudokuMatrix.setValueAt({2, 2}, 9);
 
-	sudokuMatrix.getCellAtPosition({0, 0}).addParityCell(sudokuMatrix.getCellAtPosition({3, 0}));
+	sudokuMatrix.getCellAtPosition({0, 0})->addParityCell(sudokuMatrix.getCellAtPosition({3, 0}));
 	sudokuMatrix.setValueAt({3, 0}, 2);
 
 	// QApplication sudokuApp(argc, argv);
@@ -36,6 +36,10 @@ int main(int argc, char *argv[]) {
 	// sudokuMatrix.~SudokuMatrix();
 	sudokuMatrix2.setValueAt({0, 0}, 6);
 	SudokuMatrix sudokuMatrix3{std::move(sudokuMatrix2)};
+
+	SudokuMatrixMasked sudokuMasked{sudokuMatrix3};
+	sudokuMasked.setValueAt({6, 8}, 2);
+	SudokuMatrixMasked sudokuMasked2{sudokuMasked};
 
 	return 0;
 }

@@ -21,9 +21,9 @@ class SudokuMatrix {
 
 	std::vector<std::vector<SudokuSubMatrix>> subMatrices;
 
-	SudokuMatrix &prepareCells();
+	SudokuMatrix *prepareCells();
 
-	SudokuMatrix &prepareSubMatrices();
+	SudokuMatrix *prepareSubMatrices();
 
       public:
 	SudokuMatrix();
@@ -36,12 +36,12 @@ class SudokuMatrix {
 	int getSize();
 	int getSubMatrixSize();
 
-	SudokuCell &setValueAt(std::pair<int, int> position, int value);
+	SudokuCell *setValueAt(std::pair<int, int> position, int value);
 
-	SudokuCell &getCellAtPosition(std::pair<int, int> position);
+	SudokuCell *getCellAtPosition(std::pair<int, int> position);
 
-	SudokuSubMatrix &getSubMatrixAtPosition(std::pair<int, int> position);
-	SudokuSubMatrix &getSubMatrixAtCellPosition(std::pair<int, int> position);
+	SudokuSubMatrix *getSubMatrixAtPosition(std::pair<int, int> position);
+	SudokuSubMatrix *getSubMatrixAtCellPosition(std::pair<int, int> position);
 
 	bool checkViableAtPosition(std::pair<int, int> position);
 };
@@ -55,15 +55,16 @@ class SudokuSubMatrix {
 	bool filled;
 	std::pair<int, int> position;
 
+	friend SudokuMatrixMasked;
 	std::vector<std::vector<SudokuCell *>> cells;
 
 	friend SudokuMatrix;
-	SudokuSubMatrix &setParent(SudokuMatrix &parentMatrix);
+	SudokuSubMatrix *setParent(SudokuMatrix *parentMatrix);
 
       public:
-	SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix &parentMatrix);
+	SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix);
 
-	SudokuMatrix &getParent();
+	SudokuMatrix *getParent();
 
 	int getSize();
 
@@ -83,7 +84,8 @@ class SudokuCell {
 	bool getCalledParity();
 
 	friend SudokuMatrix;
-	SudokuCell &setParent(SudokuMatrix &parentMatrix);
+	friend SudokuMatrixMasked;
+	SudokuCell *setParent(SudokuMatrix *parentMatrix);
 
       public:
 	SudokuCell(std::pair<int, int> position);
@@ -91,14 +93,14 @@ class SudokuCell {
 	bool operator==(SudokuCell &sudokuCell);
 	bool operator!=(SudokuCell &sudokuCell);
 
-	SudokuMatrix &getParent();
+	SudokuMatrix *getParent();
 
-	SudokuCell &setValue(int value);
+	SudokuCell *setValue(int value);
 	int getValue();
 
 	std::vector<SudokuCell *> parityCells;
 
-	SudokuCell &addParityCell(SudokuCell &parityCell);
+	SudokuCell *addParityCell(SudokuCell *parityCell);
 };
 
 #endif
