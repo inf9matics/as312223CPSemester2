@@ -93,6 +93,8 @@ class SudokuCell {
 	bool operator==(SudokuCell &sudokuCell);
 	bool operator!=(SudokuCell &sudokuCell);
 
+	SudokuCell &operator=(const SudokuCell &sudokuCell);
+
 	SudokuMatrix *getParent();
 
 	SudokuCell *setValue(int value);
