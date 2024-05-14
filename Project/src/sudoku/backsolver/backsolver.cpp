@@ -1,5 +1,4 @@
 #include "backsolver.h"
-#include <cmath>
 
 SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix sudokuMatrix) : SudokuMatrix(sudokuMatrix) {
 	this->parentMatrix = &sudokuMatrix;
