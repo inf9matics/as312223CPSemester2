@@ -8,8 +8,6 @@
 class LendableDigital : virtual public LendableBase {
       public:
 	LendableDigital(int id, std::string title);
-
-	// std::string getFullTitle();
 };
 
 #endif
