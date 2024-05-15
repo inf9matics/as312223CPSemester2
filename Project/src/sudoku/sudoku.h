@@ -103,6 +103,12 @@ class SudokuCell {
 	std::vector<SudokuCell *> parityCells;
 
 	SudokuCell *addParityCell(SudokuCell *parityCell);
+
+	SudokuCell *copyParityFrom(SudokuCell &sudokuCell);
+	friend SudokuCell *SudokuCell::copyParityFrom(SudokuCell &SudokuCell);
+
+	SudokuCell *copyParityTo(SudokuCell &sudokuCell);
+	friend SudokuCell *SudokuCell::copyParityTo(SudokuCell &sudokuCell);
 };
 
 #endif

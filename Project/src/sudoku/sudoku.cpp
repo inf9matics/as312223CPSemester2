@@ -21,16 +21,26 @@ SudokuMatrix::SudokuMatrix(const SudokuMatrix &sudokuMatrix) { *this = sudokuMat
 
 SudokuMatrix::SudokuMatrix(SudokuMatrix &&sudokuMatrix) {
 	this->size = sudokuMatrix.size;
-	sudokuMatrix.size = NULL;
+	sudokuMatrix.size = -1;
 
 	this->subMatrixSize = sudokuMatrix.subMatrixSize;
-	sudokuMatrix.subMatrixSize = NULL;
+	sudokuMatrix.subMatrixSize = -1;
 
 	this->cells = sudokuMatrix.cells;
 	sudokuMatrix.cells.clear();
+	std::vector<std::vector<SudokuCell>>::iterator cellsColumnIterator = this->cells.begin();
+	while(cellsColumnIterator != this->cells.end()) {
+		std::vector<SudokuCell>::iterator cellsRowIterator = cellsColumnIterator->begin();
+		while(cellsRowIterator != cellsColumnIterator->end()) {
+			cellsRowIterator->setParent(this);
+			cellsRowIterator++;
+		}
+		cellsColumnIterator++;
+	}
 
-	this->subMatrices = sudokuMatrix.subMatrices;
 	sudokuMatrix.subMatrices.clear();
+	this->subMatrices.clear();
+	this->prepareSubMatrices();
 
 	sudokuMatrix.~SudokuMatrix();
 }
@@ -39,8 +49,6 @@ SudokuMatrix &SudokuMatrix::operator=(const SudokuMatrix &sudokuMatrix) {
 	this->size = sudokuMatrix.size;
 	this->subMatrixSize = sudokuMatrix.subMatrixSize;
 
-	this->cells.clear();
-	this->prepareCells();
 	this->cells = sudokuMatrix.cells;
 	std::vector<std::vector<SudokuCell>>::iterator cellsRowIterator = this->cells.begin();
 	while (cellsRowIterator != this->cells.end()) {
@@ -61,16 +69,6 @@ SudokuMatrix &SudokuMatrix::operator=(const SudokuMatrix &sudokuMatrix) {
 
 	this->subMatrices.clear();
 	this->prepareSubMatrices();
-	this->subMatrices = sudokuMatrix.subMatrices;
-	std::vector<std::vector<SudokuSubMatrix>>::iterator subMatricesRowIterator = this->subMatrices.begin();
-	while (subMatricesRowIterator != this->subMatrices.end()) {
-		std::vector<SudokuSubMatrix>::iterator subMatricesColumnIterator = subMatricesRowIterator->begin();
-		while (subMatricesColumnIterator != subMatricesRowIterator->end()) {
-			subMatricesColumnIterator->setParent(this);
-			subMatricesColumnIterator++;
-		}
-		subMatricesRowIterator++;
-	}
 
 	return *this;
 }
@@ -198,6 +196,21 @@ bool SudokuCell::operator==(SudokuCell &sudokuCell) { return ((this->parentMatri
 
 bool SudokuCell::operator!=(SudokuCell &sudokuCell) { return !(*this == sudokuCell); }
 
+SudokuCell &SudokuCell::operator=(const SudokuCell &sudokuCell) {
+	this->parentMatrix = sudokuCell.parentMatrix;
+	
+	this->parityCells.clear();
+	this->parityCells = sudokuCell.parityCells;
+
+	this->value = sudokuCell.value;
+
+	this->position = sudokuCell.position;
+
+	this->viable = this->parentMatrix->checkViableAtPosition(this->position);
+
+	return *this;
+}
+
 SudokuCell *SudokuCell::setParent(SudokuMatrix *parentMatrix) {
 	this->parentMatrix = parentMatrix;
 	return this;
@@ -236,6 +249,28 @@ SudokuCell *SudokuCell::addParityCell(SudokuCell *parityCell) {
 		parityCell->addParityCell(this);
 	}
 	this->calledParity = false;
+
+	return this;
+}
+
+SudokuCell *SudokuCell::copyParityFrom(SudokuCell &sudokuCell) {
+	std::vector<SudokuCell *>::iterator parityCellsIterator = sudokuCell.parityCells.begin();
+	this->parityCells.clear();
+	while (parityCellsIterator != sudokuCell.parityCells.end()) {
+		this->parityCells.push_back(this->parentMatrix->getCellAtPosition((*parityCellsIterator)->position));
+		parityCellsIterator++;
+	}
+
+	return this;
+}
+
+SudokuCell *SudokuCell::copyParityTo(SudokuCell &sudokuCell) {
+	std::vector<SudokuCell *>::iterator parityCellsIterator = this->parityCells.begin();
+	sudokuCell.parityCells.clear();
+	while (parityCellsIterator != sudokuCell.parityCells.end()) {
+		sudokuCell.parityCells.push_back(sudokuCell.parentMatrix->getCellAtPosition((*parityCellsIterator)->position));
+		parityCellsIterator++;
+	}
 
 	return this;
 }
