@@ -26,6 +26,7 @@ SudokuMatrix::SudokuMatrix(SudokuMatrix &&sudokuMatrix) {
 	this->subMatrixSize = sudokuMatrix.subMatrixSize;
 	sudokuMatrix.subMatrixSize = -1;
 
+	this->cells.clear();
 	this->cells = sudokuMatrix.cells;
 	sudokuMatrix.cells.clear();
 	std::vector<std::vector<SudokuCell>>::iterator cellsColumnIterator = this->cells.begin();
@@ -49,6 +50,7 @@ SudokuMatrix &SudokuMatrix::operator=(const SudokuMatrix &sudokuMatrix) {
 	this->size = sudokuMatrix.size;
 	this->subMatrixSize = sudokuMatrix.subMatrixSize;
 
+	this->cells.clear();
 	this->cells = sudokuMatrix.cells;
 	std::vector<std::vector<SudokuCell>>::iterator cellsRowIterator = this->cells.begin();
 	while (cellsRowIterator != this->cells.end()) {
