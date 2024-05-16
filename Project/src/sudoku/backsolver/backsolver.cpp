@@ -1,14 +1,29 @@
 #include "backsolver.h"
 
-SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix &sudokuMatrix) : SudokuMatrix(sudokuMatrix), cells{sudokuMatrix.cells} {
+#include <stdexcept>
+
+SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix &sudokuMatrix) : SudokuMatrix(sudokuMatrix) {
 	this->parentMatrix = &sudokuMatrix;
+
+	this->cells = new std::vector<std::vector<SudokuCell>>{};
+	*this->cells = sudokuMatrix.cells;
+
+	std::vector<std::vector<SudokuCell>>::iterator rowsIterator = this->cells->begin();
+	while(rowsIterator != this->cells->end()) {
+		std::vector<SudokuCell>::iterator columnsIterator = rowsIterator->begin();
+		while(columnsIterator != rowsIterator->end()) {
+			columnsIterator->setParent(this);
+			columnsIterator++;
+		}
+		rowsIterator++;
+	}
 
 	this->root = true;
 
 	for (int i{0}; i < this->size; i++) {
 		std::vector<SudokuCell *> row;
 		for (int j{0}; j < this->size; j++) {
-			row.push_back(&this->cells.at(i).at(j));
+			row.push_back(&this->cells->at(i).at(j));
 		}
 		this->cellsMasked.push_back(row);
 	}
@@ -18,6 +33,7 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix &sudokuMatrix) : SudokuMatri
 }
 
 SudokuMatrixMasked::SudokuMatrixMasked(const SudokuMatrixMasked &sudokuMatrixMasked) : SudokuMatrix(*sudokuMatrixMasked.parentMatrix), cells{sudokuMatrixMasked.cells} {
+	this->cells = sudokuMatrixMasked.cells;
 	this->cellsMasked = sudokuMatrixMasked.cellsMasked;
 
 	this->root = false;
@@ -38,7 +54,7 @@ SudokuMatrixMasked::~SudokuMatrixMasked() {
 
 SudokuCell *SudokuMatrixMasked::setValueAt(std::pair<int, int> position, int value) {
 	SudokuCell *cell;
-	cell = this->getCellAtPosition(position);
+	cell = this->cellsMasked.at(position.first).at(position.second);
 
 	if (value > this->size) {
 		return cell;
@@ -48,7 +64,6 @@ SudokuCell *SudokuMatrixMasked::setValueAt(std::pair<int, int> position, int val
 		cell = new SudokuCell{position};
 		this->cellsManaged.emplace_back(cell);
 		this->cellsManaged.back()->setParent(this);
-		this->getSubMatrixAtCellPosition(position)->cells.at(position.first % this->subMatrixSize).at(position.second % this->subMatrixSize) = this->cellsManaged.back();
 		this->cellsMasked.at(position.first).at(position.second) = this->cellsManaged.back();
 	}
 
@@ -59,11 +74,7 @@ SudokuCell *SudokuMatrixMasked::getCellAtPosition(std::pair<int, int> position) 
 	SudokuCell *cell;
 	cell = this->cellsMasked.at(position.first).at(position.second);
 	if (cell->getValue() == 0) {
-		if (this->root) {
-			cell = &cells.at(position.first).at(position.second);
-		} else {
-			cell = this->parentMatrix->getCellAtPosition(position);
-		}
+		cell = &cells->at(position.first).at(position.second);
 	}
 
 	return cell;

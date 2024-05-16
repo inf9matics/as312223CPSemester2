@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
 	SudokuMatrixMasked sudokuMasked{sudokuMatrix3};
 	sudokuMatrix3.setValueAt({0, 0}, 2);
-	sudokuMasked.setValueAt({6, 8}, 2);
+	sudokuMasked.setValueAt({0, 0}, 4);
 	SudokuMatrixMasked sudokuMasked2{sudokuMasked};
 
 	return 0;

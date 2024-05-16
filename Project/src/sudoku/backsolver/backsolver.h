@@ -5,7 +5,7 @@
 
 class SudokuMatrixMasked : public SudokuMatrix {
       protected:
-	std::vector<std::vector<SudokuCell>> &cells;
+	std::vector<std::vector<SudokuCell>> *cells;
 
 	std::vector<std::vector<SudokuCell *>> cellsMasked;
 

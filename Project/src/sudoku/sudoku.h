@@ -56,7 +56,7 @@ class SudokuSubMatrix {
 	std::pair<int, int> position;
 
 	friend SudokuMatrixMasked;
-	std::vector<std::vector<SudokuCell *>> cells;
+	std::vector<std::vector<std::pair<int, int>>> cells;
 
 	friend SudokuMatrix;
 	SudokuSubMatrix *setParent(SudokuMatrix *parentMatrix);
@@ -79,6 +79,7 @@ class SudokuCell {
 	int value;
 	bool viable;
 
+	std::vector<std::pair<int, int>> parityCells;
 	bool calledParity;
 
 	bool getCalledParity();
@@ -100,15 +101,11 @@ class SudokuCell {
 	SudokuCell *setValue(int value);
 	int getValue();
 
-	std::vector<SudokuCell *> parityCells;
-
 	SudokuCell *addParityCell(SudokuCell *parityCell);
 
 	SudokuCell *copyParityFrom(SudokuCell &sudokuCell);
-	friend SudokuCell *SudokuCell::copyParityFrom(SudokuCell &SudokuCell);
 
 	SudokuCell *copyParityTo(SudokuCell &sudokuCell);
-	friend SudokuCell *SudokuCell::copyParityTo(SudokuCell &sudokuCell);
 };
 
 #endif
