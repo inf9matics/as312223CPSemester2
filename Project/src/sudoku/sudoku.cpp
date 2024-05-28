@@ -30,9 +30,9 @@ SudokuMatrix::SudokuMatrix(SudokuMatrix &&sudokuMatrix) {
 	this->cells = sudokuMatrix.cells;
 	sudokuMatrix.cells.clear();
 	std::vector<std::vector<SudokuCell>>::iterator cellsRowIterator = this->cells.begin();
-	while(cellsRowIterator != this->cells.end()) {
+	while (cellsRowIterator != this->cells.end()) {
 		std::vector<SudokuCell>::iterator cellsColumnIterator = cellsRowIterator->begin();
-		while(cellsColumnIterator != cellsRowIterator->end()) {
+		while (cellsColumnIterator != cellsRowIterator->end()) {
 			cellsColumnIterator->setParent(this);
 			cellsColumnIterator++;
 		}
@@ -146,6 +146,10 @@ SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuM
 		}
 		this->cells.push_back(row);
 	}
+
+	for (int i{0}; i < std::pow(this->size, 2); i++) {
+		this->existingValues.insert(i+1, 0);
+	}
 }
 
 SudokuSubMatrix *SudokuSubMatrix::setParent(SudokuMatrix *parentMatrix) {
@@ -158,27 +162,54 @@ SudokuMatrix *SudokuSubMatrix::getParent() { return this->parentMatrix; }
 int SudokuSubMatrix::getSize() { return this->size; }
 
 bool SudokuSubMatrix::checkIfViable() {
-	std::map<int, bool> existingValues;
-	for (int i{0}; i < this->size; i++) {
-		for (int j{0}; j < this->size; j++) {
-			if (this->parentMatrix->getCellAtPosition(this->cells.at(i).at(j))->getValue() == 0) {
-				continue;
-			}
-			if (existingValues.count(this->parentMatrix->getCellAtPosition(this->cells.at(i).at(j))->getValue()) == 0) {
-				existingValues.insert({this->parentMatrix->getCellAtPosition(this->cells.at(i).at(j))->getValue(), true});
-			} else {
-				this->viable = false;
-				this->filled = false;
-
-				return false;
-			}
+	bool viable{true};
+	std::map<int, int>::iterator existingValuesIterator = this->existingValues.begin();
+	while(existingValuesIterator != this->existingValues.end()) {
+		if(existingValuesIterator->second > 1) {
+			viable = false;
 		}
-	}
-	if (existingValues.size() == std::pow(this->size, 2)) {
-		this->filled = true;
+		existingValuesIterator++;
 	}
 
-	return true;
+	return viable;
+}
+
+SudokuMatrix *SudokuMatrix::updateSubMatrixAtCellPosition(std::pair<int, int> position) {
+	this->getSubMatrixAtCellPosition(position)->updateExistingValues(this->getCellAtPosition(position)->getValue());
+
+	return this;
+}
+
+SudokuSubMatrix *SudokuSubMatrix::updateExistingValues(int value) {
+	this->existingValues.at(value)++;
+}
+
+std::vector<int> SudokuSubMatrix::getValuesMissing() {
+	std::vector<int> valuesMissing;
+
+	std::map<int, int>::iterator existingValuesIterator = this->existingValues.begin();
+	while(existingValuesIterator != this->existingValues.end()) {
+		if(existingValuesIterator->second == 0) {
+			valuesMissing.push_back(existingValuesIterator->first);
+		}
+		existingValuesIterator++;
+	}
+
+	return valuesMissing;
+}
+
+std::vector<int> SudokuSubMatrix::getValuesFilled() {
+	std::vector<int> valuesFilled;
+
+	std::map<int, int>::iterator existingValuesIterator = this->existingValues.begin();
+	while(existingValuesIterator != this->existingValues.end()) {
+		if(existingValuesIterator->second > 0) {
+			valuesFilled.push_back(existingValuesIterator->first);
+		}
+		existingValuesIterator++;
+	}
+
+	return valuesFilled;
 }
 
 SudokuCell::SudokuCell(std::pair<int, int> position) {
@@ -193,7 +224,7 @@ bool SudokuCell::operator!=(SudokuCell &sudokuCell) { return !(*this == sudokuCe
 
 SudokuCell &SudokuCell::operator=(const SudokuCell &sudokuCell) {
 	this->parentMatrix = sudokuCell.parentMatrix;
-	
+
 	this->parityCells.clear();
 	this->parityCells = sudokuCell.parityCells;
 
@@ -213,7 +244,7 @@ SudokuMatrix *SudokuCell::getParent() { return this->parentMatrix; }
 
 SudokuCell *SudokuCell::setValue(int value) {
 	this->value = value;
-	this->viable = this->parentMatrix->checkViableAtPosition(this->position);
+	this->viable = this->parentMatrix->updateSubMatrixAtCellPosition(this->position)->checkViableAtPosition(this->position);
 
 	if (!this->parityCells.empty()) {
 		this->calledParity = true;

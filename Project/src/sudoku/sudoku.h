@@ -43,6 +43,8 @@ class SudokuMatrix {
 	SudokuSubMatrix *getSubMatrixAtPosition(std::pair<int, int> position);
 	SudokuSubMatrix *getSubMatrixAtCellPosition(std::pair<int, int> position);
 
+	SudokuMatrix *updateSubMatrixAtCellPosition(std::pair<int, int> position);
+
 	bool checkViableAtPosition(std::pair<int, int> position);
 };
 
@@ -54,6 +56,8 @@ class SudokuSubMatrix {
 	bool viable;
 	bool filled;
 	std::pair<int, int> position;
+
+	std::map<int, int> existingValues;
 
 	friend SudokuMatrixMasked;
 	std::vector<std::vector<std::pair<int, int>>> cells;
@@ -69,6 +73,11 @@ class SudokuSubMatrix {
 	int getSize();
 
 	bool checkIfViable();
+
+	SudokuSubMatrix *updateExistingValues(int value);
+
+	std::vector<int> getValuesMissing();
+	std::vector<int> getValuesFilled();
 };
 
 class SudokuCell {

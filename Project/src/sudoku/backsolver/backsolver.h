@@ -39,10 +39,12 @@ class SudokuBacksolver {
       protected:
 	SudokuMatrix sudokuMatrix;
 
+	SudokuMatrixMasked recurseMaskedMatrices(std::vector<SudokuMatrixMasked> &maskedMatrices);
+
       public:
 	SudokuBacksolver(SudokuMatrix &sudokuMatrix);
 
-	SudokuBacksolver *solveMatrix();
+	SudokuMatrix solveMatrix();
 };
 
 #endif
