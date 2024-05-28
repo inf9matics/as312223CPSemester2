@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 	// gameLauncherWindow.show();
 
 	// return sudokuApp.exec();
-n	SudokuMatrix sudokuMatrix2{};
+	SudokuMatrix sudokuMatrix2{};
 	sudokuMatrix2 = sudokuMatrix;
 	// sudokuMatrix.~SudokuMatrix();
 	sudokuMatrix2.setValueAt({0, 0}, 6);
