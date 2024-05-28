@@ -1,6 +1,5 @@
 #include "sudoku.h"
 
-
 SudokuCell::SudokuCell(std::pair<int, int> position) {
 	this->position = position;
 
@@ -38,13 +37,7 @@ SudokuCell *SudokuCell::setValue(int value) {
 
 	if (!this->parityCells.empty()) {
 		this->calledParity = true;
-		std::vector<std::pair<int, int>>::iterator parityCellsIterator = this->parityCells.begin();
-		while (parityCellsIterator != this->parityCells.end()) {
-			if (!this->parentMatrix->getCellAtPosition(*parityCellsIterator)->getCalledParity()) {
-				this->parentMatrix->getCellAtPosition(*parityCellsIterator)->setValue(value);
-			}
-			parityCellsIterator++;
-		}
+		this->iterateOverParity([value](SudokuCell *sudokuCell) { sudokuCell->setValue(value); });
 		this->calledParity = false;
 	}
 
@@ -85,6 +78,18 @@ SudokuCell *SudokuCell::copyParityTo(SudokuCell &sudokuCell) {
 	sudokuCell.parityCells.clear();
 	while (parityCellsIterator != sudokuCell.parityCells.end()) {
 		sudokuCell.parityCells.push_back(*parityCellsIterator);
+		parityCellsIterator++;
+	}
+
+	return this;
+}
+
+template <typename Function> SudokuCell *SudokuCell::iterateOverParity(Function f) {
+	std::vector<std::pair<int, int>>::iterator parityCellsIterator = this->parityCells.begin();
+	while (parityCellsIterator != this->parityCells.end()) {
+		if (!this->parentMatrix->getCellAtPosition(*parityCellsIterator)->getCalledParity()) {
+			f(this->parentMatrix->getCellAtPosition(*parityCellsIterator));
+		}
 		parityCellsIterator++;
 	}
 

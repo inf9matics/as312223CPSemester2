@@ -119,6 +119,9 @@ class SudokuCell {
 	SudokuCell *copyParityFrom(SudokuCell &sudokuCell);
 
 	SudokuCell *copyParityTo(SudokuCell &sudokuCell);
+
+	template<typename Function>
+	SudokuCell *iterateOverParity(Function f);
 };
 
 #endif
