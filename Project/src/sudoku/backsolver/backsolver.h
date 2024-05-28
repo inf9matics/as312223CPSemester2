@@ -1,6 +1,8 @@
 #ifndef BACKSOLVER_H
 #define BACKSOLVER_H
 
+#include <set>
+
 #include "sudoku.h"
 
 class SudokuMatrixMasked : public SudokuMatrix {
@@ -9,14 +11,14 @@ class SudokuMatrixMasked : public SudokuMatrix {
 
 	std::vector<std::vector<SudokuCell *>> cellsMasked;
 
-	std::vector<SudokuCell *> cellsManaged;
+	std::set<std::pair<int, int>> cellsManaged;
 
 	SudokuMatrix *parentMatrix;
 
 	bool root;
 
 	SudokuMatrixMasked *prepareCellsMasked();
-    
+
       public:
 	SudokuMatrixMasked(SudokuMatrix &sudokuMatrix);
 	SudokuMatrixMasked(SudokuMatrixMasked &&sudokuMatrixMasked);
@@ -33,6 +35,14 @@ class SudokuMatrixMasked : public SudokuMatrix {
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
 };
 
-class SudokuBacksolver {};
+class SudokuBacksolver {
+      protected:
+	SudokuMatrix sudokuMatrix;
+
+      public:
+	SudokuBacksolver(SudokuMatrix &sudokuMatrix);
+
+	SudokuBacksolver *solveMatrix();
+};
 
 #endif

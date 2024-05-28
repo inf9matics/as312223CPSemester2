@@ -38,9 +38,10 @@ int main(int argc, char *argv[]) {
 	SudokuMatrix sudokuMatrix3{std::move(sudokuMatrix2)};
 
 	SudokuMatrixMasked sudokuMasked{sudokuMatrix3};
+	SudokuMatrixMasked sudokuMasked2{sudokuMasked};
 	sudokuMatrix3.setValueAt({0, 0}, 2);
 	sudokuMasked.setValueAt({0, 0}, 4);
-	SudokuMatrixMasked sudokuMasked2{sudokuMasked};
+	SudokuMatrixMasked sudokuMasked3{sudokuMasked};
 
 	return 0;
 }

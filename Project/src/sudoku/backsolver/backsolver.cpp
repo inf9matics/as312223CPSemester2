@@ -9,9 +9,9 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix &sudokuMatrix) : SudokuMatri
 	*this->cells = sudokuMatrix.cells;
 
 	std::vector<std::vector<SudokuCell>>::iterator rowsIterator = this->cells->begin();
-	while(rowsIterator != this->cells->end()) {
+	while (rowsIterator != this->cells->end()) {
 		std::vector<SudokuCell>::iterator columnsIterator = rowsIterator->begin();
-		while(columnsIterator != rowsIterator->end()) {
+		while (columnsIterator != rowsIterator->end()) {
 			columnsIterator->setParent(this);
 			columnsIterator++;
 		}
@@ -45,9 +45,9 @@ SudokuMatrixMasked::SudokuMatrixMasked(const SudokuMatrixMasked &sudokuMatrixMas
 }
 
 SudokuMatrixMasked::~SudokuMatrixMasked() {
-	std::vector<SudokuCell *>::iterator cellsManagedIterator = this->cellsManaged.begin();
+	std::set<std::pair<int, int>>::iterator cellsManagedIterator = this->cellsManaged.begin();
 	while (cellsManagedIterator != this->cellsManaged.end()) {
-		delete *cellsManagedIterator;
+		delete this->cellsMasked.at(cellsManagedIterator->first).at(cellsManagedIterator->second);
 		cellsManagedIterator++;
 	}
 }
@@ -60,22 +60,44 @@ SudokuCell *SudokuMatrixMasked::setValueAt(std::pair<int, int> position, int val
 		return cell;
 	}
 
-	if (cell->getValue() == 0) {
-		cell = new SudokuCell{position};
-		this->cellsManaged.emplace_back(cell);
-		this->cellsManaged.back()->setParent(this);
-		this->cellsMasked.at(position.first).at(position.second) = this->cellsManaged.back();
+	if (this->cellsManaged.count(position) == 0) {
+		SudokuCell *cellManaged = new SudokuCell(*cell);
+		cellManaged->setParent(this);
+		this->cellsManaged.insert(position);
+		this->cellsMasked.at(position.first).at(position.second) = cellManaged;
+		cell = cellManaged;
+		std::vector<SudokuCell *> newParityCells;
+		std::vector<std::pair<int, int>>::iterator parityCellsIterator = cellManaged->parityCells.begin();
+		while (parityCellsIterator != cellManaged->parityCells.end()) {
+			newParityCells.emplace_back(this->getCellAtPosition(*parityCellsIterator));
+			this->cellsMasked.at(parityCellsIterator->first).at(parityCellsIterator->second) = newParityCells.back();
+			this->cellsManaged.insert(*parityCellsIterator);
+			parityCellsIterator++;
+		}
 	}
 
 	return cell->setValue(value);
 }
 
-SudokuCell *SudokuMatrixMasked::getCellAtPosition(std::pair<int, int> position) {
-	SudokuCell *cell;
-	cell = this->cellsMasked.at(position.first).at(position.second);
-	if (cell->getValue() == 0) {
-		cell = &cells->at(position.first).at(position.second);
+SudokuCell *SudokuMatrixMasked::getCellAtPosition(std::pair<int, int> position) { return this->cellsMasked.at(position.first).at(position.second); }
+
+SudokuBacksolver::SudokuBacksolver(SudokuMatrix &sudokuMatrix) : sudokuMatrix{sudokuMatrix} {}
+
+SudokuBacksolver *SudokuBacksolver::solveMatrix() {
+	SudokuMatrixMasked maskedMatrix{this->sudokuMatrix};
+
+	std::vector<SudokuMatrixMasked> maskedMatrices;
+	std::pair<int, int> startPosition;
+
+	for (int i{0}; i < maskedMatrix.getSize(); i++) {
+		for (int j{0}; i < maskedMatrix.getSize(); j++) {
+			if(maskedMatrix.getCellAtPosition({i, j})->getValue() == 0) {
+				startPosition = {i, j};
+				i = maskedMatrix.getSize();
+				j = maskedMatrix.getSize();
+			}
+		}
 	}
 
-	return cell;
+	SudokuSubMatrix startPositionSubMatrix = *maskedMatrix.getSubMatrixAtCellPosition(startPosition);
 }
