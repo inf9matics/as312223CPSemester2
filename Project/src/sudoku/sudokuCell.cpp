@@ -84,11 +84,11 @@ SudokuCell *SudokuCell::copyParityTo(SudokuCell &sudokuCell) {
 	return this;
 }
 
-template <typename Function> SudokuCell *SudokuCell::iterateOverParity(Function f) {
+template <typename Function> SudokuCell *SudokuCell::iterateOverParity(Function function) {
 	std::vector<std::pair<int, int>>::iterator parityCellsIterator = this->parityCells.begin();
 	while (parityCellsIterator != this->parityCells.end()) {
 		if (!this->parentMatrix->getCellAtPosition(*parityCellsIterator)->getCalledParity()) {
-			f(this->parentMatrix->getCellAtPosition(*parityCellsIterator));
+			function(this->parentMatrix->getCellAtPosition(*parityCellsIterator));
 		}
 		parityCellsIterator++;
 	}

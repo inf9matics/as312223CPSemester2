@@ -47,6 +47,9 @@ class SudokuMatrix {
 	SudokuMatrix *updateSubMatrixAtCellPosition(std::pair<int, int> position);
 
 	bool checkViableAtPosition(std::pair<int, int> position);
+
+	template<typename Function>
+	SudokuMatrix *iterateOverCells(Function function);
 };
 
 class SudokuSubMatrix {
@@ -121,7 +124,7 @@ class SudokuCell {
 	SudokuCell *copyParityTo(SudokuCell &sudokuCell);
 
 	template<typename Function>
-	SudokuCell *iterateOverParity(Function f);
+	SudokuCell *iterateOverParity(Function function);
 };
 
 #endif

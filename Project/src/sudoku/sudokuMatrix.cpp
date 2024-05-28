@@ -27,15 +27,7 @@ SudokuMatrix::SudokuMatrix(SudokuMatrix &&sudokuMatrix) {
 	this->cells.clear();
 	this->cells = sudokuMatrix.cells;
 	sudokuMatrix.cells.clear();
-	std::vector<std::vector<SudokuCell>>::iterator cellsRowIterator = this->cells.begin();
-	while (cellsRowIterator != this->cells.end()) {
-		std::vector<SudokuCell>::iterator cellsColumnIterator = cellsRowIterator->begin();
-		while (cellsColumnIterator != cellsRowIterator->end()) {
-			cellsColumnIterator->setParent(this);
-			cellsColumnIterator++;
-		}
-		cellsRowIterator++;
-	}
+	this->iterateOverCells([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
 
 	sudokuMatrix.subMatrices.clear();
 	this->subMatrices.clear();
@@ -50,15 +42,7 @@ SudokuMatrix &SudokuMatrix::operator=(const SudokuMatrix &sudokuMatrix) {
 
 	this->cells.clear();
 	this->cells = sudokuMatrix.cells;
-	std::vector<std::vector<SudokuCell>>::iterator cellsRowIterator = this->cells.begin();
-	while (cellsRowIterator != this->cells.end()) {
-		std::vector<SudokuCell>::iterator cellsColumnIterator = cellsRowIterator->begin();
-		while (cellsColumnIterator != cellsRowIterator->end()) {
-			cellsColumnIterator->setParent(this);
-			cellsColumnIterator++;
-		}
-		cellsRowIterator++;
-	}
+	this->iterateOverCells([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
 
 	this->subMatrices.clear();
 	this->prepareSubMatrices();
@@ -130,6 +114,20 @@ bool SudokuMatrix::checkViableAtPosition(std::pair<int, int> position) {
 
 SudokuMatrix *SudokuMatrix::updateSubMatrixAtCellPosition(std::pair<int, int> position) {
 	this->getSubMatrixAtCellPosition(position)->updateExistingValues({position.first % this->subMatrixSize, position.second % this->subMatrixSize});
+
+	return this;
+}
+
+template <typename Function> SudokuMatrix *SudokuMatrix::iterateOverCells(Function function) {
+	std::vector<std::vector<SudokuCell>>::iterator rowIterator = this->cells.begin();
+	while (rowIterator != this->cells.end()) {
+		std::vector<SudokuCell>::iterator columnIterator = rowIterator->begin();
+		while (columnIterator != rowIterator->end()) {
+			function(columnIterator.base());
+			columnIterator++;
+		}
+		rowIterator++;
+	}
 
 	return this;
 }
