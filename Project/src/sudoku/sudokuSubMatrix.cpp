@@ -1,5 +1,4 @@
 #include <cmath>
-#include <map>
 
 #include "sudoku.h"
 
@@ -21,7 +20,7 @@ SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuM
 	}
 
 	for (int i{0}; i < std::pow(this->size, 2); i++) {
-		this->existingValues.insert(i+1, 0);
+		this->existingValues.insert({i+1, 0});
 	}
 }
 
@@ -47,8 +46,14 @@ bool SudokuSubMatrix::checkIfViable() {
 	return viable;
 }
 
-SudokuSubMatrix *SudokuSubMatrix::updateExistingValues(int value) {
-	this->existingValues.at(value)++;
+SudokuSubMatrix *SudokuSubMatrix::updateExistingValues(std::pair<int, int> position) {
+	SudokuCell *currentCell = this->parentMatrix->getCellAtPosition(this->cells.at(position.first).at(position.second));
+	if(currentCell->getPreviousValue() > 0) {
+		this->existingValues.at(currentCell->getPreviousValue())--;
+	}
+	this->existingValues.at(currentCell->getValue())++;
+
+	return this;
 }
 
 std::vector<int> SudokuSubMatrix::getValuesMissing() {

@@ -129,7 +129,7 @@ bool SudokuMatrix::checkViableAtPosition(std::pair<int, int> position) {
 }
 
 SudokuMatrix *SudokuMatrix::updateSubMatrixAtCellPosition(std::pair<int, int> position) {
-	this->getSubMatrixAtCellPosition(position)->updateExistingValues(this->getCellAtPosition(position)->getValue());
+	this->getSubMatrixAtCellPosition(position)->updateExistingValues({position.first % this->subMatrixSize, position.second % this->subMatrixSize});
 
 	return this;
 }

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 class SudokuMatrixMasked;
 
@@ -74,7 +75,7 @@ class SudokuSubMatrix {
 
 	bool checkIfViable();
 
-	SudokuSubMatrix *updateExistingValues(int value);
+	SudokuSubMatrix *updateExistingValues(std::pair<int, int> position);
 
 	std::vector<int> getValuesMissing();
 	std::vector<int> getValuesFilled();
@@ -87,6 +88,8 @@ class SudokuCell {
 
 	int value;
 	bool viable;
+
+	int previousValue;
 
 	std::vector<std::pair<int, int>> parityCells;
 	bool calledParity;
@@ -109,6 +112,7 @@ class SudokuCell {
 
 	SudokuCell *setValue(int value);
 	int getValue();
+	int getPreviousValue();
 
 	SudokuCell *addParityCell(SudokuCell *parityCell);
 

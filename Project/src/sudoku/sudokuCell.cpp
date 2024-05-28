@@ -32,6 +32,7 @@ SudokuCell *SudokuCell::setParent(SudokuMatrix *parentMatrix) {
 SudokuMatrix *SudokuCell::getParent() { return this->parentMatrix; }
 
 SudokuCell *SudokuCell::setValue(int value) {
+	this->previousValue = this->value;
 	this->value = value;
 	this->viable = this->parentMatrix->updateSubMatrixAtCellPosition(this->position)->checkViableAtPosition(this->position);
 
@@ -51,6 +52,8 @@ SudokuCell *SudokuCell::setValue(int value) {
 }
 
 int SudokuCell::getValue() { return this->value; }
+
+int SudokuCell::getPreviousValue() { return this->previousValue; }
 
 bool SudokuCell::getCalledParity() { return this->calledParity; }
 
