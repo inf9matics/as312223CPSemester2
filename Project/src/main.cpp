@@ -25,6 +25,9 @@ int main(int argc, char *argv[]) {
 	sudokuMatrix.getCellAtPosition({0, 0})->addParityCell(sudokuMatrix.getCellAtPosition({3, 0}));
 	sudokuMatrix.setValueAt({3, 0}, 2);
 
+	SudokuBacksolver backsolver{sudokuMatrix};
+	backsolver.solveMatrix();
+
 	GameLauncher gameLauncher{};
 	gameLauncher.show();
 

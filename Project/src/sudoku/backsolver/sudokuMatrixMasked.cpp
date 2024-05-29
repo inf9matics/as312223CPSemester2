@@ -22,6 +22,7 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix &sudokuMatrix) : SudokuMatri
 		std::vector<SudokuCell *> row;
 		for (int j{0}; j < this->size; j++) {
 			row.push_back(&this->cells->at(i).at(j));
+			row.back()->setParent(this);
 		}
 		this->cellsMasked.push_back(row);
 	}
@@ -36,7 +37,7 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrixMasked &&sudokuMatrixMasked) 
 	sudokuMatrixMasked.cells = nullptr;
 
 	std::vector<std::vector<SudokuSubMatrix>>::iterator subMatricesIterator = sudokuMatrixMasked.subMatrices.begin();
-	while(subMatricesIterator != sudokuMatrixMasked.subMatrices.end()) {
+	while (subMatricesIterator != sudokuMatrixMasked.subMatrices.end()) {
 		subMatricesIterator->clear();
 		subMatricesIterator++;
 	}
@@ -48,13 +49,12 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrixMasked &&sudokuMatrixMasked) 
 	sudokuMatrixMasked.cellsManaged.clear();
 }
 
-SudokuMatrixMasked::SudokuMatrixMasked(const SudokuMatrixMasked &sudokuMatrixMasked) : SudokuMatrix(*sudokuMatrixMasked.parentMatrix), cells{sudokuMatrixMasked.cells} {
-	*this = sudokuMatrixMasked;
-}
+SudokuMatrixMasked::SudokuMatrixMasked(const SudokuMatrixMasked &sudokuMatrixMasked) : SudokuMatrix(*sudokuMatrixMasked.parentMatrix), cells{sudokuMatrixMasked.cells} { *this = sudokuMatrixMasked; }
 
 SudokuMatrixMasked &SudokuMatrixMasked::operator=(const SudokuMatrixMasked &sudokuMatrixMasked) {
 	this->cells = sudokuMatrixMasked.cells;
 	this->cellsMasked = sudokuMatrixMasked.cellsMasked;
+	this->iterateOverCellsMasked([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
 
 	this->subMatrices.clear();
 	this->subMatrices = sudokuMatrixMasked.subMatrices;
@@ -100,3 +100,17 @@ SudokuCell *SudokuMatrixMasked::setValueAt(std::pair<int, int> position, int val
 }
 
 SudokuCell *SudokuMatrixMasked::getCellAtPosition(std::pair<int, int> position) { return this->cellsMasked.at(position.first).at(position.second); }
+
+template <typename Function> SudokuMatrixMasked *SudokuMatrixMasked::iterateOverCellsMasked(Function function) {
+	std::vector<std::vector<SudokuCell *>>::iterator rowIterator = this->cellsMasked.begin();
+	while (rowIterator != this->cellsMasked.end()) {
+		std::vector<SudokuCell *>::iterator columnIterator = rowIterator->begin();
+		while (columnIterator != rowIterator->end()) {
+			function(*columnIterator);
+			columnIterator++;
+		}
+		rowIterator++;
+	}
+
+	return this;
+}

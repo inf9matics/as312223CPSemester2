@@ -31,6 +31,9 @@ class SudokuMatrixMasked : public SudokuMatrix {
 	SudokuCell *setValueAt(std::pair<int, int> position, int value);
 
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
+
+	template<typename Function>
+	SudokuMatrixMasked *iterateOverCellsMasked(Function function);
 };
 
 class SudokuBacksolver {

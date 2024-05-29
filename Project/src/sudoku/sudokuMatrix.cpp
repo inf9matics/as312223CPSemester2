@@ -43,6 +43,9 @@ SudokuMatrix &SudokuMatrix::operator=(const SudokuMatrix &sudokuMatrix) {
 	this->size = sudokuMatrix.size;
 	this->subMatrixSize = sudokuMatrix.subMatrixSize;
 
+	this->viable = sudokuMatrix.viable;
+	this->filled = sudokuMatrix.filled;
+
 	this->cells.clear();
 	this->cells = sudokuMatrix.cells;
 	this->iterateOverCells([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
@@ -163,13 +166,16 @@ bool SudokuMatrix::getFilled() { return this->filled; }
 
 std::vector<int> SudokuMatrix::getCrossValuesPresentAtPosition(std::pair<int, int> position) {
 	std::vector<int> valuesPresent;
-	for(int i{0}; i<this->getSize(); i++) {
+	for(int i{0}; i<=this->getSize(); i++) {
 		valuesPresent.push_back(0);
 	}
 
 	for (int i{0}; i < this->size; i++) {
-		if (position != std::pair<int, int>{i, i}) {
-			valuesPresent.at(i)++;
+		if (position.first != i) {
+			valuesPresent.at(this->getCellAtPosition({position.first, i})->getValue())++;
+		}
+		if(position.second != i) {
+			valuesPresent.at(this->getCellAtPosition({i, position.second})->getValue())++;
 		}
 	}
 	
@@ -181,9 +187,10 @@ std::vector<int> SudokuMatrix::getCrossValuesMissingAtPosition(std::pair<int, in
 
 	std::vector<int> valuesMissing;
 	std::vector<int>::iterator valuesPresentIterator = valuesPresent.begin();
+	valuesPresentIterator++;
 	while(valuesPresentIterator != valuesPresent.end()) {
 		if(*valuesPresentIterator == 0) {
-			valuesMissing.push_back(*valuesPresentIterator);
+			valuesMissing.push_back(std::distance(valuesPresent.begin(), valuesPresentIterator));
 		}
 		valuesPresentIterator++;
 	}

@@ -19,8 +19,8 @@ SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuM
 		this->cells.push_back(row);
 	}
 
-	for (int i{0}; i < std::pow(this->size, 2); i++) {
-		this->existingValues.insert({i+1, 0});
+	for (int i{0}; i <= std::pow(this->size, 2); i++) {
+		this->existingValues.insert({i, 0});
 	}
 }
 

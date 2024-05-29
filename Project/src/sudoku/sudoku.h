@@ -42,7 +42,7 @@ class SudokuMatrix {
 
 	SudokuCell *setValueAt(std::pair<int, int> position, int value);
 
-	SudokuCell *getCellAtPosition(std::pair<int, int> position);
+	virtual SudokuCell *getCellAtPosition(std::pair<int, int> position);
 
 	SudokuSubMatrix *getSubMatrixAtPosition(std::pair<int, int> position);
 	SudokuSubMatrix *getSubMatrixAtCellPosition(std::pair<int, int> position);
