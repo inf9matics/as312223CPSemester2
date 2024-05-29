@@ -58,6 +58,9 @@ class SudokuMatrix {
 
 	template<typename Function>
 	SudokuMatrix *iterateOverCells(Function function);
+
+	std::vector<int> getCrossValuesPresentAtPosition(std::pair<int, int> position);
+	std::vector<int> getCrossValuesMissingAtPosition(std::pair<int, int> position);
 };
 
 class SudokuSubMatrix {

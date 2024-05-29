@@ -7,56 +7,27 @@ SudokuMatrix SudokuBacksolver::solveMatrix() {
 
 	std::vector<SudokuMatrixMasked> maskedMatrices;
 
-	std::pair<int, int> startPosition;
-	for (int i{0}; i < maskedMatrix.getSize(); i++) {
-		for (int j{0}; i < maskedMatrix.getSize(); j++) {
-			if (maskedMatrix.getCellAtPosition({i, j})->getValue() == 0) {
-				startPosition = {i, j};
-				i = maskedMatrix.getSize();
-				j = maskedMatrix.getSize();
-			}
-		}
-	}
+	std::pair<int, int> startPosition{this->findEmptyPosition(maskedMatrix)};
 
 	SudokuSubMatrix startPositionSubMatrix = *maskedMatrix.getSubMatrixAtCellPosition(startPosition);
-	std::vector<int> startPositionValuesMissing = startPositionSubMatrix.getValuesMissing();
-	std::vector<int>::iterator startPositionValuesMissingIterator = startPositionValuesMissing.begin();
-	while (startPositionValuesMissingIterator != startPositionValuesMissing.end()) {
-		maskedMatrices.emplace_back(maskedMatrix);
-		maskedMatrices.back().setValueAt(startPosition, *startPositionValuesMissingIterator);
-		startPositionValuesMissingIterator++;
-	}
+	std::vector<int> startPositionSubMatrixValuesMissing = startPositionSubMatrix.getValuesMissing();
+	std::vector<int> startPositionCrossValuesMissing = maskedMatrix.getCrossValuesMissingAtPosition(startPosition);
 
-	this->recurseMaskedMatrices(maskedMatrices);
+	
 }
 
-SudokuMatrixMasked SudokuBacksolver::recurseMaskedMatrices(std::vector<SudokuMatrixMasked> &maskedMatrices) {
-	std::vector<SudokuMatrixMasked>::iterator maskedMatricesIterator = maskedMatrices.begin();
-	while (maskedMatricesIterator != maskedMatrices.end()) {
-		std::pair<int, int> startPosition;
-		for (int i{0}; i < maskedMatricesIterator->getSize(); i++) {
-			for (int j{0}; i < maskedMatricesIterator->getSize(); j++) {
-				if (maskedMatricesIterator->getCellAtPosition({i, j})->getValue() == 0) {
-					startPosition = {i, j};
-					i = maskedMatricesIterator->getSize();
-					j = maskedMatricesIterator->getSize();
-				}
-			}
-		}
+std::pair<int, int> SudokuBacksolver::findEmptyPosition(SudokuMatrixMasked &sudokuMatrixMasked) {
+	std::pair<int, int> position{-1, -1};
 
-		SudokuSubMatrix startPositionSubMatrix = *maskedMatricesIterator->getSubMatrixAtCellPosition(startPosition);
-		std::vector<int> startPositionValuesMissing = startPositionSubMatrix.getValuesMissing();
-		std::vector<int>::iterator startPositionValuesMissingIterator = startPositionValuesMissing.begin();
-		while (startPositionValuesMissingIterator != startPositionValuesMissing.end()) {
-			maskedMatrices.emplace_back(*maskedMatricesIterator);
-			maskedMatrices.back().setValueAt(startPosition, *startPositionValuesMissingIterator);
-			startPositionValuesMissingIterator++;
-		}
-		if (startPositionValuesMissing.empty()) {
-			if(maskedMatricesIterator->checkFilled()) {
-				
+	for (int i{0}; i < sudokuMatrixMasked.getSize(); i++) {
+		for (int j{0}; i < sudokuMatrixMasked.getSize(); j++) {
+			if (sudokuMatrixMasked.getCellAtPosition({i, j})->getValue() == 0) {
+				position = {i, j};
+				i = sudokuMatrixMasked.getSize();
+				j = sudokuMatrixMasked.getSize();
 			}
 		}
-		maskedMatricesIterator++;
 	}
+
+	return position;
 }

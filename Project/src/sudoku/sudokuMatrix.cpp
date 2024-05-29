@@ -160,3 +160,33 @@ bool SudokuMatrix::checkFilled() {
 }
 
 bool SudokuMatrix::getFilled() { return this->filled; }
+
+std::vector<int> SudokuMatrix::getCrossValuesPresentAtPosition(std::pair<int, int> position) {
+	std::vector<int> valuesPresent;
+	for(int i{0}; i<this->getSize(); i++) {
+		valuesPresent.push_back(0);
+	}
+
+	for (int i{0}; i < this->size; i++) {
+		if (position != std::pair<int, int>{i, i}) {
+			valuesPresent.at(i)++;
+		}
+	}
+	
+	return valuesPresent;
+}
+
+std::vector<int> SudokuMatrix::getCrossValuesMissingAtPosition(std::pair<int, int> position) {
+	std::vector<int> valuesPresent = this->getCrossValuesPresentAtPosition(position);
+
+	std::vector<int> valuesMissing;
+	std::vector<int>::iterator valuesPresentIterator = valuesPresent.begin();
+	while(valuesPresentIterator != valuesPresent.end()) {
+		if(*valuesPresentIterator == 0) {
+			valuesMissing.push_back(*valuesPresentIterator);
+		}
+		valuesPresentIterator++;
+	}
+
+	return valuesMissing;
+}

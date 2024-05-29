@@ -39,7 +39,7 @@ class SudokuBacksolver {
       protected:
 	SudokuMatrix sudokuMatrix;
 
-	SudokuMatrixMasked recurseMaskedMatrices(std::vector<SudokuMatrixMasked> &maskedMatrices);
+	std::pair<int, int> findEmptyPosition(SudokuMatrixMasked &sudokuMatrixMasked);
 
       public:
 	SudokuBacksolver(SudokuMatrix &sudokuMatrix);
