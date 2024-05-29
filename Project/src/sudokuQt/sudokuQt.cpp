@@ -7,3 +7,5 @@ SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QTableWidget(parent), SudokuMa
 SudokuCellQt::~SudokuCellQt() {}
 
 SudokuCellQt::SudokuCellQt(std::pair<int, int> position) : QTableWidgetItem(), SudokuCell(position) {}
+
+#include "moc_sudokuQt.cpp"

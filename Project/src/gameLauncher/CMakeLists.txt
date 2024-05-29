@@ -1,3 +1,5 @@
+set(AUTOMOC ON)
+
 qt_add_library(gameLauncher STATIC gameLauncher.cpp)
 
 target_link_libraries(gameLauncher PRIVATE Qt6::Widgets)

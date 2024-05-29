@@ -18,6 +18,9 @@ class SudokuMatrix {
 	int size;
 	int subMatrixSize;
 
+	bool viable;
+	bool filled;
+
 	std::vector<std::vector<SudokuCell>> cells;
 
 	std::vector<std::vector<SudokuSubMatrix>> subMatrices;
@@ -47,6 +50,11 @@ class SudokuMatrix {
 	SudokuMatrix *updateSubMatrixAtCellPosition(std::pair<int, int> position);
 
 	bool checkViableAtPosition(std::pair<int, int> position);
+	bool checkViable();
+	bool getViable();
+
+	bool checkFilled();
+	bool getFilled();
 
 	template<typename Function>
 	SudokuMatrix *iterateOverCells(Function function);
