@@ -15,7 +15,7 @@ class SudokuMatrixMasked : public SudokuMatrix {
 
 	SudokuMatrix *parentMatrix;
 
-	bool root;
+	// bool root;
 
 	SudokuMatrixMasked *prepareCellsMasked();
 
@@ -28,8 +28,6 @@ class SudokuMatrixMasked : public SudokuMatrix {
 
 	SudokuMatrixMasked &operator=(const SudokuMatrixMasked &sudokuMatrixMasked);
 
-	operator SudokuMatrix();
-
 	SudokuCell *setValueAt(std::pair<int, int> position, int value);
 
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
@@ -39,12 +37,12 @@ class SudokuBacksolver {
       protected:
 	SudokuMatrix sudokuMatrix;
 
-	std::pair<int, int> findEmptyPosition(SudokuMatrixMasked &sudokuMatrixMasked);
+	std::pair<bool, SudokuMatrix> recurseSolveMatrix(std::vector<SudokuMatrixMasked> &sudokuMaskedMatrices);
 
       public:
 	SudokuBacksolver(SudokuMatrix &sudokuMatrix);
 
-	SudokuMatrix solveMatrix();
+	std::pair<bool, SudokuMatrix> solveMatrix();
 };
 
 #endif

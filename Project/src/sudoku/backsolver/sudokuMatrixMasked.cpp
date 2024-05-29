@@ -16,7 +16,7 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix &sudokuMatrix) : SudokuMatri
 		rowsIterator++;
 	}
 
-	this->root = true;
+	// this->root = true;
 
 	for (int i{0}; i < this->size; i++) {
 		std::vector<SudokuCell *> row;
@@ -30,16 +30,38 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix &sudokuMatrix) : SudokuMatri
 	this->prepareSubMatrices();
 }
 
+SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrixMasked &&sudokuMatrixMasked) {
+	*this = sudokuMatrixMasked;
+
+	sudokuMatrixMasked.cells = nullptr;
+
+	std::vector<std::vector<SudokuSubMatrix>>::iterator subMatricesIterator = sudokuMatrixMasked.subMatrices.begin();
+	while(subMatricesIterator != sudokuMatrixMasked.subMatrices.end()) {
+		subMatricesIterator->clear();
+		subMatricesIterator++;
+	}
+	sudokuMatrixMasked.subMatrices.clear();
+
+	sudokuMatrixMasked.size = -1;
+
+	this->cellsManaged = sudokuMatrixMasked.cellsManaged;
+	sudokuMatrixMasked.cellsManaged.clear();
+}
+
 SudokuMatrixMasked::SudokuMatrixMasked(const SudokuMatrixMasked &sudokuMatrixMasked) : SudokuMatrix(*sudokuMatrixMasked.parentMatrix), cells{sudokuMatrixMasked.cells} {
+	*this = sudokuMatrixMasked;
+}
+
+SudokuMatrixMasked &SudokuMatrixMasked::operator=(const SudokuMatrixMasked &sudokuMatrixMasked) {
 	this->cells = sudokuMatrixMasked.cells;
 	this->cellsMasked = sudokuMatrixMasked.cellsMasked;
-
-	this->root = false;
 
 	this->subMatrices.clear();
 	this->subMatrices = sudokuMatrixMasked.subMatrices;
 
 	this->parentMatrix = sudokuMatrixMasked.parentMatrix;
+
+	return *this;
 }
 
 SudokuMatrixMasked::~SudokuMatrixMasked() {

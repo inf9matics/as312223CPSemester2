@@ -190,3 +190,19 @@ std::vector<int> SudokuMatrix::getCrossValuesMissingAtPosition(std::pair<int, in
 
 	return valuesMissing;
 }
+
+std::pair<int, int> SudokuMatrix::findEmptyPosition() {
+	std::pair<int, int> position{-1, -1};
+
+	for (int i{0}; i < this->getSize(); i++) {
+		for (int j{0}; i < this->getSize(); j++) {
+			if (this->getCellAtPosition({i, j})->getValue() == 0) {
+				position = {i, j};
+				i = this->getSize();
+				j = this->getSize();
+			}
+		}
+	}
+
+	return position;
+}

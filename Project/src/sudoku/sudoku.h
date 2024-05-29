@@ -61,6 +61,8 @@ class SudokuMatrix {
 
 	std::vector<int> getCrossValuesPresentAtPosition(std::pair<int, int> position);
 	std::vector<int> getCrossValuesMissingAtPosition(std::pair<int, int> position);
+
+	std::pair<int, int> findEmptyPosition();
 };
 
 class SudokuSubMatrix {
@@ -136,6 +138,8 @@ class SudokuCell {
 
 	template<typename Function>
 	SudokuCell *iterateOverParity(Function function);
+
+	std::vector<int> getMissingValues();
 };
 
 #endif

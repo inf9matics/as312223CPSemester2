@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "sudoku.h"
 
 SudokuCell::SudokuCell(std::pair<int, int> position) {
@@ -94,4 +96,20 @@ template <typename Function> SudokuCell *SudokuCell::iterateOverParity(Function 
 	}
 
 	return this;
+}
+
+std::vector<int> SudokuCell::getMissingValues() {
+	std::vector<int> subMatrixValuesMissing = this->parentMatrix->getSubMatrixAtCellPosition(this->position)->getValuesMissing();
+	std::vector<int> crossValuesMissing = this->parentMatrix->getCrossValuesMissingAtPosition(this->position);
+
+	std::vector<int> valuesMissing;
+	std::vector<int>::iterator subMatrixValuesMissingIterator = subMatrixValuesMissing.begin();
+	while (subMatrixValuesMissingIterator != subMatrixValuesMissing.end()) {
+		if (std::find(crossValuesMissing.begin(), crossValuesMissing.end(), *subMatrixValuesMissingIterator) != crossValuesMissing.end()) {
+			valuesMissing.push_back(*subMatrixValuesMissingIterator);
+		}
+		subMatrixValuesMissingIterator++;
+	}
+
+	return valuesMissing;
 }
