@@ -22,11 +22,11 @@ int main(int argc, char *argv[]) {
 	sudokuMatrix.setValueAt({2, 1}, 8);
 	sudokuMatrix.setValueAt({2, 2}, 9);
 
-	sudokuMatrix.getCellAtPosition({0, 0})->addParityCell(sudokuMatrix.getCellAtPosition({3, 0}));
-	sudokuMatrix.setValueAt({3, 0}, 2);
+	// sudokuMatrix.getCellAtPosition({0, 0})->addParityCell(sudokuMatrix.getCellAtPosition({3, 0}));
+	// sudokuMatrix.setValueAt({3, 0}, 2);
 
 	SudokuBacksolver backsolver{sudokuMatrix};
-	backsolver.solveMatrix();
+	std::pair<bool, SudokuMatrix> solvedMatrix = backsolver.solveMatrix();
 
 	GameLauncher gameLauncher{};
 	gameLauncher.show();

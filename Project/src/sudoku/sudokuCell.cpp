@@ -19,6 +19,7 @@ SudokuCell &SudokuCell::operator=(const SudokuCell &sudokuCell) {
 	this->parityCells = sudokuCell.parityCells;
 
 	this->value = sudokuCell.value;
+	this->previousValue = sudokuCell.previousValue;
 	this->position = sudokuCell.position;
 
 	this->viable = this->parentMatrix->checkViableAtPosition(this->position);
@@ -36,6 +37,7 @@ SudokuCell *SudokuCell::setValue(int value) {
 	this->previousValue = this->value;
 	this->value = value;
 	this->viable = this->parentMatrix->updateSubMatrixAtCellPosition(this->position)->checkViableAtPosition(this->position);
+	this->parentMatrix->checkFilledAtPosition(this->position);
 
 	if (!this->parityCells.empty()) {
 		this->calledParity = true;

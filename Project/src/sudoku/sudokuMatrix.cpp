@@ -9,13 +9,22 @@ SudokuMatrix::SudokuMatrix() {
 	this->viable = false;
 	this->filled = false;
 
+	this->filledAmount = 0;
+
 	this->prepareCells()->prepareSubMatrices();
 }
 
 SudokuMatrix::SudokuMatrix(int subMatrixSize) {
-	this->size = std::pow(size, 2);
+	this->size = std::pow(subMatrixSize, 2);
 
 	this->subMatrixSize = size;
+
+	this->viable = false;
+	this->filled = false;
+
+	this->filledAmount = 0;
+
+	this->prepareCells()->prepareSubMatrices();
 }
 
 SudokuMatrix::SudokuMatrix(const SudokuMatrix &sudokuMatrix) { *this = sudokuMatrix; }
@@ -27,14 +36,24 @@ SudokuMatrix::SudokuMatrix(SudokuMatrix &&sudokuMatrix) {
 	this->subMatrixSize = sudokuMatrix.subMatrixSize;
 	sudokuMatrix.subMatrixSize = -1;
 
+	this->viable = sudokuMatrix.viable;
+	sudokuMatrix.viable = NULL;
+	this->filled = sudokuMatrix.filled;
+	sudokuMatrix.filled = NULL;
+
+	this->filledAmount = sudokuMatrix.filledAmount;
+	sudokuMatrix.filledAmount = -1;
+
 	this->cells.clear();
 	this->cells = sudokuMatrix.cells;
 	sudokuMatrix.cells.clear();
 	this->iterateOverCells([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
 
-	sudokuMatrix.subMatrices.clear();
+	
 	this->subMatrices.clear();
-	this->prepareSubMatrices();
+	this->subMatrices = sudokuMatrix.subMatrices;
+	sudokuMatrix.subMatrices.clear();
+	this->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 
 	sudokuMatrix.~SudokuMatrix();
 }
@@ -46,12 +65,15 @@ SudokuMatrix &SudokuMatrix::operator=(const SudokuMatrix &sudokuMatrix) {
 	this->viable = sudokuMatrix.viable;
 	this->filled = sudokuMatrix.filled;
 
+	this->filledAmount = sudokuMatrix.filledAmount;
+
 	this->cells.clear();
 	this->cells = sudokuMatrix.cells;
 	this->iterateOverCells([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
 
 	this->subMatrices.clear();
-	this->prepareSubMatrices();
+	this->subMatrices = sudokuMatrix.subMatrices;
+	this->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 
 	return *this;
 }
@@ -129,10 +151,24 @@ SudokuMatrix *SudokuMatrix::updateSubMatrixAtCellPosition(std::pair<int, int> po
 	return this;
 }
 
-template <typename Function> SudokuMatrix *SudokuMatrix::iterateOverCells(Function function) {
+SudokuMatrix *SudokuMatrix::iterateOverCells(std::function<void(SudokuCell *)> function) {
 	std::vector<std::vector<SudokuCell>>::iterator rowIterator = this->cells.begin();
 	while (rowIterator != this->cells.end()) {
 		std::vector<SudokuCell>::iterator columnIterator = rowIterator->begin();
+		while (columnIterator != rowIterator->end()) {
+			function(columnIterator.base());
+			columnIterator++;
+		}
+		rowIterator++;
+	}
+
+	return this;
+}
+
+SudokuMatrix *SudokuMatrix::iterateOverSubMatrices(std::function<void(SudokuSubMatrix *)> function) {
+	std::vector<std::vector<SudokuSubMatrix>>::iterator rowIterator = this->subMatrices.begin();
+	while (rowIterator != this->subMatrices.end()) {
+		std::vector<SudokuSubMatrix>::iterator columnIterator = rowIterator->begin();
 		while (columnIterator != rowIterator->end()) {
 			function(columnIterator.base());
 			columnIterator++;
@@ -153,7 +189,7 @@ bool SudokuMatrix::getViable() { return this->viable; }
 bool SudokuMatrix::checkFilled() {
 	bool filled{true};
 	this->iterateOverCells([&filled](SudokuCell *sudokuCell) {
-		if (!filled && sudokuCell->getValue() > 0) {
+		if (filled && sudokuCell->getValue() > 0) {
 			filled = false;
 		}
 	});
@@ -162,23 +198,46 @@ bool SudokuMatrix::checkFilled() {
 	return this->filled;
 }
 
+bool SudokuMatrix::checkFilledAtPosition(std::pair<int, int> position) {
+	SudokuCell *cell = this->getCellAtPosition(position);
+	if(cell->previousValue > 0) {
+		if(cell->value == 0) {
+			this->filledAmount--;
+		}
+	}
+	else {
+		if(cell->value > 0) {
+			this->filledAmount++;
+		}
+	}
+
+	if(this->filledAmount == std::pow(this->size, 2)) {
+		this->filled = true;
+	}
+	else {
+		this->filled = false;
+	}
+
+	return this->filled;
+} 
+
 bool SudokuMatrix::getFilled() { return this->filled; }
 
 std::vector<int> SudokuMatrix::getCrossValuesPresentAtPosition(std::pair<int, int> position) {
 	std::vector<int> valuesPresent;
-	for(int i{0}; i<=this->getSize(); i++) {
+	for (int i{0}; i <= this->getSize(); i++) {
 		valuesPresent.push_back(0);
 	}
 
 	for (int i{0}; i < this->size; i++) {
 		if (position.first != i) {
-			valuesPresent.at(this->getCellAtPosition({position.first, i})->getValue())++;
-		}
-		if(position.second != i) {
 			valuesPresent.at(this->getCellAtPosition({i, position.second})->getValue())++;
 		}
+		if (position.second != i) {
+			valuesPresent.at(this->getCellAtPosition({position.first, i})->getValue())++;
+		}
 	}
-	
+
 	return valuesPresent;
 }
 
@@ -188,8 +247,8 @@ std::vector<int> SudokuMatrix::getCrossValuesMissingAtPosition(std::pair<int, in
 	std::vector<int> valuesMissing;
 	std::vector<int>::iterator valuesPresentIterator = valuesPresent.begin();
 	valuesPresentIterator++;
-	while(valuesPresentIterator != valuesPresent.end()) {
-		if(*valuesPresentIterator == 0) {
+	while (valuesPresentIterator != valuesPresent.end()) {
+		if (*valuesPresentIterator == 0) {
 			valuesMissing.push_back(std::distance(valuesPresent.begin(), valuesPresentIterator));
 		}
 		valuesPresentIterator++;
@@ -202,7 +261,7 @@ std::pair<int, int> SudokuMatrix::findEmptyPosition() {
 	std::pair<int, int> position{-1, -1};
 
 	for (int i{0}; i < this->getSize(); i++) {
-		for (int j{0}; i < this->getSize(); j++) {
+		for (int j{0}; j < this->getSize(); j++) {
 			if (this->getCellAtPosition({i, j})->getValue() == 0) {
 				position = {i, j};
 				i = this->getSize();
@@ -212,4 +271,24 @@ std::pair<int, int> SudokuMatrix::findEmptyPosition() {
 	}
 
 	return position;
+}
+
+std::pair<std::pair<int, int>, std::vector<int>> SudokuMatrix::findEmptyPositionWithMissingValues() {
+	std::pair<int, int> emptyPosition{-1, -1};
+	std::vector<int> missingValues;
+
+	for (int i{0}; i < this->getSize(); i++) {
+		for (int j{0}; j < this->getSize(); j++) {
+			if (this->getCellAtPosition({i, j})->getValue() == 0) {
+				missingValues = this->getCellAtPosition({i, j})->getMissingValues();
+				if (!missingValues.empty()) {
+					emptyPosition = {i, j};
+					i = this->getSize();
+					j = this->getSize();
+				}
+			}
+		}
+	}
+
+	return std::pair<std::pair<int, int>, std::vector<int>>{emptyPosition, missingValues};
 }

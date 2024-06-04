@@ -1,9 +1,10 @@
 #ifndef SUDOKU_H
 #define SUDOKU_H
 
+#include <map>
 #include <memory>
 #include <vector>
-#include <map>
+#include <functional>
 
 class SudokuMatrixMasked;
 
@@ -19,7 +20,9 @@ class SudokuMatrix {
 	int subMatrixSize;
 
 	bool viable;
+
 	bool filled;
+	int filledAmount;
 
 	std::vector<std::vector<SudokuCell>> cells;
 
@@ -53,16 +56,19 @@ class SudokuMatrix {
 	bool checkViable();
 	bool getViable();
 
+	bool checkFilledAtPosition(std::pair<int, int> position);
 	bool checkFilled();
 	bool getFilled();
 
-	template<typename Function>
-	SudokuMatrix *iterateOverCells(Function function);
+	SudokuMatrix *iterateOverCells(std::function<void(SudokuCell *)> function);
+	SudokuMatrix *iterateOverSubMatrices(std::function<void(SudokuSubMatrix *)> function);
 
 	std::vector<int> getCrossValuesPresentAtPosition(std::pair<int, int> position);
 	std::vector<int> getCrossValuesMissingAtPosition(std::pair<int, int> position);
 
 	std::pair<int, int> findEmptyPosition();
+
+	std::pair<std::pair<int, int>, std::vector<int>> findEmptyPositionWithMissingValues();
 };
 
 class SudokuSubMatrix {
@@ -136,8 +142,7 @@ class SudokuCell {
 
 	SudokuCell *copyParityTo(SudokuCell &sudokuCell);
 
-	template<typename Function>
-	SudokuCell *iterateOverParity(Function function);
+	template <typename Function> SudokuCell *iterateOverParity(Function function);
 
 	std::vector<int> getMissingValues();
 };
