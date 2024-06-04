@@ -6,6 +6,7 @@ SudokuCell::SudokuCell(std::pair<int, int> position) {
 	this->position = position;
 
 	this->value = 0;
+	this->previousValue = 0;
 }
 
 bool SudokuCell::operator==(SudokuCell &sudokuCell) { return ((this->parentMatrix == sudokuCell.parentMatrix) && (this->position == sudokuCell.position)); }
@@ -32,6 +33,8 @@ SudokuCell *SudokuCell::setParent(SudokuMatrix *parentMatrix) {
 }
 
 SudokuMatrix *SudokuCell::getParent() { return this->parentMatrix; }
+
+std::pair<int, int> SudokuCell::getPosition() { return this->position; }
 
 SudokuCell *SudokuCell::setValue(int value) {
 	this->previousValue = this->value;

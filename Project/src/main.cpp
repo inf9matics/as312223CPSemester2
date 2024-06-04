@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <QApplication>
+#include <QIcon>
 
 #include "backsolver.h"
 #include "gameLauncher.h"
@@ -31,9 +32,8 @@ int main(int argc, char *argv[]) {
 	// SudokuBacksolver backsolver{sudokuMatrix};
 	// std::pair<bool, SudokuMatrix> solvedMatrix = backsolver.solveMatrix();
 
-	QWidget qWidget;
-	qWidget.show();
-	SudokuMatrixQt sudokuMatrixQt{sudokuMatrix, &qWidget};
+	SudokuMatrixQt sudokuMatrixQt{sudokuMatrix};
+	sudokuMatrixQt.show();
 	sudokuMatrixQt.showCells();
 
 	return qtApp.exec();

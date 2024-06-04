@@ -10,11 +10,23 @@
 
 class SudokuCellQt;
 
-class SudokuMatrixQt : public QGridLayout, public SudokuMatrix {
+class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	Q_OBJECT
+
+      private:
+	int cellFrameStyle{1};
+	int cellSize{30};
+	Qt::Alignment cellAlignment{Qt::AlignCenter};
 
       protected:
 	std::vector<std::vector<SudokuCellQt *>> cellsQt;
+
+	QGridLayout gridLayout;
+
+	SudokuMatrixQt *prepareCellsQt();
+	SudokuMatrixQt *styleLayout();
+
+	SudokuMatrixQt *styleCell(SudokuCellQt &sudokuCellQt);
 
       public:
 	SudokuMatrixQt(QWidget *parent = nullptr);
@@ -22,20 +34,36 @@ class SudokuMatrixQt : public QGridLayout, public SudokuMatrix {
 
 	SudokuMatrixQt *showCells();
 
+	SudokuCell *getCellAtPosition(std::pair<int, int> position);
+
 	SudokuMatrixQt *iterateOverCellsQt(std::function<void(SudokuCellQt *)> function);
 
 	~SudokuMatrixQt();
 };
 
-class SudokuCellQt : public QLabel {
+class SudokuCellQt : public QLabel, public SudokuCell {
 	Q_OBJECT
 
-      public:
-	SudokuCellQt(SudokuCell &sudokuCell, QWidget *parent = nullptr);
+      protected:
+	void mousePressEvent(QMouseEvent *event);
 
-	SudokuCell &cell;
+	SudokuCellQt *connectTasks();
+
+      public:
+	SudokuCellQt(std::pair<int, int> position, QWidget *parent = nullptr);
+
+	SudokuCellQt *setValue(int value);
 
 	~SudokuCellQt();
+
+      signals:
+
+	void clicked();
+	void valueChanged();
+
+	public slots:
+
+	void updateValue(int value);
 };
 
 #endif

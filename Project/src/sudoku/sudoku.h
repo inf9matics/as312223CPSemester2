@@ -1,10 +1,10 @@
 #ifndef SUDOKU_H
 #define SUDOKU_H
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <vector>
-#include <functional>
 
 class SudokuMatrixMasked;
 
@@ -120,7 +120,6 @@ class SudokuCell {
 
 	friend SudokuMatrix;
 	friend SudokuMatrixMasked;
-	SudokuCell *setParent(SudokuMatrix *parentMatrix);
 
       public:
 	SudokuCell(std::pair<int, int> position);
@@ -130,11 +129,14 @@ class SudokuCell {
 
 	SudokuCell &operator=(const SudokuCell &sudokuCell);
 
+	SudokuCell *setParent(SudokuMatrix *parentMatrix);
 	SudokuMatrix *getParent();
 
 	SudokuCell *setValue(int value);
 	int getValue();
 	int getPreviousValue();
+
+	std::pair<int, int> getPosition();
 
 	SudokuCell *addParityCell(SudokuCell *parityCell);
 
