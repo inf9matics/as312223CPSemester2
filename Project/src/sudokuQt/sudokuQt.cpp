@@ -8,7 +8,7 @@ SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QGridLayout(parent), SudokuMat
         for(int j{0}; j < this->size; j++) {
             SudokuCellQt *cellQt = new SudokuCellQt{*this->getCellAtPosition(std::pair<int, int>{i, j}), this->parentWidget()};
             row.emplace_back(cellQt);
-            this->addWidget(cellQt);
+            this->addWidget(cellQt, i, j);
         }
         this->cellsQt.push_back(row);
     }
@@ -20,7 +20,7 @@ SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix, QWidget *parent) : QGr
         for(int j{0}; j < this->size; j++) {
             SudokuCellQt *cellQt = new SudokuCellQt{*this->getCellAtPosition(std::pair<int, int>{i, j}), this->parentWidget()};
             row.emplace_back(cellQt);
-            this->addWidget(cellQt);
+            this->addWidget(cellQt, i, j);
         }
         this->cellsQt.push_back(row);
     }
@@ -48,4 +48,6 @@ SudokuMatrixQt *SudokuMatrixQt::iterateOverCellsQt(std::function<void(SudokuCell
 
 SudokuCellQt::~SudokuCellQt() {}
 
-SudokuCellQt::SudokuCellQt(SudokuCell &sudokuCell, QWidget *parent) : QWidget(parent), cell(sudokuCell) {}
+SudokuCellQt::SudokuCellQt(SudokuCell &sudokuCell, QWidget *parent) : QLabel(parent), cell(sudokuCell) {
+    this->setNum(this->cell.getValue());
+}

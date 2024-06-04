@@ -2,7 +2,7 @@
 #define SUDOKU_QT_H
 
 #include <QGridLayout>
-#include <QWidget>
+#include <QLabel>
 
 #include <functional>
 
@@ -27,7 +27,7 @@ class SudokuMatrixQt : public QGridLayout, public SudokuMatrix {
 	~SudokuMatrixQt();
 };
 
-class SudokuCellQt : public QWidget {
+class SudokuCellQt : public QLabel {
 	Q_OBJECT
 
       public:
