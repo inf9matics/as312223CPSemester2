@@ -1,25 +1,39 @@
 #ifndef SUDOKU_QT_H
 #define SUDOKU_QT_H
 
-#include <QTableWidget>
-#include <QTableWidgetItem>
+#include <QGridLayout>
+#include <QWidget>
+
+#include <functional>
 
 #include "sudoku.h"
 
-class SudokuMatrixQt : public QTableWidget, public SudokuMatrix {
+class SudokuCellQt;
+
+class SudokuMatrixQt : public QGridLayout, public SudokuMatrix {
 	Q_OBJECT
+
+      protected:
+	std::vector<std::vector<SudokuCellQt *>> cellsQt;
 
       public:
 	SudokuMatrixQt(QWidget *parent = nullptr);
+	SudokuMatrixQt(SudokuMatrix sudokuMatrix, QWidget *parent = nullptr);
+
+	SudokuMatrixQt *showCells();
+
+	SudokuMatrixQt *iterateOverCellsQt(std::function<void(SudokuCellQt *)> function);
 
 	~SudokuMatrixQt();
 };
 
-class SudokuCellQt : public QTableWidgetItem, public SudokuCell {
+class SudokuCellQt : public QWidget {
 	Q_OBJECT
 
       public:
-	SudokuCellQt(std::pair<int, int> position);
+	SudokuCellQt(SudokuCell &sudokuCell, QWidget *parent = nullptr);
+
+	SudokuCell &cell;
 
 	~SudokuCellQt();
 };

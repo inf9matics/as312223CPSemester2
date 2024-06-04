@@ -10,20 +10,29 @@ std::pair<bool, SudokuMatrix> SudokuBacksolver::solveMatrix() {
 }
 
 std::pair<bool, SudokuMatrix *> SudokuBacksolver::recurseSolveMatrix(SudokuMatrixMasked &sudokuMaskedMatrix) {
-	std::pair<std::pair<int, int>, std::vector<int>> emptyPositionWithMissingValues = sudokuMaskedMatrix.findEmptyPositionWithMissingValues();
+	std::pair<int, int> emptyPosition = sudokuMaskedMatrix.findEmptyPosition();
+	std::vector<int> missingValues = sudokuMaskedMatrix.getCellAtPosition(emptyPosition)->getMissingValues();
 	std::pair<bool, SudokuMatrix *> solution;
-	solution.first = false;
-	std::vector<int>::iterator missingValuesIterator = emptyPositionWithMissingValues.second.begin();
-	while (!solution.first && (missingValuesIterator != emptyPositionWithMissingValues.second.end())) {
-		sudokuMaskedMatrix.setValueAt(emptyPositionWithMissingValues.first, *missingValuesIterator);
-		if (sudokuMaskedMatrix.getFilled() && sudokuMaskedMatrix.getViable()) {
-			solution.first = true;
-			solution.second = new SudokuMatrix{sudokuMaskedMatrix.getSudokuMatrix()};
-		} else {
-			solution = this->recurseSolveMatrix(sudokuMaskedMatrix);
-		}
-		missingValuesIterator++;
-	}
 
-	return solution;
+	if (emptyPosition != std::pair<int, int>{-1, -1} && missingValues.empty()) {
+		solution.first = false;
+		return solution;
+
+	} else {
+		std::vector<int>::iterator missingValuesIterator = missingValues.begin();
+		while (missingValuesIterator != missingValues.end()) {
+			sudokuMaskedMatrix.setValueAt(emptyPosition, *missingValuesIterator);
+			if (sudokuMaskedMatrix.getViable() && sudokuMaskedMatrix.getFilled()) {
+				solution.first = true;
+				solution.second = new SudokuMatrix{sudokuMaskedMatrix.getSudokuMatrix()};
+				return solution;
+			} else {
+				solution = this->recurseSolveMatrix({sudokuMaskedMatrix});
+			}
+			missingValuesIterator++;
+		}
+
+		solution.first = false;
+		return solution;
+	}
 }

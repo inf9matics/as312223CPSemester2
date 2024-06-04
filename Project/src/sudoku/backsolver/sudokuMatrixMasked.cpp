@@ -21,30 +21,16 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrix &sudokuMatrix) : SudokuMatri
 }
 
 SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrixMasked &&sudokuMatrixMasked) {
-	this->size = sudokuMatrixMasked.size;
-	sudokuMatrixMasked.size = -1;
+	(*this) = sudokuMatrixMasked;
 
-	this->subMatrixSize = sudokuMatrixMasked.subMatrixSize;
-	sudokuMatrixMasked.subMatrixSize = -1;
-
-	this->viable = sudokuMatrixMasked.viable;
-	sudokuMatrixMasked.viable = NULL;
-	this->filled = sudokuMatrixMasked.filled;
-	sudokuMatrixMasked.filled = NULL;
-
-	this->filledAmount = sudokuMatrixMasked.filledAmount;
-	sudokuMatrixMasked.filledAmount = -1;
-
-	sudokuMatrixMasked.cells = nullptr;
-
-	std::vector<std::vector<SudokuSubMatrix>>::iterator subMatricesIterator = sudokuMatrixMasked.subMatrices.begin();
-	while (subMatricesIterator != sudokuMatrixMasked.subMatrices.end()) {
-		subMatricesIterator->clear();
-		subMatricesIterator++;
-	}
 	sudokuMatrixMasked.subMatrices.clear();
 
 	sudokuMatrixMasked.size = -1;
+
+	sudokuMatrixMasked.viable = NULL;
+	sudokuMatrixMasked.filled = NULL;
+
+	sudokuMatrixMasked.filledAmount = -1;
 
 	this->cellsManaged = sudokuMatrixMasked.cellsManaged;
 	sudokuMatrixMasked.cellsManaged.clear();
@@ -53,13 +39,7 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrixMasked &&sudokuMatrixMasked) 
 SudokuMatrixMasked::SudokuMatrixMasked(const SudokuMatrixMasked &sudokuMatrixMasked) : SudokuMatrix(*sudokuMatrixMasked.parentMatrix), cells{sudokuMatrixMasked.cells} { *this = sudokuMatrixMasked; }
 
 SudokuMatrixMasked &SudokuMatrixMasked::operator=(const SudokuMatrixMasked &sudokuMatrixMasked) {
-	this->size = sudokuMatrixMasked.size;
-	this->subMatrixSize = sudokuMatrixMasked.subMatrixSize;
-
-	this->viable = sudokuMatrixMasked.viable;
-	this->filled = sudokuMatrixMasked.filled;
-
-	this->filledAmount = sudokuMatrixMasked.filledAmount;
+	(*this) = sudokuMatrixMasked;
 
 	this->cells = sudokuMatrixMasked.cells;
 	this->cellsMasked = sudokuMatrixMasked.cellsMasked;
