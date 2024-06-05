@@ -68,7 +68,7 @@ SudokuSubMatrix *SudokuSubMatrix::updateExistingValues(std::pair<int, int> posit
 	if (currentCell->getValue() > 0) {
 		this->existingValues.at(currentCell->getValue())++;
 	}
-	if (currentCell->getPreviousValue() > 0) {
+	if(currentCell->getPreviousValue() > 0) {
 		this->existingValues.at(currentCell->getPreviousValue())--;
 	}
 

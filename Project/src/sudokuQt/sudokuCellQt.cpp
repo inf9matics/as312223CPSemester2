@@ -2,9 +2,17 @@
 
 SudokuCellQt::~SudokuCellQt() {}
 
-SudokuCellQt::SudokuCellQt(std::pair<int, int> position, QWidget *parent) : QLabel(parent), signalMapper(this), SudokuCell(position) { this->connectTasks(); }
+SudokuCellQt::SudokuCellQt(std::pair<int, int> position, QWidget *parent) : QLabel(parent), SudokuCell(position) {
+	this->valueDialog = new SudokuCellQtValueDialog(*this, this);
+	this->connectTasks();
+}
 
-SudokuCellQt::SudokuCellQt(const SudokuCellQt &sudokuCellQt) : SudokuCell(sudokuCellQt) { *this = sudokuCellQt; }
+SudokuCellQt::SudokuCellQt(const SudokuCellQt &sudokuCellQt) : SudokuCell(sudokuCellQt) {
+	*this = sudokuCellQt;
+
+	this->valueDialog = new SudokuCellQtValueDialog(*this, this);
+    this->connectTasks();
+}
 
 SudokuCellQt *SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 	SudokuCell cell{sudokuCell};
@@ -32,10 +40,7 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 	return this;
 }
 
-void SudokuCellQt::mousePressEvent(QMouseEvent *event) {
-	emit clicked();
-	this->setValueQt(this->getValue() + 1);
-}
+void SudokuCellQt::mousePressEvent(QMouseEvent *event) { emit clicked(); }
 
 SudokuCellQt *SudokuCellQt::setValue(int value) {
 	this->SudokuCell::setValue(value);
@@ -61,5 +66,8 @@ void SudokuCellQt::updateViableColor() {
 
 SudokuCellQt *SudokuCellQt::connectTasks() {
 	QObject::connect(this, SIGNAL(valueChanged()), this, SLOT(updateViableColor()));
+
+	QObject::connect(this, SIGNAL(clicked()), this->valueDialog, SLOT(showDialog()));
+
 	return this;
 }

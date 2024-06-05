@@ -11,6 +11,8 @@
 
 class SudokuCellQt;
 
+class SudokuCellQtValueDialog;
+
 class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	Q_OBJECT
 
@@ -50,7 +52,7 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 
 	SudokuCellQt *connectTasks();
 
-	QSignalMapper signalMapper;
+	SudokuCellQtValueDialog *valueDialog;
 
       public:
 	SudokuCellQt(std::pair<int, int> position, QWidget *parent = nullptr);
@@ -72,6 +74,22 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 
 	void setValueQt(int value);
 	void updateViableColor();
+};
+
+class SudokuCellQtValueDialog : public QWidget {
+	Q_OBJECT
+
+	protected:
+	SudokuCellQt &sudokuCellQt;
+
+	public:
+	SudokuCellQtValueDialog(SudokuCellQt &sudokuCellQt, QWidget *parent = nullptr);
+
+	~SudokuCellQtValueDialog();
+
+	public slots:
+
+	void showDialog();
 };
 
 #endif
