@@ -3,6 +3,7 @@
 
 #include <QGridLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QSignalMapper>
 
 #include <functional>
@@ -70,7 +71,7 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 	void clicked();
 	void valueChanged();
 
-	public slots:
+      public slots:
 
 	void setValueQt(int value);
 	void updateViableColor();
@@ -79,15 +80,29 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 class SudokuCellQtValueDialog : public QWidget {
 	Q_OBJECT
 
-	protected:
+      protected:
+	std::vector<QPushButton *> valueButtons;
+
 	SudokuCellQt &sudokuCellQt;
 
-	public:
+	QGridLayout gridLayout;
+
+	SudokuCellQtValueDialog *styleLayout();
+
+	SudokuCellQtValueDialog *showValueButtons();
+
+	SudokuCellQtValueDialog *iterateOverValueButtons(std::function<void(QPushButton *)> function);
+
+      public:
 	SudokuCellQtValueDialog(SudokuCellQt &sudokuCellQt, QWidget *parent = nullptr);
 
 	~SudokuCellQtValueDialog();
 
-	public slots:
+	SudokuCellQtValueDialog *addValues(std::vector<int> values);
+	SudokuCellQtValueDialog *addMissingValues();
+	SudokuCellQtValueDialog *clearValues();
+
+      public slots:
 
 	void showDialog();
 };

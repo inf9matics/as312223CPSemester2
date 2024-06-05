@@ -149,7 +149,7 @@ class SudokuCell {
 
 	SudokuCell *copyParityTo(SudokuCell &sudokuCell);
 
-	template <typename Function> SudokuCell *iterateOverParity(Function function);
+	SudokuCell *iterateOverParity(std::function<void (SudokuCell *)> function);
 
 	std::vector<int> getMissingValues();
 };
