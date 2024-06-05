@@ -2,11 +2,14 @@
 
 SudokuCellQtValueDialog::~SudokuCellQtValueDialog() {}
 
-SudokuCellQtValueDialog::SudokuCellQtValueDialog(SudokuCellQt &sudokuCellQt, QWidget *parent) : QWidget(parent), gridLayout(this), sudokuCellQt(sudokuCellQt) {}
+SudokuCellQtValueDialog::SudokuCellQtValueDialog(SudokuCellQt &sudokuCellQt, QWidget *parent) : QWidget(parent), buttonLayout(this), sudokuCellQt(sudokuCellQt) { this->styleLayout()->connectTasks(); }
 
 void SudokuCellQtValueDialog::showDialog() { this->addMissingValues()->showValueButtons()->show(); }
 
-SudokuCellQtValueDialog *SudokuCellQtValueDialog::styleLayout() { return this; }
+SudokuCellQtValueDialog *SudokuCellQtValueDialog::styleLayout() {
+	this->setWindowFlags(Qt::Popup);
+	return this;
+}
 
 SudokuCellQtValueDialog *SudokuCellQtValueDialog::iterateOverValueButtons(std::function<void(QPushButton *)> function) {
 	std::vector<QPushButton *>::iterator valueButtonsIterator = this->valueButtons.begin();
@@ -20,9 +23,11 @@ SudokuCellQtValueDialog *SudokuCellQtValueDialog::iterateOverValueButtons(std::f
 
 SudokuCellQtValueDialog *SudokuCellQtValueDialog::clearValues() {
 	this->iterateOverValueButtons([this](QPushButton *valueButton) {
-		this->gridLayout.removeWidget(valueButton);
+		this->buttonLayout.removeWidget(valueButton);
 		delete (valueButton);
 	});
+
+    this->valueButtons.clear();
 
 	return this;
 }
@@ -35,14 +40,14 @@ SudokuCellQtValueDialog *SudokuCellQtValueDialog::showValueButtons() {
 
 SudokuCellQtValueDialog *SudokuCellQtValueDialog::addValues(std::vector<int> values) {
 	std::vector<int>::iterator valuesIterator = values.begin();
-    int i{0};
+	int i{0};
 	while (valuesIterator != values.end()) {
 		QPushButton *valueButton = new QPushButton{this};
-        valueButton->setText({QString::number(*valuesIterator)});
 		this->valueButtons.push_back(valueButton);
-		this->gridLayout.addWidget(this->valueButtons.back(), 0, i);
+		valueButton->setText(QString::number(*valuesIterator));
+		this->buttonLayout.addWidget(this->valueButtons.back(), this->valueButtonAlignment);
 
-        i++;
+		i++;
 		valuesIterator++;
 	}
 
@@ -52,4 +57,19 @@ SudokuCellQtValueDialog *SudokuCellQtValueDialog::addValues(std::vector<int> val
 SudokuCellQtValueDialog *SudokuCellQtValueDialog::addMissingValues() {
 	this->addValues(this->sudokuCellQt.getMissingValues());
 	return this;
+}
+
+void SudokuCellQtValueDialog::closeEvent(QCloseEvent *event) {
+    this->close();
+    emit closed();
+}
+
+SudokuCellQtValueDialog *SudokuCellQtValueDialog::connectTasks() {
+    QObject::connect(this, SIGNAL(closed()), this, SLOT(closeDialog()));
+
+    return this;
+}
+
+void SudokuCellQtValueDialog::closeDialog() {
+    this->clearValues();
 }

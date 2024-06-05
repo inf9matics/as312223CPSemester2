@@ -104,6 +104,8 @@ class SudokuSubMatrix {
 
 	std::vector<int> getValuesMissing();
 	std::vector<int> getValuesFilled();
+
+	std::map<int, int> getExistingValues();
 };
 
 class SudokuCell {

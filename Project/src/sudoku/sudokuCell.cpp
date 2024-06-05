@@ -107,6 +107,9 @@ SudokuCell *SudokuCell::iterateOverParity(std::function<void (SudokuCell *)> fun
 
 std::vector<int> SudokuCell::getMissingValues() {
 	std::vector<int> subMatrixValuesMissing = this->parentMatrix->getSubMatrixAtCellPosition(this->position)->getValuesMissing();
+	if(this->parentMatrix->getSubMatrixAtCellPosition(this->position)->getExistingValues().at(this->value) == 1) {
+		subMatrixValuesMissing.push_back(this->value);
+	}
 	std::vector<int> crossValuesMissing = this->parentMatrix->getCrossValuesMissingAtPosition(this->position);
 
 	std::vector<int> valuesMissing;

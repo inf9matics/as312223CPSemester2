@@ -2,9 +2,11 @@
 #define SUDOKU_QT_H
 
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QSignalMapper>
+#include <QSizePolicy>
 
 #include <functional>
 
@@ -80,12 +82,19 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 class SudokuCellQtValueDialog : public QWidget {
 	Q_OBJECT
 
+      private:
+	Qt::Alignment valueButtonAlignment{Qt::AlignCenter};
+
+	void closeEvent(QCloseEvent *event);
+
+	SudokuCellQtValueDialog *connectTasks();
+
       protected:
 	std::vector<QPushButton *> valueButtons;
 
 	SudokuCellQt &sudokuCellQt;
 
-	QGridLayout gridLayout;
+	QHBoxLayout buttonLayout;
 
 	SudokuCellQtValueDialog *styleLayout();
 
@@ -102,9 +111,13 @@ class SudokuCellQtValueDialog : public QWidget {
 	SudokuCellQtValueDialog *addMissingValues();
 	SudokuCellQtValueDialog *clearValues();
 
+      signals:
+	void closed();
+
       public slots:
 
 	void showDialog();
+	void closeDialog();
 };
 
 #endif
