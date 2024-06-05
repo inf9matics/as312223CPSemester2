@@ -1,20 +1,23 @@
 #include "sudokuQt.h"
 
+#include "moc_sudokuQt.cpp"
+
 SudokuMatrixQt::~SudokuMatrixQt() {}
 
-SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix() { this->prepareCellsQt()->styleLayout(); }
+SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix() {
+	this->prepareCellsQt()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
+}
 
 SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix, QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix(sudokuMatrix) {
-	this->prepareCellsQt()->styleLayout();
-
-	this->iterateOverCellsQt([&sudokuMatrix](SudokuCellQt *sudokuCellQt) { sudokuCellQt->setValue(sudokuMatrix.getCellAtPosition(sudokuCellQt->getPosition())->getValue()); });
+	this->prepareCellsQt()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 }
 
 SudokuMatrixQt *SudokuMatrixQt::prepareCellsQt() {
 	for (int i{0}; i < this->SudokuMatrix::size; i++) {
 		std::vector<SudokuCellQt *> row;
 		for (int j{0}; j < this->SudokuMatrix::size; j++) {
-			SudokuCellQt *cellQt = new SudokuCellQt{std::pair<int, int>{i, j}, this->parentWidget()};
+			SudokuCellQt *cellQt = new SudokuCellQt{std::pair<int, int>{i, j}, this};
+			*cellQt = this->cells.at(i).at(j);
 			cellQt->SudokuCell::setParent(this);
 			this->styleCell(*cellQt);
 			row.emplace_back(cellQt);
@@ -22,6 +25,8 @@ SudokuMatrixQt *SudokuMatrixQt::prepareCellsQt() {
 		}
 		this->cellsQt.push_back(row);
 	}
+
+	this->iterateOverCellsQt([](SudokuCellQt *sudokuCellQt) { sudokuCellQt->setValue(sudokuCellQt->getValue()); });
 
 	return this;
 }
@@ -63,28 +68,4 @@ SudokuMatrixQt *SudokuMatrixQt::iterateOverCellsQt(std::function<void(SudokuCell
 	return this;
 }
 
-SudokuCell *SudokuMatrixQt::getCellAtPosition(std::pair<int, int> position) { return &this->cells.at(position.first).at(position.second); }
-
-SudokuCellQt::~SudokuCellQt() {}
-
-SudokuCellQt::SudokuCellQt(std::pair<int, int> position, QWidget *parent) : QLabel(parent), SudokuCell(position) { this->connectTasks(); }
-
-void SudokuCellQt::mousePressEvent(QMouseEvent *event) { emit clicked(); }
-
-SudokuCellQt *SudokuCellQt::setValue(int value) {
-	this->SudokuCell::setValue(value);
-
-	emit valueChanged();
-
-	return this;
-}
-
-void SudokuCellQt::updateValue(int value) { this->setValue(value); }
-
-SudokuCellQt *SudokuCellQt::connectTasks() {
-	connect(this, SIGNAL(valueChanged()), this, SLOT(setNum(int)));
-
-	connect(this, SIGNAL(clicked()), this, SLOT(updateValue(int value)));
-
-	return this;
-}
+SudokuCell *SudokuMatrixQt::getCellAtPosition(std::pair<int, int> position) { return this->cellsQt.at(position.first).at(position.second); }

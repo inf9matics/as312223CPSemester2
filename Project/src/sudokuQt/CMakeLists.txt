@@ -1,6 +1,8 @@
 set(AUTOMOC ON)
 
-qt_add_library(sudokuQt STATIC sudokuQt.cpp)
+set(SUDOKU_QT_SOURCES sudokuCellQt.cpp sudokuMatrixQt.cpp)
+
+qt_add_library(sudokuQt STATIC ${SUDOKU_QT_SOURCES})
 
 target_link_libraries(sudokuQt PRIVATE sudoku)
 

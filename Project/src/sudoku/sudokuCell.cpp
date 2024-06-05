@@ -37,15 +37,17 @@ SudokuMatrix *SudokuCell::getParent() { return this->parentMatrix; }
 std::pair<int, int> SudokuCell::getPosition() { return this->position; }
 
 SudokuCell *SudokuCell::setValue(int value) {
-	this->previousValue = this->value;
-	this->value = value;
-	this->viable = this->parentMatrix->updateSubMatrixAtCellPosition(this->position)->checkViableAtPosition(this->position);
-	this->parentMatrix->checkFilledAtPosition(this->position);
+	if (value <= this->parentMatrix->getSize()) {
+		this->previousValue = this->value;
+		this->value = value;
+		this->viable = this->parentMatrix->checkViableAtPosition(this->position);
+		this->parentMatrix->checkFilledAtPosition(this->position);
 
-	if (!this->parityCells.empty()) {
-		this->calledParity = true;
-		this->iterateOverParity([value](SudokuCell *sudokuCell) { sudokuCell->setValue(value); });
-		this->calledParity = false;
+		if (!this->parityCells.empty()) {
+			this->calledParity = true;
+			this->iterateOverParity([value](SudokuCell *sudokuCell) { sudokuCell->setValue(value); });
+			this->calledParity = false;
+		}
 	}
 
 	return this;
@@ -118,3 +120,5 @@ std::vector<int> SudokuCell::getMissingValues() {
 
 	return valuesMissing;
 }
+
+bool SudokuCell::getViable() { return this->viable; }

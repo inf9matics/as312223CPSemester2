@@ -82,15 +82,18 @@ class SudokuSubMatrix {
 
 	std::map<int, int> existingValues;
 
-	friend SudokuMatrixMasked;
 	std::vector<std::vector<std::pair<int, int>>> cells;
 
 	friend SudokuMatrix;
-	SudokuSubMatrix *setParent(SudokuMatrix *parentMatrix);
+	friend SudokuMatrixMasked;
 
       public:
 	SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix);
+	SudokuSubMatrix(const SudokuSubMatrix &sudokuSubMatrix);
 
+	SudokuSubMatrix *operator=(const SudokuSubMatrix &sudokuSubMatrix);
+
+	SudokuSubMatrix *setParent(SudokuMatrix *parentMatrix);
 	SudokuMatrix *getParent();
 
 	int getSize();
@@ -135,6 +138,8 @@ class SudokuCell {
 	SudokuCell *setValue(int value);
 	int getValue();
 	int getPreviousValue();
+
+	bool getViable();
 
 	std::pair<int, int> getPosition();
 

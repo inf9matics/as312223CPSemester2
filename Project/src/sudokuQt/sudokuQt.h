@@ -3,6 +3,7 @@
 
 #include <QGridLayout>
 #include <QLabel>
+#include <QSignalMapper>
 
 #include <functional>
 
@@ -49,8 +50,14 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 
 	SudokuCellQt *connectTasks();
 
+	QSignalMapper signalMapper;
+
       public:
 	SudokuCellQt(std::pair<int, int> position, QWidget *parent = nullptr);
+	SudokuCellQt(const SudokuCellQt &sudokuCellQt);
+
+	SudokuCellQt *operator=(const SudokuCellQt &sudokuCellQt);
+	SudokuCellQt *operator=(const SudokuCell &sudokuCell);
 
 	SudokuCellQt *setValue(int value);
 
@@ -63,7 +70,8 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 
 	public slots:
 
-	void updateValue(int value);
+	void setValueQt(int value);
+	void updateViableColor();
 };
 
 #endif
