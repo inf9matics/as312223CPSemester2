@@ -28,7 +28,7 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 
       private:
 	int cellFrameStyle{3};
-	int cellSize{30};
+	int cellSize{40};
 	Qt::Alignment cellAlignment{Qt::AlignCenter};
 
 	int subMatrixFrameStyle{3};
