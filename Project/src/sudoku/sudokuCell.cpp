@@ -2,7 +2,7 @@
 
 #include "sudoku.h"
 
-SudokuCell::SudokuCell(std::pair<int, int> position) : position(position), value(0), previousValue(0), viable(true) {}
+SudokuCell::SudokuCell(std::pair<int, int> position) : position(position), value(0), previousValue(0), viable(true), locked(false) {}
 
 bool SudokuCell::operator==(SudokuCell &sudokuCell) { return ((this->parentMatrix == sudokuCell.parentMatrix) && (this->position == sudokuCell.position)); }
 
@@ -32,7 +32,7 @@ SudokuMatrix *SudokuCell::getParent() { return this->parentMatrix; }
 std::pair<int, int> SudokuCell::getPosition() { return this->position; }
 
 SudokuCell *SudokuCell::setValue(int value, bool checkParity) {
-	if (value <= this->parentMatrix->getSize()) {
+	if (!this->locked && (value <= this->parentMatrix->getSize())) {
 		this->previousValue = this->value;
 		this->value = value;
 
@@ -65,6 +65,7 @@ SudokuCell *SudokuCell::addParityCell(SudokuCell *parityCell) {
 	this->calledParity = true;
 	if (!parityCell->getCalledParity()) {
 		parityCell->addParityCell(this);
+		parityCell->setValue(this->value);
 	}
 	this->calledParity = false;
 
@@ -107,9 +108,6 @@ SudokuCell *SudokuCell::iterateOverParity(std::function<void(SudokuCell *)> func
 
 std::vector<int> SudokuCell::getMissingValues() {
 	std::vector<int> subMatrixValuesMissing = this->parentMatrix->getSubMatrixAtCellPosition(this->position)->getValuesMissing();
-	if (this->parentMatrix->getSubMatrixAtCellPosition(this->position)->getExistingValues().at(this->value) < 2) {
-		subMatrixValuesMissing.push_back(this->value);
-	}
 	std::vector<int> crossValuesMissing = this->parentMatrix->getCrossValuesMissingAtPosition(this->position);
 
 	std::vector<int> valuesMissing;
@@ -124,4 +122,18 @@ std::vector<int> SudokuCell::getMissingValues() {
 	return valuesMissing;
 }
 
+bool SudokuCell::getLocked() { return this->locked; }
+
 bool SudokuCell::getViable() { return this->viable; }
+
+SudokuCell *SudokuCell::lock() {
+	this->locked = true;
+
+	return this;
+}
+
+SudokuCell *SudokuCell::unlock() {
+	this->locked = false;
+
+	return this;
+}

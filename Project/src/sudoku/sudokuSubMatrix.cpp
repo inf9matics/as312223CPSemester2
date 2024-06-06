@@ -5,7 +5,7 @@
 SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix) : size(size), position(position), parentMatrix(parentMatrix) {
 	for (int i{0}; i < this->size; i++) {
 		for (int j{0}; j < this->size; j++) {
-			this->cells.insert({{i, j}, {(this->position.first * this->size) + j, (this->position.second * this->size) + i}});
+			this->cells.insert({{i, j}, {(this->position.first * this->size) + i, (this->position.second * this->size) + j}});
 		}
 	}
 

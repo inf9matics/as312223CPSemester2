@@ -119,6 +119,8 @@ class SudokuCell {
 	int value;
 	bool viable;
 
+	bool locked;
+
 	int previousValue;
 
 	std::vector<std::pair<int, int>> parityCells;
@@ -159,6 +161,11 @@ class SudokuCell {
 	std::vector<int> getMissingValues();
 
 	std::vector<std::pair<int, int>> getParityCells();
+
+	bool getLocked();
+
+	SudokuCell *lock();
+	SudokuCell *unlock();
 };
 
 #endif

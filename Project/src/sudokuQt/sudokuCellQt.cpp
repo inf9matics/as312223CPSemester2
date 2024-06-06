@@ -44,7 +44,11 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 	return this;
 }
 
-void SudokuCellQt::mousePressEvent(QMouseEvent *event) { emit clicked(); }
+void SudokuCellQt::mousePressEvent(QMouseEvent *event) {
+	if (!this->locked) {
+		emit clicked();
+	}
+}
 
 SudokuCellQt *SudokuCellQt::iterateOverParityQt(std::function<void(SudokuCellQt *)> function) {
 	std::vector<std::pair<int, int>>::iterator parityCellsIterator = this->parityCells.begin();
@@ -59,7 +63,7 @@ SudokuCellQt *SudokuCellQt::iterateOverParityQt(std::function<void(SudokuCellQt 
 }
 
 SudokuCell *SudokuCellQt::setValue(int value, bool checkParity) {
-	if (value <= this->parentMatrix->getSize()) {
+	if (!this->locked && (value <= this->parentMatrix->getSize())) {
 		this->SudokuCell::setValue(value, false);
 
 		this->setNum(value);
