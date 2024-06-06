@@ -3,15 +3,10 @@
 #include "sudoku.h"
 
 SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix) : size(size), position(position), parentMatrix(parentMatrix) {
-	this->cells.reserve(this->size);
-
 	for (int i{0}; i < this->size; i++) {
-		std::vector<std::pair<int, int>> row;
-		row.reserve(this->size);
 		for (int j{0}; j < this->size; j++) {
-			row.push_back({(this->position.first * this->size) + i, (this->position.second * this->size) + j});
+			this->cells.insert({{i, j}, {(this->position.first * this->size) + j, (this->position.second * this->size) + i}});
 		}
-		this->cells.push_back(row);
 	}
 
 	for (int i{0}; i <= std::pow(this->size, 2); i++) {
@@ -63,7 +58,7 @@ bool SudokuSubMatrix::checkIfViable() {
 }
 
 SudokuSubMatrix *SudokuSubMatrix::updateExistingValues(std::pair<int, int> position) {
-	SudokuCell *currentCell = this->parentMatrix->getCellAtPosition(position);
+	SudokuCell *currentCell = this->parentMatrix->getCellAtPosition(this->cells.at(position));
 	if (currentCell->getValue() > 0) {
 		this->existingValues.at(currentCell->getValue())++;
 	}

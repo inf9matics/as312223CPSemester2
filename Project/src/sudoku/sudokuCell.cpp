@@ -2,7 +2,7 @@
 
 #include "sudoku.h"
 
-SudokuCell::SudokuCell(std::pair<int, int> position) : position(position), value(0), previousValue(0) {}
+SudokuCell::SudokuCell(std::pair<int, int> position) : position(position), value(0), previousValue(0), viable(true) {}
 
 bool SudokuCell::operator==(SudokuCell &sudokuCell) { return ((this->parentMatrix == sudokuCell.parentMatrix) && (this->position == sudokuCell.position)); }
 
@@ -31,22 +31,27 @@ SudokuMatrix *SudokuCell::getParent() { return this->parentMatrix; }
 
 std::pair<int, int> SudokuCell::getPosition() { return this->position; }
 
-SudokuCell *SudokuCell::setValue(int value) {
+SudokuCell *SudokuCell::setValue(int value, bool checkParity) {
 	if (value <= this->parentMatrix->getSize()) {
 		this->previousValue = this->value;
 		this->value = value;
-		this->viable = this->parentMatrix->checkViableAtPosition(this->position);
-		this->parentMatrix->checkFilledAtPosition(this->position);
 
-		if (!this->parityCells.empty()) {
+		this->parentMatrix->updateSubMatrixAtCellPosition(this->position);
+
+		if (checkParity && !this->parityCells.empty()) {
 			this->calledParity = true;
 			this->iterateOverParity([value](SudokuCell *sudokuCell) { sudokuCell->setValue(value); });
 			this->calledParity = false;
 		}
+
+		this->viable = this->parentMatrix->checkViableAtPosition(this->position);
+		this->parentMatrix->checkFilledAtPosition(this->position);
 	}
 
 	return this;
 }
+
+std::vector<std::pair<int, int>> SudokuCell::getParityCells() { return this->parityCells; }
 
 int SudokuCell::getValue() { return this->value; }
 
@@ -88,7 +93,7 @@ SudokuCell *SudokuCell::copyParityTo(SudokuCell &sudokuCell) {
 	return this;
 }
 
-SudokuCell *SudokuCell::iterateOverParity(std::function<void (SudokuCell *)> function) {
+SudokuCell *SudokuCell::iterateOverParity(std::function<void(SudokuCell *)> function) {
 	std::vector<std::pair<int, int>>::iterator parityCellsIterator = this->parityCells.begin();
 	while (parityCellsIterator != this->parityCells.end()) {
 		if (!this->parentMatrix->getCellAtPosition(*parityCellsIterator)->getCalledParity()) {
@@ -102,7 +107,7 @@ SudokuCell *SudokuCell::iterateOverParity(std::function<void (SudokuCell *)> fun
 
 std::vector<int> SudokuCell::getMissingValues() {
 	std::vector<int> subMatrixValuesMissing = this->parentMatrix->getSubMatrixAtCellPosition(this->position)->getValuesMissing();
-	if(this->parentMatrix->getSubMatrixAtCellPosition(this->position)->getExistingValues().at(this->value) == 1) {
+	if (this->parentMatrix->getSubMatrixAtCellPosition(this->position)->getExistingValues().at(this->value) < 2) {
 		subMatrixValuesMissing.push_back(this->value);
 	}
 	std::vector<int> crossValuesMissing = this->parentMatrix->getCrossValuesMissingAtPosition(this->position);

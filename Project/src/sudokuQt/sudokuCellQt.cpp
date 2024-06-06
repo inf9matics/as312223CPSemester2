@@ -2,7 +2,7 @@
 
 SudokuCellQt::~SudokuCellQt() {}
 
-SudokuCellQt::SudokuCellQt(std::pair<int, int> position, QWidget *parent) : QLabel(parent), SudokuCell(position), initialPalette(this->palette()) {
+SudokuCellQt::SudokuCellQt(std::pair<int, int> position, SudokuMatrixQt *parent) : QLabel(parent), SudokuCell(position), parentMatrixQt(parent), initialPalette(this->palette()) {
 	this->valueDialog = new SudokuCellQtValueDialog(*this, this);
 	this->connectTasks();
 }
@@ -11,7 +11,7 @@ SudokuCellQt::SudokuCellQt(const SudokuCellQt &sudokuCellQt) : SudokuCell(sudoku
 	*this = sudokuCellQt;
 
 	this->valueDialog = new SudokuCellQtValueDialog(*this, this);
-    this->connectTasks();
+	this->connectTasks();
 }
 
 SudokuCellQt *SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
@@ -24,6 +24,8 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 
 	this->viable = cell.getViable();
 
+	this->parityCells = cell.getParityCells();
+
 	return this;
 }
 
@@ -35,6 +37,8 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 
 	this->viable = sudokuCellQt.viable;
 
+	this->parityCells = sudokuCellQt.parityCells;
+
 	this->QLabel::setParent(sudokuCellQt.parentWidget());
 
 	return this;
@@ -42,11 +46,34 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 
 void SudokuCellQt::mousePressEvent(QMouseEvent *event) { emit clicked(); }
 
-SudokuCellQt *SudokuCellQt::setValue(int value) {
-	this->SudokuCell::setValue(value);
-	this->setNum(this->value);
+SudokuCellQt *SudokuCellQt::iterateOverParityQt(std::function<void(SudokuCellQt *)> function) {
+	std::vector<std::pair<int, int>>::iterator parityCellsIterator = this->parityCells.begin();
+	while (parityCellsIterator != this->parityCells.end()) {
+		if (!this->parentMatrixQt->getCellQtAtPosition(*parityCellsIterator)->getCalledParity()) {
+			function(this->parentMatrixQt->getCellQtAtPosition(*parityCellsIterator));
+		}
+		parityCellsIterator++;
+	}
 
-	emit valueChanged();
+	return this;
+}
+
+SudokuCell *SudokuCellQt::setValue(int value, bool checkParity) {
+	if (value <= this->parentMatrix->getSize()) {
+		this->SudokuCell::setValue(value, false);
+
+		this->setNum(value);
+
+		if (checkParity && !this->parityCells.empty()) {
+			this->calledParity = true;
+			this->iterateOverParityQt([value](SudokuCellQt *sudokuCellQt) { sudokuCellQt->setValue(value); });
+			this->calledParity = false;
+
+			this->viable = this->parentMatrix->checkViableAtPosition(this->position);
+		}
+
+		emit valueChanged();
+	}
 
 	return this;
 }

@@ -41,14 +41,13 @@ SudokuMatrixQt *SudokuMatrixQt::showSubMatrices() {
 
 SudokuMatrixQt *SudokuMatrixQt::prepareCellsQt() {
 	for (int i{0}; i < this->SudokuMatrix::size; i++) {
-		std::vector<SudokuCellQt *> row;
 		for (int j{0}; j < this->SudokuMatrix::size; j++) {
 			SudokuCellQt *cellQt = new SudokuCellQt{std::pair<int, int>{i, j}, this};
-			*cellQt = this->cells.at(i).at(j);
+			*cellQt = *this->SudokuMatrix::getCellAtPosition({i, j});
 			cellQt->SudokuCell::setParent(this);
-			row.emplace_back(cellQt);
+
+			this->cellsQt.insert({{i, j}, cellQt});
 		}
-		this->cellsQt.push_back(row);
 	}
 
 	this->iterateOverCellsQt([this](SudokuCellQt *sudokuCellQt) { sudokuCellQt->setValue(sudokuCellQt->getValue()); });
@@ -62,9 +61,9 @@ SudokuMatrixQt *SudokuMatrixQt::prepareSubMatricesQt() {
 		for (int j{0}; j < this->subMatrixSize; j++) {
 			SudokuSubMatrixQt *subMatrixQt = new SudokuSubMatrixQt(this);
 			row.push_back(subMatrixQt);
-			for(int k{0}; k < this->subMatrixSize; k++) {
-				for(int l{0}; l < this->subMatrixSize; l++) {
-					SudokuCellQt *cellQt = this->cellsQt.at((i * this->subMatrixSize) + k).at((j * this->subMatrixSize) + l);
+			for (int k{0}; k < this->subMatrixSize; k++) {
+				for (int l{0}; l < this->subMatrixSize; l++) {
+					SudokuCellQt *cellQt = this->getCellQtAtPosition({(i * this->subMatrixSize) + k, (j * this->subMatrixSize) + l});
 
 					subMatrixQt->addCellToLayout(cellQt, std::pair<int, int>{k, l});
 					cellQt->QObject::setParent(subMatrixQt);
@@ -80,7 +79,7 @@ SudokuMatrixQt *SudokuMatrixQt::prepareSubMatricesQt() {
 SudokuMatrixQt *SudokuMatrixQt::prepareGridLayouts() {
 	for (int i{0}; i < this->subMatrixSize; i++) {
 		for (int j{0}; j < this->subMatrixSize; j++) {
-			this->gridLayout.addWidget(this->subMatricesQt.at(i).at(j), i, j);
+			this->gridLayout.addWidget(this->subMatricesQt.at(i).at(j), j, i);
 		}
 	}
 
@@ -124,17 +123,15 @@ SudokuMatrixQt *SudokuMatrixQt::showCells() {
 }
 
 SudokuMatrixQt *SudokuMatrixQt::iterateOverCellsQt(std::function<void(SudokuCellQt *)> function) {
-	std::vector<std::vector<SudokuCellQt *>>::iterator columnIterator = this->cellsQt.begin();
-	while (columnIterator != this->cellsQt.end()) {
-		std::vector<SudokuCellQt *>::iterator rowIterator = columnIterator->begin();
-		while (rowIterator != columnIterator->end()) {
-			function(*rowIterator);
-			rowIterator++;
-		}
-		columnIterator++;
+	std::map<std::pair<int, int>, SudokuCellQt *>::iterator cellsQtIterator = this->cellsQt.begin();
+	while (cellsQtIterator != this->cellsQt.end()) {
+		function(cellsQtIterator->second);
+		cellsQtIterator++;
 	}
 
 	return this;
 }
 
-SudokuCell *SudokuMatrixQt::getCellAtPosition(std::pair<int, int> position) { return this->cellsQt.at(position.first).at(position.second); }
+SudokuCell *SudokuMatrixQt::getCellAtPosition(std::pair<int, int> position) { return this->cellsQt.at(position); }
+
+SudokuCellQt *SudokuMatrixQt::getCellQtAtPosition(std::pair<int, int> position) { return this->cellsQt.at(position); }

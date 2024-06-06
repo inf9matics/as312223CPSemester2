@@ -7,9 +7,9 @@
 
 class SudokuMatrixMasked : public SudokuMatrix {
       protected:
-	std::vector<std::vector<SudokuCell>> *cells;
+	std::map<std::pair<int, int>, SudokuCell> *cells;
 
-	std::vector<std::vector<SudokuCell *>> cellsMasked;
+	std::map<std::pair<int, int>, SudokuCell *> cellsMasked;
 
 	std::set<std::pair<int, int>> cellsManaged;
 

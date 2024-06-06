@@ -11,6 +11,10 @@ void SudokuCellQtValueButton::setCellQtValue() {
 }
 
 SudokuCellQtValueButton *SudokuCellQtValueButton::styleLayout() {
+    QFont font;
+    font.setWeight(QFont::Bold);
+    this->setFont(font);
+
 	this->setContentsMargins(0, 0, 0, 0);
 
 	return this;

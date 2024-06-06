@@ -24,9 +24,9 @@ class SudokuMatrix {
 	bool filled;
 	int filledAmount;
 
-	std::vector<std::vector<SudokuCell>> cells;
+	std::map<std::pair<int, int>, SudokuCell> cells;
 
-	std::vector<std::vector<SudokuSubMatrix>> subMatrices;
+	std::map<std::pair<int, int>, SudokuSubMatrix> subMatrices;
 
 	SudokuMatrix *prepareCells();
 
@@ -69,6 +69,8 @@ class SudokuMatrix {
 	std::pair<int, int> findEmptyPosition();
 
 	std::pair<std::pair<int, int>, std::vector<int>> findEmptyPositionWithMissingValues();
+
+	std::pair<int, int> cellPositionInSubMatrix(std::pair<int, int> cellPosition);
 };
 
 class SudokuSubMatrix {
@@ -82,7 +84,7 @@ class SudokuSubMatrix {
 
 	std::map<int, int> existingValues;
 
-	std::vector<std::vector<std::pair<int, int>>> cells;
+	std::map<std::pair<int, int>, std::pair<int, int>> cells;
 
 	friend SudokuMatrix;
 	friend SudokuMatrixMasked;
@@ -138,7 +140,7 @@ class SudokuCell {
 	SudokuCell *setParent(SudokuMatrix *parentMatrix);
 	SudokuMatrix *getParent();
 
-	SudokuCell *setValue(int value);
+	virtual SudokuCell *setValue(int value, bool checkParity = true);
 	int getValue();
 	int getPreviousValue();
 
@@ -155,6 +157,8 @@ class SudokuCell {
 	SudokuCell *iterateOverParity(std::function<void (SudokuCell *)> function);
 
 	std::vector<int> getMissingValues();
+
+	std::vector<std::pair<int, int>> getParityCells();
 };
 
 #endif

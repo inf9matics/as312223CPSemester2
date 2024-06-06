@@ -27,7 +27,7 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	SudokuMatrixQt *styleLayout();
 
       private:
-	int cellFrameStyle{1};
+	int cellFrameStyle{3};
 	int cellSize{30};
 	Qt::Alignment cellAlignment{Qt::AlignCenter};
 
@@ -38,7 +38,7 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	QMargins subMatrixMargins{0, 0, 0, 0};
 
       protected:
-	std::vector<std::vector<SudokuCellQt *>> cellsQt;
+	std::map<std::pair<int, int>, SudokuCellQt *> cellsQt;
 
 	std::vector<std::vector<SudokuSubMatrixQt *>> subMatricesQt;
 
@@ -64,6 +64,7 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	SudokuMatrixQt *showBoard();
 
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
+	SudokuCellQt *getCellQtAtPosition(std::pair<int, int> position);
 
 	~SudokuMatrixQt();
 };
@@ -95,18 +96,22 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 	SudokuCellQt *styleLayout();
 
       protected:
+	SudokuMatrixQt *parentMatrixQt;
+
 	QPalette initialPalette;
 
 	SudokuCellQtValueDialog *valueDialog;
 
+	SudokuCellQt *iterateOverParityQt(std::function<void(SudokuCellQt *)> function);
+
       public:
-	SudokuCellQt(std::pair<int, int> position, QWidget *parent = nullptr);
+	SudokuCellQt(std::pair<int, int> position, SudokuMatrixQt *parent = nullptr);
 	SudokuCellQt(const SudokuCellQt &sudokuCellQt);
 
 	SudokuCellQt *operator=(const SudokuCellQt &sudokuCellQt);
 	SudokuCellQt *operator=(const SudokuCell &sudokuCell);
 
-	SudokuCellQt *setValue(int value);
+	SudokuCell *setValue(int value, bool checkParity = true);
 
 	~SudokuCellQt();
 

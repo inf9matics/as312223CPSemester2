@@ -63,27 +63,20 @@ SudokuMatrix &SudokuMatrix::operator=(const SudokuMatrix &sudokuMatrix) {
 }
 
 SudokuMatrix *SudokuMatrix::prepareCells() {
-	this->cells.reserve(this->size);
 	for (int i{0}; i < this->size; i++) {
-		this->cells.emplace_back();
-		std::vector<SudokuCell> *row = &this->cells.at(i);
-		row->reserve(this->size);
 		for (int j{0}; j < this->size; j++) {
-			row->emplace_back(std::pair<int, int>{i, j});
-			row->back().setParent(this);
+			this->cells.insert({{i, j}, {{i, j}}});
+			this->cells.at({i, j}).setParent(this);
 		}
 	}
 	return this;
 }
 
 SudokuMatrix *SudokuMatrix::prepareSubMatrices() {
-	this->subMatrices.reserve(this->subMatrixSize);
 	for (int i{0}; i < this->subMatrixSize; i++) {
-		this->subMatrices.emplace_back();
-		std::vector<SudokuSubMatrix> *row = &this->subMatrices.at(i);
-		row->reserve(this->subMatrixSize);
 		for (int j{0}; j < this->subMatrixSize; j++) {
-			row->emplace_back(this->subMatrixSize, std::pair<int, int>{i, j}, this);
+			this->subMatrices.insert({{i, j}, {this->subMatrixSize, {i, j}, this}});
+			this->subMatrices.at({i, j}).setParent(this);
 		}
 	}
 	return this;
@@ -101,9 +94,17 @@ SudokuCell *SudokuMatrix::setValueAt(std::pair<int, int> position, int value) {
 	return cell->setValue(value);
 }
 
-SudokuCell *SudokuMatrix::getCellAtPosition(std::pair<int, int> position) { return &this->cells.at(position.first).at(position.second); }
+SudokuCell *SudokuMatrix::getCellAtPosition(std::pair<int, int> position) { return &this->cells.at(position); }
 
-SudokuSubMatrix *SudokuMatrix::getSubMatrixAtPosition(std::pair<int, int> position) { return &this->subMatrices.at(position.first).at(position.second); }
+SudokuSubMatrix *SudokuMatrix::getSubMatrixAtPosition(std::pair<int, int> position) { return &this->subMatrices.at(position); }
+
+std::pair<int, int> SudokuMatrix::cellPositionInSubMatrix(std::pair<int, int> cellPosition) {
+	std::pair<int, int> position;
+	position.first = cellPosition.first % this->subMatrixSize;
+	position.second = cellPosition.second % this->subMatrixSize;
+
+	return position;
+}
 
 SudokuSubMatrix *SudokuMatrix::getSubMatrixAtCellPosition(std::pair<int, int> position) {
 	std::pair<int, int> subMatrixPosition{std::floor((position.first / this->subMatrixSize)), std::floor((position.second / this->subMatrixSize))};
@@ -126,8 +127,12 @@ bool SudokuMatrix::checkViableAtPosition(std::pair<int, int> position) {
 		}
 	}
 
-	this->updateSubMatrixAtCellPosition(position);
-	viable = viable && this->getSubMatrixAtCellPosition(position)->checkIfViable();
+	bool subMatrixViable{false};
+	if (this->getSubMatrixAtCellPosition(position)->getExistingValues().at(currentCell->getValue()) < 2) {
+		subMatrixViable = true;
+	}
+
+	viable = viable && subMatrixViable;
 
 	this->viable = viable;
 
@@ -135,34 +140,26 @@ bool SudokuMatrix::checkViableAtPosition(std::pair<int, int> position) {
 }
 
 SudokuMatrix *SudokuMatrix::updateSubMatrixAtCellPosition(std::pair<int, int> position) {
-	this->getSubMatrixAtCellPosition(position)->updateExistingValues({position.first % this->subMatrixSize, position.second % this->subMatrixSize});
+	this->getSubMatrixAtCellPosition(position)->updateExistingValues(this->cellPositionInSubMatrix(position))->checkIfViable();
 
 	return this;
 }
 
 SudokuMatrix *SudokuMatrix::iterateOverCells(std::function<void(SudokuCell *)> function) {
-	std::vector<std::vector<SudokuCell>>::iterator rowIterator = this->cells.begin();
-	while (rowIterator != this->cells.end()) {
-		std::vector<SudokuCell>::iterator columnIterator = rowIterator->begin();
-		while (columnIterator != rowIterator->end()) {
-			function(columnIterator.base());
-			columnIterator++;
-		}
-		rowIterator++;
+	std::map<std::pair<int, int>, SudokuCell>::iterator cellsIterator = this->cells.begin();
+	while (cellsIterator != this->cells.end()) {
+		function(&cellsIterator->second);
+		cellsIterator++;
 	}
 
 	return this;
 }
 
 SudokuMatrix *SudokuMatrix::iterateOverSubMatrices(std::function<void(SudokuSubMatrix *)> function) {
-	std::vector<std::vector<SudokuSubMatrix>>::iterator rowIterator = this->subMatrices.begin();
-	while (rowIterator != this->subMatrices.end()) {
-		std::vector<SudokuSubMatrix>::iterator columnIterator = rowIterator->begin();
-		while (columnIterator != rowIterator->end()) {
-			function(columnIterator.base());
-			columnIterator++;
-		}
-		rowIterator++;
+	std::map<std::pair<int, int>, SudokuSubMatrix>::iterator subMatricesIterator = this->subMatrices.begin();
+	while (subMatricesIterator != this->subMatrices.end()) {
+		function(&subMatricesIterator->second);
+		subMatricesIterator++;
 	}
 
 	return this;

@@ -11,7 +11,7 @@ SudokuSubMatrixQt *SudokuSubMatrixQt::styleLayout() {
 }
 
 SudokuSubMatrixQt *SudokuSubMatrixQt::addCellToLayout(SudokuCellQt *sudokuCellQt, std::pair<int, int> position) {
-	this->gridLayout.addWidget(sudokuCellQt, position.first, position.second);
+	this->gridLayout.addWidget(sudokuCellQt, position.second, position.first);
 
 	return this;
 }
