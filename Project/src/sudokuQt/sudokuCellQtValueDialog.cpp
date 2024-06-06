@@ -6,7 +6,7 @@ SudokuCellQtValueDialog::SudokuCellQtValueDialog(SudokuCellQt &sudokuCellQt, QWi
 
 void SudokuCellQtValueDialog::showDialog() {
 	this->addMissingValues()->showValueButtons();
-	this->move(this->parentWidget()->window()->pos() + this->parentWidget()->pos());
+	this->move(this->parentWidget()->window()->pos() + this->parentWidget()->parentWidget()->pos() + this->parentWidget()->pos());
 	this->setFixedSize(this->parentWidget()->width() * this->valueButtons.size(), this->parentWidget()->height());
 	this->show();
 }

@@ -71,3 +71,12 @@ SudokuCellQt *SudokuCellQt::connectTasks() {
 
 	return this;
 }
+
+SudokuCellQt *SudokuCellQt::styleLayout() {
+	QSizePolicy sizePolicy{};
+	sizePolicy.setHorizontalPolicy(QSizePolicy::Expanding);
+	sizePolicy.setVerticalPolicy(QSizePolicy::Expanding);
+	this->setSizePolicy(sizePolicy);
+
+	return this;
+}

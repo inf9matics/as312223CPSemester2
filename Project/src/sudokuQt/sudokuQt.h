@@ -18,37 +18,69 @@ class SudokuCellQtValueDialog;
 
 class SudokuCellQtValueButton;
 
+class SudokuSubMatrixQt;
+
 class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	Q_OBJECT
+
+      private:
+	SudokuMatrixQt *styleLayout();
 
       private:
 	int cellFrameStyle{1};
 	int cellSize{30};
 	Qt::Alignment cellAlignment{Qt::AlignCenter};
 
+	int subMatrixFrameStyle{3};
+	Qt::Alignment subMatrixAlignment{Qt::AlignCenter};
+
+	int subMatrixSpacing{0};
+	QMargins subMatrixMargins{0, 0, 0, 0};
+
       protected:
 	std::vector<std::vector<SudokuCellQt *>> cellsQt;
 
+	std::vector<std::vector<SudokuSubMatrixQt *>> subMatricesQt;
+
 	QGridLayout gridLayout;
-	std::vector<QGridLayout *> subGridLayouts;
 
 	SudokuMatrixQt *prepareCellsQt();
-	SudokuMatrixQt *styleLayout();
+	SudokuMatrixQt *prepareSubMatricesQt();
+
+	SudokuMatrixQt *prepareGridLayouts();
 
 	SudokuMatrixQt *styleCell(SudokuCellQt &sudokuCellQt);
+	SudokuMatrixQt *styleSubMatrix(SudokuSubMatrixQt &sudokuSubMatrixQt);
 
 	SudokuMatrixQt *iterateOverCellsQt(std::function<void(SudokuCellQt *)> function);
-	SudokuMatrixQt *iterateOverSubGridLayouts(std::function<void(QGridLayout *)> function);
+	SudokuMatrixQt *iterateOverSubMatricesQt(std::function<void(SudokuSubMatrixQt *)> function);
 
       public:
 	SudokuMatrixQt(QWidget *parent = nullptr);
 	SudokuMatrixQt(SudokuMatrix sudokuMatrix, QWidget *parent = nullptr);
 
 	SudokuMatrixQt *showCells();
+	SudokuMatrixQt *showSubMatrices();
+	SudokuMatrixQt *showBoard();
 
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
 
 	~SudokuMatrixQt();
+};
+
+class SudokuSubMatrixQt : public QFrame {
+	Q_OBJECT
+
+      private:
+	SudokuSubMatrixQt *styleLayout();
+
+      protected:
+	QGridLayout gridLayout;
+
+      public:
+	SudokuSubMatrixQt(QWidget *parent = nullptr);
+
+	SudokuSubMatrixQt *addCellToLayout(SudokuCellQt *sudokuCellQt, std::pair<int, int> position);
 };
 
 class SudokuCellQt : public QLabel, public SudokuCell {
@@ -58,6 +90,9 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 	SudokuCellQt *connectTasks();
 
 	void mousePressEvent(QMouseEvent *event);
+
+      private:
+	SudokuCellQt *styleLayout();
 
       protected:
 	QPalette initialPalette;

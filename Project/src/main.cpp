@@ -33,8 +33,7 @@ int main(int argc, char *argv[]) {
 	// std::pair<bool, SudokuMatrix> solvedMatrix = backsolver.solveMatrix();
 
 	SudokuMatrixQt sudokuMatrixQt{sudokuMatrix};
-	sudokuMatrixQt.show();
-	sudokuMatrixQt.showCells();
+	sudokuMatrixQt.showBoard();
 
 	return qtApp.exec();
 	// return 0;

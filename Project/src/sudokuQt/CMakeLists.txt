@@ -1,6 +1,6 @@
 set(AUTOMOC ON)
 
-set(SUDOKU_QT_SOURCES sudokuQt.cpp sudokuCellQt.cpp sudokuCellQtValueButton.cpp sudokuCellQtValueDialog.cpp sudokuMatrixQt.cpp)
+set(SUDOKU_QT_SOURCES sudokuQt.cpp sudokuCellQt.cpp sudokuCellQtValueButton.cpp sudokuCellQtValueDialog.cpp sudokuSubMatrixQt.cpp sudokuMatrixQt.cpp)
 
 qt_add_library(sudokuQt STATIC ${SUDOKU_QT_SOURCES})
 
