@@ -2,61 +2,40 @@
 
 #include "sudoku.h"
 
-SudokuMatrix::SudokuMatrix() {
-	this->size = 9;
-	this->subMatrixSize = 3;
-
-	this->viable = false;
-	this->filled = false;
-
-	this->filledAmount = 0;
-
+SudokuMatrix::SudokuMatrix() : size(9), subMatrixSize(3), viable(false), filled(false), filledAmount(0) {
 	this->prepareCells()->prepareSubMatrices();
 
 	this->iterateOverCells([](SudokuCell *sudokuCell) { sudokuCell->viable = sudokuCell->getParent()->checkViableAtPosition(sudokuCell->getPosition()); });
 	this->iterateOverSubMatrices([](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->checkIfViable(); });
 }
 
-SudokuMatrix::SudokuMatrix(int subMatrixSize) {
-	this->size = std::pow(subMatrixSize, 2);
-
-	this->subMatrixSize = size;
-
-	this->viable = false;
-	this->filled = false;
-
-	this->filledAmount = 0;
-
+SudokuMatrix::SudokuMatrix(int subMatrixSize) : size(std::pow(subMatrixSize, 2)), subMatrixSize(subMatrixSize), viable(false), filled(false), filledAmount(0) {
 	this->prepareCells()->prepareSubMatrices();
 
 	this->iterateOverCells([](SudokuCell *sudokuCell) { sudokuCell->viable = sudokuCell->getParent()->checkViableAtPosition(sudokuCell->getPosition()); });
 	this->iterateOverSubMatrices([](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->checkIfViable(); });
 }
 
-SudokuMatrix::SudokuMatrix(const SudokuMatrix &sudokuMatrix) { *this = sudokuMatrix; }
+SudokuMatrix::SudokuMatrix(const SudokuMatrix &sudokuMatrix)
+    : size(sudokuMatrix.size), subMatrixSize(sudokuMatrix.subMatrixSize), viable(sudokuMatrix.viable), filled(sudokuMatrix.filled), filledAmount(sudokuMatrix.filledAmount), cells(sudokuMatrix.cells), subMatrices(sudokuMatrix.subMatrices) {
+	this->iterateOverCells([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
+	this->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
+}
 
-SudokuMatrix::SudokuMatrix(SudokuMatrix &&sudokuMatrix) {
-	this->size = sudokuMatrix.size;
+SudokuMatrix::SudokuMatrix(SudokuMatrix &&sudokuMatrix)
+    : size(sudokuMatrix.size), subMatrixSize(sudokuMatrix.subMatrixSize), viable(sudokuMatrix.viable), filled(sudokuMatrix.filled), filledAmount(sudokuMatrix.filledAmount), cells(sudokuMatrix.cells), subMatrices(sudokuMatrix.subMatrices) {
 	sudokuMatrix.size = -1;
 
-	this->subMatrixSize = sudokuMatrix.subMatrixSize;
 	sudokuMatrix.subMatrixSize = -1;
 
-	this->viable = sudokuMatrix.viable;
 	sudokuMatrix.viable = NULL;
-	this->filled = sudokuMatrix.filled;
 	sudokuMatrix.filled = NULL;
 
-	this->filledAmount = sudokuMatrix.filledAmount;
 	sudokuMatrix.filledAmount = -1;
 
-	this->cells.clear();
-	this->cells = sudokuMatrix.cells;
 	sudokuMatrix.cells.clear();
 	this->iterateOverCells([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
 
-	this->subMatrices.clear();
-	this->subMatrices = sudokuMatrix.subMatrices;
 	sudokuMatrix.subMatrices.clear();
 	this->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 

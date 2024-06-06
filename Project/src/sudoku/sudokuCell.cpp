@@ -2,12 +2,7 @@
 
 #include "sudoku.h"
 
-SudokuCell::SudokuCell(std::pair<int, int> position) {
-	this->position = position;
-
-	this->value = 0;
-	this->previousValue = 0;
-}
+SudokuCell::SudokuCell(std::pair<int, int> position) : position(position), value(0), previousValue(0) {}
 
 bool SudokuCell::operator==(SudokuCell &sudokuCell) { return ((this->parentMatrix == sudokuCell.parentMatrix) && (this->position == sudokuCell.position)); }
 

@@ -2,12 +2,7 @@
 
 #include "sudoku.h"
 
-SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix) {
-	this->setParent(parentMatrix);
-
-	this->size = size;
-	this->position = position;
-
+SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix) : size(size), position(position), parentMatrix(parentMatrix) {
 	this->cells.reserve(this->size);
 
 	for (int i{0}; i < this->size; i++) {
@@ -24,9 +19,10 @@ SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuM
 	}
 }
 
-SudokuSubMatrix::SudokuSubMatrix(const SudokuSubMatrix &sudokuSubMatrix) { *this = sudokuSubMatrix; }
+SudokuSubMatrix::SudokuSubMatrix(const SudokuSubMatrix &sudokuSubMatrix) : cells(sudokuSubMatrix.cells), size(sudokuSubMatrix.size), viable(sudokuSubMatrix.viable), filled(sudokuSubMatrix.filled), existingValues(sudokuSubMatrix.existingValues) {}
 
-SudokuSubMatrix *SudokuSubMatrix::operator=(const SudokuSubMatrix &sudokuSubMatrix) {
+SudokuSubMatrix &SudokuSubMatrix::operator=(const SudokuSubMatrix &sudokuSubMatrix) {
+	this->cells.clear();
 	this->cells = sudokuSubMatrix.cells;
 
 	this->size = sudokuSubMatrix.size;
@@ -34,10 +30,13 @@ SudokuSubMatrix *SudokuSubMatrix::operator=(const SudokuSubMatrix &sudokuSubMatr
 	this->viable = sudokuSubMatrix.viable;
 	this->filled = sudokuSubMatrix.filled;
 
+	this->existingValues.clear();
 	this->existingValues = sudokuSubMatrix.existingValues;
 
-	return this;
+	return *this;
 }
+
+bool SudokuSubMatrix::getViable() { return this->viable; }
 
 SudokuSubMatrix *SudokuSubMatrix::setParent(SudokuMatrix *parentMatrix) {
 	this->parentMatrix = parentMatrix;

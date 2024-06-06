@@ -1,7 +1,5 @@
 #include "sudokuQt.h"
 
-#include "moc_sudokuQt.cpp"
-
 SudokuMatrixQt::~SudokuMatrixQt() {}
 
 SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix() {
@@ -21,17 +19,21 @@ SudokuMatrixQt *SudokuMatrixQt::prepareCellsQt() {
 			cellQt->SudokuCell::setParent(this);
 			this->styleCell(*cellQt);
 			row.emplace_back(cellQt);
-			this->gridLayout.addWidget(cellQt, i, j);
 		}
 		this->cellsQt.push_back(row);
 	}
 
-	this->iterateOverCellsQt([](SudokuCellQt *sudokuCellQt) { sudokuCellQt->setValue(sudokuCellQt->getValue()); });
+	this->iterateOverCellsQt([this](SudokuCellQt *sudokuCellQt) {
+		sudokuCellQt->setValue(sudokuCellQt->getValue());
+		this->gridLayout.addWidget(sudokuCellQt, sudokuCellQt->getPosition().first, sudokuCellQt->getPosition().second);
+	});
 
 	return this;
 }
 
 SudokuMatrixQt *SudokuMatrixQt::styleLayout() {
+	this->setWindowTitle("sudokuBoard");
+
 	this->gridLayout.setHorizontalSpacing(1);
 	this->gridLayout.setVerticalSpacing(1);
 

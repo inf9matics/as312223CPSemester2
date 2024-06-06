@@ -2,12 +2,12 @@
 
 SudokuCellQt::~SudokuCellQt() {}
 
-SudokuCellQt::SudokuCellQt(std::pair<int, int> position, QWidget *parent) : QLabel(parent), SudokuCell(position) {
+SudokuCellQt::SudokuCellQt(std::pair<int, int> position, QWidget *parent) : QLabel(parent), SudokuCell(position), initialPalette(this->palette()) {
 	this->valueDialog = new SudokuCellQtValueDialog(*this, this);
 	this->connectTasks();
 }
 
-SudokuCellQt::SudokuCellQt(const SudokuCellQt &sudokuCellQt) : SudokuCell(sudokuCellQt) {
+SudokuCellQt::SudokuCellQt(const SudokuCellQt &sudokuCellQt) : SudokuCell(sudokuCellQt), initialPalette(this->palette()) {
 	*this = sudokuCellQt;
 
 	this->valueDialog = new SudokuCellQtValueDialog(*this, this);
@@ -56,7 +56,7 @@ void SudokuCellQt::setValueQt(int value) { this->SudokuCellQt::setValue(value); 
 void SudokuCellQt::updateViableColor() {
 	QPalette palette = this->palette();
 	if (this->viable) {
-		palette.setColor(this->foregroundRole(), {255, 255, 255});
+		palette = this->initialPalette;
 	} else {
 		palette.setColor(this->foregroundRole(), {255, 0, 0});
 	}

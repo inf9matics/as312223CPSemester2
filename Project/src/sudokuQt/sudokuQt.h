@@ -16,6 +16,8 @@ class SudokuCellQt;
 
 class SudokuCellQtValueDialog;
 
+class SudokuCellQtValueButton;
+
 class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	Q_OBJECT
 
@@ -50,10 +52,13 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 class SudokuCellQt : public QLabel, public SudokuCell {
 	Q_OBJECT
 
-      protected:
+      private:
+	SudokuCellQt *connectTasks();
+
 	void mousePressEvent(QMouseEvent *event);
 
-	SudokuCellQt *connectTasks();
+      protected:
+	QPalette initialPalette;
 
 	SudokuCellQtValueDialog *valueDialog;
 
@@ -83,24 +88,25 @@ class SudokuCellQtValueDialog : public QWidget {
 	Q_OBJECT
 
       private:
-	Qt::Alignment valueButtonAlignment{Qt::AlignCenter};
+	SudokuCellQtValueDialog *connectTasks();
 
 	void closeEvent(QCloseEvent *event);
 
-	SudokuCellQtValueDialog *connectTasks();
-
-      protected:
-	std::vector<QPushButton *> valueButtons;
-
-	SudokuCellQt &sudokuCellQt;
-
-	QHBoxLayout buttonLayout;
-
+      private:
 	SudokuCellQtValueDialog *styleLayout();
 
 	SudokuCellQtValueDialog *showValueButtons();
 
-	SudokuCellQtValueDialog *iterateOverValueButtons(std::function<void(QPushButton *)> function);
+	Qt::Alignment valueButtonAlignment{Qt::AlignCenter};
+
+	QHBoxLayout buttonLayout;
+
+      protected:
+	std::vector<SudokuCellQtValueButton *> valueButtons;
+
+	SudokuCellQt &sudokuCellQt;
+
+	SudokuCellQtValueDialog *iterateOverValueButtons(std::function<void(SudokuCellQtValueButton *)> function);
 
       public:
 	SudokuCellQtValueDialog(SudokuCellQt &sudokuCellQt, QWidget *parent = nullptr);
@@ -118,6 +124,32 @@ class SudokuCellQtValueDialog : public QWidget {
 
 	void showDialog();
 	void closeDialog();
+};
+
+class SudokuCellQtValueButton : public QPushButton {
+	Q_OBJECT
+
+      private:
+	SudokuCellQtValueButton *connectTasks();
+
+      private:
+	SudokuCellQtValueButton *styleLayout();
+
+      protected:
+	SudokuCellQt &sudokuCellQt;
+
+	int value;
+
+      public:
+	SudokuCellQtValueButton(SudokuCellQt &sudokuCellQt, int value, QWidget *parent = nullptr);
+
+	int getValue();
+
+      signals:
+	void closeParent();
+
+      public slots:
+	void setCellQtValue();
 };
 
 #endif

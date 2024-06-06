@@ -91,7 +91,7 @@ class SudokuSubMatrix {
 	SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix);
 	SudokuSubMatrix(const SudokuSubMatrix &sudokuSubMatrix);
 
-	SudokuSubMatrix *operator=(const SudokuSubMatrix &sudokuSubMatrix);
+	SudokuSubMatrix &operator=(const SudokuSubMatrix &sudokuSubMatrix);
 
 	SudokuSubMatrix *setParent(SudokuMatrix *parentMatrix);
 	SudokuMatrix *getParent();
@@ -99,6 +99,7 @@ class SudokuSubMatrix {
 	int getSize();
 
 	bool checkIfViable();
+	bool getViable();
 
 	SudokuSubMatrix *updateExistingValues(std::pair<int, int> position);
 
