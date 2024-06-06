@@ -30,11 +30,15 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	std::vector<std::vector<SudokuCellQt *>> cellsQt;
 
 	QGridLayout gridLayout;
+	std::vector<QGridLayout *> subGridLayouts;
 
 	SudokuMatrixQt *prepareCellsQt();
 	SudokuMatrixQt *styleLayout();
 
 	SudokuMatrixQt *styleCell(SudokuCellQt &sudokuCellQt);
+
+	SudokuMatrixQt *iterateOverCellsQt(std::function<void(SudokuCellQt *)> function);
+	SudokuMatrixQt *iterateOverSubGridLayouts(std::function<void(QGridLayout *)> function);
 
       public:
 	SudokuMatrixQt(QWidget *parent = nullptr);
@@ -43,8 +47,6 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	SudokuMatrixQt *showCells();
 
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
-
-	SudokuMatrixQt *iterateOverCellsQt(std::function<void(SudokuCellQt *)> function);
 
 	~SudokuMatrixQt();
 };

@@ -1,6 +1,9 @@
 #include "sudokuQt.h"
 
-SudokuMatrixQt::~SudokuMatrixQt() {}
+SudokuMatrixQt::~SudokuMatrixQt() {
+	this->iterateOverCellsQt([](SudokuCellQt *sudokuCellQt) { delete(sudokuCellQt); });
+	this->iterateOverSubGridLayouts([](QGridLayout *subGridLayout) { delete(subGridLayout); });
+}
 
 SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix() {
 	this->prepareCellsQt()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
@@ -8,6 +11,16 @@ SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QWidget(parent), gridLayout(th
 
 SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix, QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix(sudokuMatrix) {
 	this->prepareCellsQt()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
+}
+
+SudokuMatrixQt *SudokuMatrixQt::iterateOverSubGridLayouts(std::function<void(QGridLayout *)> function) {
+	std::vector<QGridLayout *>::iterator subGridLayoutsIterator = this->subGridLayouts.begin();
+	while(subGridLayoutsIterator != this->subGridLayouts.end()) {
+		function(*subGridLayoutsIterator);
+		subGridLayoutsIterator++;
+	}
+
+	return this;
 }
 
 SudokuMatrixQt *SudokuMatrixQt::prepareCellsQt() {
@@ -23,15 +36,25 @@ SudokuMatrixQt *SudokuMatrixQt::prepareCellsQt() {
 		this->cellsQt.push_back(row);
 	}
 
-	this->iterateOverCellsQt([this](SudokuCellQt *sudokuCellQt) {
-		sudokuCellQt->setValue(sudokuCellQt->getValue());
-		this->gridLayout.addWidget(sudokuCellQt, sudokuCellQt->getPosition().first, sudokuCellQt->getPosition().second);
-	});
+	this->iterateOverCellsQt([this](SudokuCellQt *sudokuCellQt) { sudokuCellQt->setValue(sudokuCellQt->getValue()); });
 
 	return this;
 }
 
 SudokuMatrixQt *SudokuMatrixQt::styleLayout() {
+	for (int i{0}; i < this->subMatrixSize; i++) {
+		for (int j{0}; j < this->subMatrixSize; j++) {
+			QGridLayout *subGridLayout = new QGridLayout;
+			this->subGridLayouts.push_back(subGridLayout);
+			for(int k{0}; k < this->subMatrixSize; k++) {
+				for(int l{0}; l < this->subMatrixSize; l++) {
+					subGridLayout->addWidget(this->cellsQt.at((i * this->subMatrixSize) + k).at((j * this->subMatrixSize) + l), (i * this->subMatrixSize) + k, (j * this->subMatrixSize) + l);
+				}
+			}
+			this->gridLayout.addLayout(subGridLayout, i, j);
+		}
+	}
+
 	this->setWindowTitle("sudokuBoard");
 
 	this->gridLayout.setHorizontalSpacing(1);

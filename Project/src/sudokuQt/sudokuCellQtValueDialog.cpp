@@ -58,7 +58,9 @@ SudokuCellQtValueDialog *SudokuCellQtValueDialog::addValues(std::vector<int> val
 }
 
 SudokuCellQtValueDialog *SudokuCellQtValueDialog::addMissingValues() {
-	this->addValues(this->sudokuCellQt.getMissingValues());
+	std::vector<int> missingValues = this->sudokuCellQt.getMissingValues();
+	missingValues.push_back(0);
+	this->addValues(missingValues);
 	return this;
 }
 
