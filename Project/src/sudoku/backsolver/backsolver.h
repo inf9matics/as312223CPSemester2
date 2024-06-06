@@ -7,9 +7,9 @@
 
 class SudokuMatrixMasked : public SudokuMatrix {
       protected:
-	std::vector<std::vector<SudokuCell>> *cells;
+	std::map<std::pair<int, int>, SudokuCell> *cells;
 
-	std::vector<std::vector<SudokuCell *>> cellsMasked;
+	std::map<std::pair<int, int>, SudokuCell *> cellsMasked;
 
 	std::set<std::pair<int, int>> cellsManaged;
 
@@ -31,13 +31,16 @@ class SudokuMatrixMasked : public SudokuMatrix {
 	SudokuCell *setValueAt(std::pair<int, int> position, int value);
 
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
+
+	SudokuMatrixMasked *iterateOverCellsMasked(std::function<void(SudokuCell *)> function);
+	SudokuMatrix getSudokuMatrix();
 };
 
 class SudokuBacksolver {
       protected:
 	SudokuMatrix sudokuMatrix;
 
-	std::pair<bool, SudokuMatrix> recurseSolveMatrix(std::vector<SudokuMatrixMasked> &sudokuMaskedMatrices);
+	std::pair<bool, SudokuMatrix *> recurseSolveMatrix(SudokuMatrixMasked &sudokuMaskedMatrix);
 
       public:
 	SudokuBacksolver(SudokuMatrix &sudokuMatrix);

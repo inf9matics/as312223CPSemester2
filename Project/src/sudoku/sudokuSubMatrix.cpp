@@ -2,27 +2,36 @@
 
 #include "sudoku.h"
 
-SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix) {
-	this->setParent(parentMatrix);
-
-	this->size = size;
-	this->position = position;
-
-	this->cells.reserve(this->size);
-
+SudokuSubMatrix::SudokuSubMatrix(int size, std::pair<int, int> position, SudokuMatrix *parentMatrix) : size(size), position(position), parentMatrix(parentMatrix) {
 	for (int i{0}; i < this->size; i++) {
-		std::vector<std::pair<int, int>> row;
-		row.reserve(this->size);
 		for (int j{0}; j < this->size; j++) {
-			row.push_back({(this->position.first * this->size) + i, (this->position.second * this->size) + j});
+			this->cells.insert({{i, j}, {(this->position.first * this->size) + i, (this->position.second * this->size) + j}});
 		}
-		this->cells.push_back(row);
 	}
 
-	for (int i{0}; i < std::pow(this->size, 2); i++) {
-		this->existingValues.insert({i+1, 0});
+	for (int i{0}; i <= std::pow(this->size, 2); i++) {
+		this->existingValues.insert({i, 0});
 	}
 }
+
+SudokuSubMatrix::SudokuSubMatrix(const SudokuSubMatrix &sudokuSubMatrix) : cells(sudokuSubMatrix.cells), size(sudokuSubMatrix.size), viable(sudokuSubMatrix.viable), filled(sudokuSubMatrix.filled), existingValues(sudokuSubMatrix.existingValues) {}
+
+SudokuSubMatrix &SudokuSubMatrix::operator=(const SudokuSubMatrix &sudokuSubMatrix) {
+	this->cells.clear();
+	this->cells = sudokuSubMatrix.cells;
+
+	this->size = sudokuSubMatrix.size;
+
+	this->viable = sudokuSubMatrix.viable;
+	this->filled = sudokuSubMatrix.filled;
+
+	this->existingValues.clear();
+	this->existingValues = sudokuSubMatrix.existingValues;
+
+	return *this;
+}
+
+bool SudokuSubMatrix::getViable() { return this->viable; }
 
 SudokuSubMatrix *SudokuSubMatrix::setParent(SudokuMatrix *parentMatrix) {
 	this->parentMatrix = parentMatrix;
@@ -36,22 +45,26 @@ int SudokuSubMatrix::getSize() { return this->size; }
 bool SudokuSubMatrix::checkIfViable() {
 	bool viable{true};
 	std::map<int, int>::iterator existingValuesIterator = this->existingValues.begin();
-	while(existingValuesIterator != this->existingValues.end()) {
-		if(existingValuesIterator->second > 1) {
+	while (existingValuesIterator != this->existingValues.end()) {
+		if ((existingValuesIterator->first != 0) && (existingValuesIterator->second > 1)) {
 			viable = false;
 		}
 		existingValuesIterator++;
 	}
 
-	return viable;
+	this->viable = viable;
+
+	return this->viable;
 }
 
 SudokuSubMatrix *SudokuSubMatrix::updateExistingValues(std::pair<int, int> position) {
-	SudokuCell *currentCell = this->parentMatrix->getCellAtPosition(this->cells.at(position.first).at(position.second));
-	if(currentCell->getPreviousValue() > 0) {
+	SudokuCell *currentCell = this->parentMatrix->getCellAtPosition(this->cells.at(position));
+	if (currentCell->getValue() > 0) {
+		this->existingValues.at(currentCell->getValue())++;
+	}
+	if (currentCell->getPreviousValue() > 0) {
 		this->existingValues.at(currentCell->getPreviousValue())--;
 	}
-	this->existingValues.at(currentCell->getValue())++;
 
 	return this;
 }
@@ -60,8 +73,8 @@ std::vector<int> SudokuSubMatrix::getValuesMissing() {
 	std::vector<int> valuesMissing;
 
 	std::map<int, int>::iterator existingValuesIterator = this->existingValues.begin();
-	while(existingValuesIterator != this->existingValues.end()) {
-		if(existingValuesIterator->second == 0) {
+	while (existingValuesIterator != this->existingValues.end()) {
+		if (existingValuesIterator->second == 0) {
 			valuesMissing.push_back(existingValuesIterator->first);
 		}
 		existingValuesIterator++;
@@ -70,12 +83,14 @@ std::vector<int> SudokuSubMatrix::getValuesMissing() {
 	return valuesMissing;
 }
 
+std::map<int, int> SudokuSubMatrix::getExistingValues() { return this->existingValues; }
+
 std::vector<int> SudokuSubMatrix::getValuesFilled() {
 	std::vector<int> valuesFilled;
 
 	std::map<int, int>::iterator existingValuesIterator = this->existingValues.begin();
-	while(existingValuesIterator != this->existingValues.end()) {
-		if(existingValuesIterator->second > 0) {
+	while (existingValuesIterator != this->existingValues.end()) {
+		if (existingValuesIterator->second > 0) {
 			valuesFilled.push_back(existingValuesIterator->first);
 		}
 		existingValuesIterator++;
