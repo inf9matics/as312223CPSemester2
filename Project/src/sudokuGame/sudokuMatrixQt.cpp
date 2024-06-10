@@ -1,15 +1,19 @@
-#include "sudokuQt.h"
+#include "sudokuGame.h"
 
 SudokuMatrixQt::~SudokuMatrixQt() {
 	this->iterateOverCellsQt([](SudokuCellQt *sudokuCellQt) { delete (sudokuCellQt); });
 	this->iterateOverSubMatricesQt([](SudokuSubMatrixQt *sudokuSubMatrixQt) { delete (sudokuSubMatrixQt); });
 }
 
-SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix() {
+SudokuMatrixQt::SudokuMatrixQt() : gridLayout(this), SudokuMatrix() {
+	this->displayName = "Sudoku";
+
 	this->prepareCellsQt()->prepareSubMatricesQt()->prepareGridLayouts()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 }
 
-SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix, QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix(sudokuMatrix) {
+SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix) : SudokuMatrix(sudokuMatrix) {
+	this->displayName = "Sudoku";
+
 	this->prepareCellsQt()->prepareSubMatricesQt()->prepareGridLayouts()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 }
 
@@ -26,6 +30,8 @@ SudokuMatrixQt *SudokuMatrixQt::iterateOverSubMatricesQt(std::function<void(Sudo
 
 	return this;
 }
+
+void SudokuMatrixQt::showGame() { this->showBoard(); }
 
 SudokuMatrixQt *SudokuMatrixQt::showBoard() {
 	this->showCells()->showSubMatrices()->show();
@@ -74,6 +80,14 @@ SudokuMatrixQt *SudokuMatrixQt::prepareSubMatricesQt() {
 	}
 
 	return this;
+}
+
+SudokuMatrixQt &SudokuMatrixQt::operator=(const SudokuMatrixQt &sudokuMatrixQt) {
+	(SudokuMatrix) *this = (SudokuMatrix)sudokuMatrixQt;
+
+	this->cellsQt = sudokuMatrixQt.cellsQt;
+
+	return *this;
 }
 
 SudokuMatrixQt *SudokuMatrixQt::prepareGridLayouts() {

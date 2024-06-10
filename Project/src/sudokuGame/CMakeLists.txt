@@ -1,11 +1,10 @@
 set(AUTOMOC ON)
 
-set(SUDOKU_GAME_SOURCES sudokuGame.cpp)
+set(SUDOKU_QT_SOURCES sudokuGame.cpp sudokuCellQt.cpp sudokuCellQtValueButton.cpp sudokuCellQtValueDialog.cpp sudokuSubMatrixQt.cpp sudokuMatrixQt.cpp)
 
-qt_add_library(sudokuGame SHARED ${SUDOKU_GAME_SOURCES})
+qt_add_library(sudokuGame STATIC ${SUDOKU_QT_SOURCES})
 
-target_link_libraries(sudokuGame PUBLIC Qt6::Widgets)
-target_link_libraries(sudokuGame PRIVATE sudokuQt gameLauncher)
+target_link_libraries(sudokuGame PUBLIC sudoku gameLauncher)
 
-target_include_directories(sudokuGame PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-# target_include_directories(sudokuGame PRIVATE sudokuQt gameLauncher)
+target_link_libraries(sudokuGame PRIVATE Qt6::Widgets)
+target_include_directories(sudokuGame INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

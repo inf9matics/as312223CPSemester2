@@ -2,18 +2,20 @@
 
 #include "moc_gameLauncher.cpp"
 
-GameLauncher::~GameLauncher() {
-	this->iterateOverGameWindows([](GameWindow *gameWindow) { delete gameWindow; });
+GameLauncher::~GameLauncher() {}
+
+GameLauncher::GameLauncher(QWidget *parent) : QMainWindow(parent) { this->gameWindow = new GameWindow{this, this->parentWidget()}; }
+
+GameLauncher *GameLauncher::showGameWindow() {
+	this->gameWindow->showGame()->show();
+
+	return this;
 }
 
-GameLauncher::GameLauncher(QWidget *parent) : QMainWindow(parent) {}
+GameWindow *GameLauncher::getGameWindow() { return this->gameWindow; }
 
-GameLauncher *GameLauncher::iterateOverGameWindows(std::function<void(GameWindow *)> function) {
-	std::vector<GameWindow *>::iterator gameWindowsIterator = this->gameWindows.begin();
-	while (gameWindowsIterator != this->gameWindows.end()) {
-		function(*gameWindowsIterator);
-		gameWindowsIterator++;
-	}
+GameLauncher *GameLauncher::addGame(Game *game) {
+	this->availableGames.push_back(game);
 
 	return this;
 }

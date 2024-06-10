@@ -14,13 +14,21 @@ class GameLauncher : public QMainWindow {
 	Q_OBJECT
 
       protected:
-	std::vector<GameWindow *> gameWindows;
+	std::vector<Game *> availableGames;
 
-      protected:
-	GameLauncher *iterateOverGameWindows(std::function<void(GameWindow *)> function);
+	GameWindow *gameWindow;
+
+	friend GameWindow;
+	GameLauncher *setGameWindow(GameWindow *gameWindow);
 
       public:
 	GameLauncher(QWidget *parent = nullptr);
+
+	GameWindow *getGameWindow();
+
+	GameLauncher *addGame(Game *game);
+
+	GameLauncher *showGameWindow();
 
 	~GameLauncher();
 };
@@ -32,9 +40,15 @@ class GameWindow : public QWidget {
 	GameLauncher *gameLauncher;
 
 	Game *game;
+	friend GameLauncher;
+	GameWindow *setGame(Game *game);
 
       public:
-	GameWindow(GameLauncher *gameLauncher);
+	GameWindow(GameLauncher *gameLauncher, QWidget *parent = nullptr);
+
+	Game *getGame();
+
+	GameWindow *showGame();
 
 	~GameWindow();
 };
@@ -42,7 +56,7 @@ class GameWindow : public QWidget {
 class Game : public QWidget {
 	Q_OBJECT
 
-      private:
+      protected:
 	std::string displayName{"Generic Game"};
 
       protected:
@@ -51,7 +65,7 @@ class Game : public QWidget {
 	bool won;
 
       public:
-	Game(GameWindow *gameWindow);
+	Game();
 
 	~Game();
 
@@ -64,6 +78,8 @@ class Game : public QWidget {
 
       public slots:
 	void gameEnd();
+
+	virtual void showGame();
 };
 
 #endif

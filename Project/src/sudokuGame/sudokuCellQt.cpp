@@ -1,4 +1,4 @@
-#include "sudokuQt.h"
+#include "sudokuGame.h"
 
 SudokuCellQt::~SudokuCellQt() {}
 

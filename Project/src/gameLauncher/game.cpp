@@ -2,6 +2,8 @@
 
 Game::~Game() {}
 
-Game::Game(GameWindow *gameWindow) : gameWindow(gameWindow) {}
+Game::Game() {}
 
 void Game::gameEnd() {}
+
+void Game::showGame() { this->show(); }
