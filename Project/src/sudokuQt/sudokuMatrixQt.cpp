@@ -89,6 +89,8 @@ SudokuMatrixQt *SudokuMatrixQt::prepareGridLayouts() {
 SudokuMatrixQt *SudokuMatrixQt::styleLayout() {
 	this->setWindowTitle("sudokuBoard");
 
+	this->setFixedSize(this->cellSize * this->SudokuMatrix::size, this->cellSize * this->SudokuMatrix::size);
+
 	this->gridLayout.setSpacing(this->subMatrixSpacing);
 	this->gridLayout.setContentsMargins(this->subMatrixMargins);
 
