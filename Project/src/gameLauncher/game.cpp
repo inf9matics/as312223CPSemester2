@@ -18,4 +18,4 @@ Game *Game::setGameLauncher(GameLauncher *gameLauncher) {
 	return this;
 }
 
-Game *Game::setSize() {}
+Game *Game::setSize() { return this; }

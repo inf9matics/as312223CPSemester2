@@ -5,8 +5,7 @@
 SudokuGame::~SudokuGame() {}
 
 SudokuGame::SudokuGame(QWidget *parent) : GameLauncher(parent) {
-	this->game = new SudokuMatrixQt{};
-	this->game->setGameLauncher(this);
+	this->regenerateGame();
 
 	this->prepareButtons();
 	this->setSize();
@@ -25,17 +24,24 @@ SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : GameLa
 }
 
 GameLauncher *SudokuGame::prepareButtons() {
-	this->menuButtons.push_back(new QPushButton(this->menuBar));
-	this->menuButtonsLayout.addWidget(this->menuButtons.back(), 0, this->menuButtonAlignment);
-	this->menuButtons.back()->setText("Start game");
-	this->menuButtons.back()->setFixedSize({this->menuButtonWidth, this->menuButtonHeight});
+	this->generateMenuButton("Start game");
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this->game, SLOT(gameStart()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(showGameWindow()));
 
-	QPushButton *backToMenu = new QPushButton{};
-	backToMenu->setText("Back to menu");
-	this->gameWindow->addMenuButton(backToMenu);
-	QObject::connect(backToMenu, SIGNAL(clicked()), this, SLOT(showGameLauncher()));
+	this->gameWindow->generateMenuButton("Back to menu");
+	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(showGameLauncher()));
+	this->gameWindow->generateMenuButton("Regenerate board");
+	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
+
+	this->gameWindow->addFinalStretch();
 
 	return this;
+}
+
+void SudokuGame::regenerateGame() {
+	delete this->game;
+	this->game = new SudokuMatrixQt{};
+	this->game->setGameLauncher(this);
+
+	this->gameWindow->styleLayout();
 }

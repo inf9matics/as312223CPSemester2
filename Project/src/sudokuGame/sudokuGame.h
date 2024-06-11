@@ -30,7 +30,7 @@ class SudokuMatrixQt : public Game, public SudokuMatrix {
       protected:
 	int cellFrameStyle{QFrame::Box};
 	int cellFrameWidth{1};
-	int cellSize{40};
+	int cellSize{48};
 	Qt::Alignment cellAlignment{Qt::AlignCenter};
 
 	int subMatrixFrameStyle{QFrame::Box};
@@ -219,6 +219,9 @@ class SudokuGame : public GameLauncher {
 	SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent = nullptr);
 
 	~SudokuGame();
+
+      public slots:
+	void regenerateGame();
 };
 
 #endif

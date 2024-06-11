@@ -1,10 +1,10 @@
 #ifndef GAMELAUNCHER_H
 #define GAMELAUNCHER_H
 
+#include <QHBoxLayout>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QWidget>
 #include <functional>
 #include <string>
@@ -29,6 +29,8 @@ class GameLauncher : public QMainWindow {
 	Qt::Alignment menuButtonAlignment{Qt::AlignCenter};
 	int menuButtonWidth{90};
 	int menuButtonHeight{30};
+
+	GameLauncher *generateMenuButton(std::string label);
 
 	virtual GameLauncher *prepareButtons();
 	GameLauncher *setSize();
@@ -61,8 +63,8 @@ class GameWindow : public QWidget {
 	QWidget *menuBar;
 	std::vector<QPushButton *> menuButtons;
 	QHBoxLayout menuBarLayout;
-	Qt::Alignment menuButtonAlignment{Qt::AlignCenter};
-	int menuButtonWidth{90};
+	Qt::Alignment menuButtonAlignment{Qt::AlignLeft};
+	int menuButtonWidthPerLetter{8};
 	int menuButtonHeight{30};
 
 	QVBoxLayout gameWindowLayout;
@@ -80,6 +82,12 @@ class GameWindow : public QWidget {
 	GameWindow *addMenuButton(QPushButton *menuButton);
 
 	~GameWindow();
+
+	QPushButton *getMenuButtonsBack();
+
+	GameWindow *generateMenuButton(std::string label);
+
+	GameWindow *addFinalStretch();
 
 	void show();
 

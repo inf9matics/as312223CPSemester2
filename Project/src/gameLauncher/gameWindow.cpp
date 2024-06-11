@@ -7,7 +7,6 @@ GameWindow::~GameWindow() {
 GameWindow::GameWindow(GameLauncher *gameLauncher) : QWidget(gameLauncher), gameLauncher(gameLauncher), gameWindowLayout(this) {
 	this->menuBar = new QWidget{this};
 	this->menuBar->setLayout(&this->menuBarLayout);
-	this->menuBar->setFixedWidth(this->menuButtonWidth);
 
 	this->menuBarLayout.addWidget(menuBar);
 }
@@ -54,7 +53,6 @@ GameWindow *GameWindow::styleLayout() {
 GameWindow *GameWindow::addMenuButton(QPushButton *menuButton) {
 	menuButton->setParent(this);
 	this->menuButtons.push_back(menuButton);
-	menuButton->setFixedWidth(this->menuButtonWidth);
 	menuButton->setFixedHeight(this->menuButtonHeight);
 
 	return this;
@@ -70,6 +68,21 @@ void GameWindow::hideMenu() {
 	this->menuBar->hide();
 }
 
-void GameWindow::showGame() {
-	this->gameLauncher->getGame()->show();
+void GameWindow::showGame() { this->gameLauncher->getGame()->show(); }
+
+QPushButton *GameWindow::getMenuButtonsBack() { return this->menuButtons.back(); }
+
+GameWindow *GameWindow::generateMenuButton(std::string label) {
+	this->menuButtons.push_back(new QPushButton(this->menuBar));
+	this->menuButtons.back()->setFixedSize({(this->menuButtonWidthPerLetter * (int)label.size()), this->menuButtonHeight});
+	this->menuBarLayout.addWidget(this->menuButtons.back(), 0, this->menuButtonAlignment);
+	this->menuButtons.back()->setText(QString::fromStdString(label));
+
+	return this;
+}
+
+GameWindow *GameWindow::addFinalStretch() {
+	this->menuBarLayout.addStretch();
+
+	return this;
 }

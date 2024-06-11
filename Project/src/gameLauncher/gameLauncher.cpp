@@ -66,3 +66,13 @@ void GameLauncher::showGameLauncher() {
 	this->GameLauncher::setSize();
 	this->show();
 }
+
+GameLauncher *GameLauncher::generateMenuButton(std::string label) {
+	this->menuButtons.push_back(new QPushButton(this->menuBar));
+	this->menuButtons.back()->setFixedSize({this->menuButtonWidth, this->menuButtonHeight});
+	this->menuButtonsLayout.addWidget(this->menuButtons.back(), 0, this->menuButtonAlignment);
+	this->menuButtons.back()->setText(QString::fromStdString(label));
+	this->menuButtons.back()->setFixedSize({this->menuButtonWidth, this->menuButtonHeight});
+
+	return this;
+}
