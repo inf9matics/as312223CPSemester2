@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QWidget>
 #include <functional>
 #include <string>
@@ -22,38 +23,71 @@ class GameLauncher : public QMainWindow {
 	GameWindow *gameWindow;
 	Game *game;
 
+	QWidget *menuBar;
 	std::vector<QPushButton *> menuButtons;
 	QVBoxLayout menuButtonsLayout;
+	Qt::Alignment menuButtonAlignment{Qt::AlignCenter};
+	int menuButtonWidth{90};
+	int menuButtonHeight{30};
 
-	GameLauncher *prepareButtons();
+	virtual GameLauncher *prepareButtons();
+	GameLauncher *setSize();
+
+	GameLauncher *styleLayout();
 
       public:
-	GameLauncher(Game *game, QWidget *parent = nullptr);
+	GameLauncher(QWidget *parent = nullptr);
 
 	GameWindow *getGameWindow();
 	Game *getGame();
 
 	~GameLauncher();
+
+      public slots:
+	void showGameWindow();
+
+	void showGameLauncher();
 };
 
 class GameWindow : public QWidget {
 	Q_OBJECT
 
       protected:
+	GameWindow *iterateOverMenuButtons(std::function<void(QPushButton *)> function);
+
+      protected:
 	GameLauncher *gameLauncher;
 
 	QWidget *menuBar;
-	QVBoxLayout menuBarLayout;
+	std::vector<QPushButton *> menuButtons;
+	QHBoxLayout menuBarLayout;
+	Qt::Alignment menuButtonAlignment{Qt::AlignCenter};
+	int menuButtonWidth{90};
+	int menuButtonHeight{30};
+
+	QVBoxLayout gameWindowLayout;
+
+	GameWindow *prepareButtons();
 
 	friend GameLauncher;
 	GameWindow *setSize();
 
       public:
-	GameWindow(GameLauncher *gameLauncher, QWidget *parent = nullptr);
+	GameWindow(GameLauncher *gameLauncher);
+
+	GameWindow *styleLayout();
+
+	GameWindow *addMenuButton(QPushButton *menuButton);
 
 	~GameWindow();
 
 	void show();
+
+      public slots:
+	void showGame();
+
+	void showMenu();
+	void hideMenu();
 };
 
 class Game : public QWidget {
@@ -63,20 +97,22 @@ class Game : public QWidget {
 	std::string displayName{"Generic Game"};
 
       protected:
-	GameWindow *gameWindow;
+	GameLauncher *gameLauncher;
 
 	bool won;
 
       public:
-	Game();
+	Game(GameLauncher *gameLauncher = nullptr);
 
 	~Game();
 
-	Game *setGameWindow(GameWindow *gameWindow);
+	Game *setGameLauncher(GameLauncher *gameLauncher);
 
 	bool getWon();
 
 	std::string getDisplayName();
+
+	Game *setSize();
 
       signals:
 	void gameEnded();

@@ -28,11 +28,13 @@ class SudokuMatrixQt : public Game, public SudokuMatrix {
 	SudokuMatrixQt *styleLayout();
 
       protected:
-	int cellFrameStyle{3};
+	int cellFrameStyle{QFrame::Box};
+	int cellFrameWidth{1};
 	int cellSize{40};
 	Qt::Alignment cellAlignment{Qt::AlignCenter};
 
-	int subMatrixFrameStyle{3};
+	int subMatrixFrameStyle{QFrame::Box};
+	int subMatrixFrameWidth{2};
 	Qt::Alignment subMatrixAlignment{Qt::AlignCenter};
 
 	int subMatrixSpacing{0};
@@ -68,6 +70,8 @@ class SudokuMatrixQt : public Game, public SudokuMatrix {
 
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
 	SudokuCellQt *getCellQtAtPosition(std::pair<int, int> position);
+
+	Game *setSize();
 
 	~SudokuMatrixQt();
 
@@ -206,7 +210,7 @@ class SudokuGame : public GameLauncher {
 	Q_OBJECT
 
       protected:
-	SudokuMatrixQt *game;
+	GameLauncher *prepareButtons();
 
       public:
 	SudokuGame(QWidget *parent = nullptr);

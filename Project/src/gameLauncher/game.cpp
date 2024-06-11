@@ -2,20 +2,20 @@
 
 Game::~Game() {}
 
-Game::Game() {}
+Game::Game(GameLauncher *gameLauncher) : gameLauncher(gameLauncher) {}
 
 void Game::gameEnd() {}
 
 void Game::gameStart() {
-	this->gameWindow->show();
-
 	this->show();
 
 	emit gameStarted();
 }
 
-Game *Game::setGameWindow(GameWindow *gameWindow) {
-    this->QWidget::setParent(gameWindow);
-	this->gameWindow = gameWindow;
+Game *Game::setGameLauncher(GameLauncher *gameLauncher) {
+	this->gameLauncher = gameLauncher;
+    this->QWidget::setParent(this->gameLauncher->getGameWindow());
 	return this;
 }
+
+Game *Game::setSize() {}

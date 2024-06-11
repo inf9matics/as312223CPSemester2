@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 
 	SudokuGame game{};
 	
-	game.show();
+	game.showGameLauncher();
 
 	return qtApp.exec();
 }

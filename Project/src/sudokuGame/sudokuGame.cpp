@@ -4,21 +4,38 @@
 
 SudokuGame::~SudokuGame() {}
 
-SudokuGame::SudokuGame(QWidget *parent) : GameLauncher(this->game, parent) {
-	SudokuMatrixQt *sudokuMatrixQt = new SudokuMatrixQt{};
-	this->game = sudokuMatrixQt;
-	this->game->QWidget::setParent(this);
-	this->game->setGameWindow(this->gameWindow);
+SudokuGame::SudokuGame(QWidget *parent) : GameLauncher(parent) {
+	this->game = new SudokuMatrixQt{};
+	this->game->setGameLauncher(this);
 
-	this->menuButtons.push_back(new QPushButton(this));
-	this->menuButtonsLayout.addWidget(this->menuButtons.back());
-	this->menuButtons.back()->setText("Start game");
-	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this->game, SLOT(gameStart()));
+	this->prepareButtons();
+	this->setSize();
+
+	this->gameWindow->styleLayout();
 }
 
-SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : game(sudokuMatrixQt), GameLauncher(sudokuMatrixQt, parent) {
-	this->menuButtons.push_back(new QPushButton(this));
-	this->menuButtonsLayout.addWidget(this->menuButtons.back());
+SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : GameLauncher(parent) {
+	this->game = sudokuMatrixQt;
+	this->game->setGameLauncher(this);
+
+	this->prepareButtons();
+	this->setSize();
+
+	this->gameWindow->styleLayout();
+}
+
+GameLauncher *SudokuGame::prepareButtons() {
+	this->menuButtons.push_back(new QPushButton(this->menuBar));
+	this->menuButtonsLayout.addWidget(this->menuButtons.back(), 0, this->menuButtonAlignment);
 	this->menuButtons.back()->setText("Start game");
+	this->menuButtons.back()->setFixedSize({this->menuButtonWidth, this->menuButtonHeight});
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this->game, SLOT(gameStart()));
+	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(showGameWindow()));
+
+	QPushButton *backToMenu = new QPushButton{};
+	backToMenu->setText("Back to menu");
+	this->gameWindow->addMenuButton(backToMenu);
+	QObject::connect(backToMenu, SIGNAL(clicked()), this, SLOT(showGameLauncher()));
+
+	return this;
 }

@@ -111,11 +111,14 @@ SudokuMatrixQt *SudokuMatrixQt::styleLayout() {
 	this->iterateOverCellsQt([this](SudokuCellQt *sudokuCellQt) { this->styleCell(*sudokuCellQt); });
 	this->iterateOverSubMatricesQt([this](SudokuSubMatrixQt *sudokuSubMatrixQt) { this->styleSubMatrix(*sudokuSubMatrixQt); });
 
+	this->setFixedSize({this->SudokuMatrix::subMatrixSize * (this->cellSize * this->subMatrixSize), this->SudokuMatrix::subMatrixSize * (this->cellSize * this->subMatrixSize)});
+
 	return this;
 }
 
 SudokuMatrixQt *SudokuMatrixQt::styleCell(SudokuCellQt &sudokuCellQt) {
 	sudokuCellQt.setFrameStyle(this->cellFrameStyle);
+	sudokuCellQt.setLineWidth(this->cellFrameWidth);
 
 	sudokuCellQt.setFixedSize(this->cellSize, this->cellSize);
 
@@ -126,6 +129,7 @@ SudokuMatrixQt *SudokuMatrixQt::styleCell(SudokuCellQt &sudokuCellQt) {
 
 SudokuMatrixQt *SudokuMatrixQt::styleSubMatrix(SudokuSubMatrixQt &sudokuSubMatrixQt) {
 	sudokuSubMatrixQt.setFrameStyle(this->subMatrixFrameStyle);
+	sudokuSubMatrixQt.setLineWidth(this->subMatrixFrameWidth);
 
 	sudokuSubMatrixQt.setFixedSize(this->cellSize * this->subMatrixSize, this->cellSize * this->subMatrixSize);
 
