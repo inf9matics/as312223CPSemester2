@@ -4,7 +4,7 @@ set(SUDOKU_QT_SOURCES sudokuGame.cpp sudokuCellQt.cpp sudokuCellQtValueButton.cp
 
 qt_add_library(sudokuGame STATIC ${SUDOKU_QT_SOURCES})
 
-target_link_libraries(sudokuGame PUBLIC sudoku gameLauncher)
+target_link_libraries(sudokuGame PUBLIC sudoku sudoku_fileHandling gameLauncher)
 
 target_link_libraries(sudokuGame PRIVATE Qt6::Widgets)
 target_include_directories(sudokuGame INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

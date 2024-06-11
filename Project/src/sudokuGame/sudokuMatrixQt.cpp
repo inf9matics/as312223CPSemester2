@@ -11,7 +11,7 @@ SudokuMatrixQt::SudokuMatrixQt() : gridLayout(this), SudokuMatrix() {
 	this->prepareCellsQt()->prepareSubMatricesQt()->prepareGridLayouts()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 }
 
-SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix) : SudokuMatrix(sudokuMatrix) {
+SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix) : gridLayout(this), SudokuMatrix(sudokuMatrix) {
 	this->displayName = "Sudoku";
 
 	this->prepareCellsQt()->prepareSubMatricesQt()->prepareGridLayouts()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
