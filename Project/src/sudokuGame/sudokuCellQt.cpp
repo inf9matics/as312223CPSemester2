@@ -111,3 +111,11 @@ SudokuCellQt *SudokuCellQt::styleLayout() {
 
 	return this;
 }
+
+SudokuCell *SudokuCellQt::setViable(bool viable) {
+	this->SudokuCell::setViable(viable);
+
+	emit valueChanged();
+
+	return this;
+}

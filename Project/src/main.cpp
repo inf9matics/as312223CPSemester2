@@ -11,7 +11,10 @@
 int main(int argc, char *argv[]) {
 	QApplication qtApp{argc, argv};
 
-	SudokuGame game{};
+	SudokuMatrixQt *sudokuBoard = new SudokuMatrixQt{};
+	sudokuBoard->getCellAtPosition({0, 0})->addParityCell({3, 3});
+
+	SudokuGame game{sudokuBoard};
 	
 	game.showGameLauncher();
 

@@ -44,9 +44,17 @@ SudokuCell *SudokuCell::setValue(int value, bool checkParity) {
 			this->calledParity = false;
 		}
 
-		this->viable = this->parentMatrix->checkViableAtPosition(this->position);
+		this->setViable(this->parentMatrix->checkViableAtPosition(this->position));
 		this->parentMatrix->checkFilledAtPosition(this->position);
+
+		this->parentMatrix->updateViableFromCellPosition(this->position);
 	}
+
+	return this;
+}
+
+SudokuCell *SudokuCell::setViable(bool viable) {
+	this->viable = viable;
 
 	return this;
 }
@@ -59,12 +67,13 @@ int SudokuCell::getPreviousValue() { return this->previousValue; }
 
 bool SudokuCell::getCalledParity() { return this->calledParity; }
 
-SudokuCell *SudokuCell::addParityCell(SudokuCell *parityCell) {
-	this->parityCells.push_back(parityCell->position);
+SudokuCell *SudokuCell::addParityCell(std::pair<int, int> parityCellPosition) {
+	this->parityCells.push_back(parityCellPosition);
 
+	SudokuCell *parityCell = this->parentMatrix->getCellAtPosition(parityCellPosition);
 	this->calledParity = true;
 	if (!parityCell->getCalledParity()) {
-		parityCell->addParityCell(this);
+		parityCell->addParityCell(this->position);
 		parityCell->setValue(this->value);
 	}
 	this->calledParity = false;

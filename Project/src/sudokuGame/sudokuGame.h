@@ -125,6 +125,8 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 
 	SudokuCell *setValue(int value, bool checkParity = true);
 
+	SudokuCell *setViable(bool viable);
+
 	~SudokuCellQt();
 
       signals:

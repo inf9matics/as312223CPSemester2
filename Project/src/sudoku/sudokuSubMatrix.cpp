@@ -98,3 +98,13 @@ std::vector<int> SudokuSubMatrix::getValuesFilled() {
 
 	return valuesFilled;
 }
+
+SudokuSubMatrix *SudokuSubMatrix::iterateOverCells(std::function<void(SudokuCell *)> function) {
+	std::map<std::pair<int, int>, std::pair<int, int>>::iterator cellsIterator = this->cells.begin();
+	while (cellsIterator != this->cells.end()) {
+		function(this->parentMatrix->getCellAtPosition(cellsIterator->second));
+		cellsIterator++;
+	}
+
+	return this;
+}

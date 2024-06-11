@@ -6,8 +6,8 @@ SudokuCellQtValueDialog::SudokuCellQtValueDialog(SudokuCellQt &sudokuCellQt, QWi
 
 void SudokuCellQtValueDialog::showDialog() {
 	this->addMissingValues()->showValueButtons();
-	QPoint cellOffset{this->parentWidget()->width(), 0};
-	this->move(this->parentWidget()->window()->pos() + this->parentWidget()->parentWidget()->pos() + this->parentWidget()->pos() + cellOffset);
+	QPoint cellOffset{0, -this->parentWidget()->height()};
+	this->move(QCursor::pos() + cellOffset);
 	this->setFixedSize(this->parentWidget()->width() * this->valueButtons.size(), this->parentWidget()->height());
 	this->iterateOverValueButtons([this](SudokuCellQtValueButton *valueButton) { valueButton->setFixedSize(this->parentWidget()->width(), this->parentWidget()->height()); });
 	this->show();
