@@ -11,13 +11,11 @@
 int main(int argc, char *argv[]) {
 	QApplication qtApp{argc, argv};
 
-	GameLauncher gameLauncher;
+	SudokuMatrixQt sudokuMatrixQt;
 
-	SudokuMatrixQt sudokuMatrixQt{};
-
-	gameLauncher.addGame(&sudokuMatrixQt);
-
-	gameLauncher.show();
+	SudokuGame game{&sudokuMatrixQt};
+	
+	game.show();
 
 	return qtApp.exec();
 }

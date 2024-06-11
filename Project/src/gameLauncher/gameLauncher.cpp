@@ -2,20 +2,26 @@
 
 #include "moc_gameLauncher.cpp"
 
-GameLauncher::~GameLauncher() {}
+GameLauncher::~GameLauncher() {
+	this->iterateOverMenuButtons([](QPushButton *menuButton) { delete menuButton; });
+}
 
-GameLauncher::GameLauncher(QWidget *parent) : QMainWindow(parent) { this->gameWindow = new GameWindow{this, this->parentWidget()}; }
+GameLauncher::GameLauncher(Game *game, QWidget *parent) : QMainWindow(parent), game(game), gameWindow(new GameWindow{this, parent}), menuButtonsLayout(this) {
+	this->game->setGameWindow(this->gameWindow);
+	this->gameWindow->setFixedSize(this->game->size());
+}
 
-GameLauncher *GameLauncher::showGameWindow() {
-	this->gameWindow->showGame()->show();
+GameLauncher *GameLauncher::iterateOverMenuButtons(std::function<void(QPushButton *)> function) {
+	std::vector<QPushButton *>::iterator menuButtonsIterator = this->menuButtons.begin();
+	while (menuButtonsIterator != this->menuButtons.end()) {
+		function(*menuButtonsIterator);
+
+		menuButtonsIterator++;
+	}
 
 	return this;
 }
+
+Game *GameLauncher::getGame() { return this->game; }
 
 GameWindow *GameLauncher::getGameWindow() { return this->gameWindow; }
-
-GameLauncher *GameLauncher::addGame(Game *game) {
-	this->availableGames.push_back(game);
-
-	return this;
-}

@@ -2,9 +2,11 @@
 #define GAMELAUNCHER_H
 
 #include <QMainWindow>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include <QWidget>
-#include <string>
 #include <functional>
+#include <string>
 
 class GameWindow;
 
@@ -14,21 +16,22 @@ class GameLauncher : public QMainWindow {
 	Q_OBJECT
 
       protected:
-	std::vector<Game *> availableGames;
+	GameLauncher *iterateOverMenuButtons(std::function<void(QPushButton *)> function);
 
+      protected:
 	GameWindow *gameWindow;
+	Game *game;
 
-	friend GameWindow;
-	GameLauncher *setGameWindow(GameWindow *gameWindow);
+	std::vector<QPushButton *> menuButtons;
+	QVBoxLayout menuButtonsLayout;
+
+	GameLauncher *prepareButtons();
 
       public:
-	GameLauncher(QWidget *parent = nullptr);
+	GameLauncher(Game *game, QWidget *parent = nullptr);
 
 	GameWindow *getGameWindow();
-
-	GameLauncher *addGame(Game *game);
-
-	GameLauncher *showGameWindow();
+	Game *getGame();
 
 	~GameLauncher();
 };
@@ -39,16 +42,8 @@ class GameWindow : public QWidget {
       protected:
 	GameLauncher *gameLauncher;
 
-	Game *game;
-	friend GameLauncher;
-	GameWindow *setGame(Game *game);
-
       public:
 	GameWindow(GameLauncher *gameLauncher, QWidget *parent = nullptr);
-
-	Game *getGame();
-
-	GameWindow *showGame();
 
 	~GameWindow();
 };
@@ -69,6 +64,8 @@ class Game : public QWidget {
 
 	~Game();
 
+	Game *setGameWindow(GameWindow *gameWindow);
+
 	bool getWon();
 
 	std::string getDisplayName();
@@ -76,10 +73,12 @@ class Game : public QWidget {
       signals:
 	void gameEnded();
 
+	void gameStarted();
+
       public slots:
 	void gameEnd();
 
-	virtual void showGame();
+	void gameStart();
 };
 
 #endif

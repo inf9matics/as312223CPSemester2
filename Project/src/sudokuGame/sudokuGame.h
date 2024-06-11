@@ -24,10 +24,10 @@ class SudokuSubMatrixQt;
 class SudokuMatrixQt : public Game, public SudokuMatrix {
 	Q_OBJECT
 
-      private:
+      protected:
 	SudokuMatrixQt *styleLayout();
 
-      private:
+      protected:
 	int cellFrameStyle{3};
 	int cellSize{40};
 	Qt::Alignment cellAlignment{Qt::AlignCenter};
@@ -200,6 +200,19 @@ class SudokuCellQtValueButton : public QPushButton {
 
       public slots:
 	void setCellQtValue();
+};
+
+class SudokuGame : public GameLauncher {
+	Q_OBJECT
+
+      protected:
+	SudokuMatrixQt *game;
+
+      public:
+	SudokuGame(QWidget *parent = nullptr);
+	SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent = nullptr);
+
+	~SudokuGame();
 };
 
 #endif
