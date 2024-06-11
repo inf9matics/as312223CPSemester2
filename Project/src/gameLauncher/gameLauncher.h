@@ -42,10 +42,18 @@ class GameWindow : public QWidget {
       protected:
 	GameLauncher *gameLauncher;
 
+	QWidget *menuBar;
+	QVBoxLayout menuBarLayout;
+
+	friend GameLauncher;
+	GameWindow *setSize();
+
       public:
 	GameWindow(GameLauncher *gameLauncher, QWidget *parent = nullptr);
 
 	~GameWindow();
+
+	void show();
 };
 
 class Game : public QWidget {

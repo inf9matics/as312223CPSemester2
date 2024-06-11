@@ -6,10 +6,7 @@ GameLauncher::~GameLauncher() {
 	this->iterateOverMenuButtons([](QPushButton *menuButton) { delete menuButton; });
 }
 
-GameLauncher::GameLauncher(Game *game, QWidget *parent) : QMainWindow(parent), game(game), gameWindow(new GameWindow{this, parent}), menuButtonsLayout(this) {
-	this->game->setGameWindow(this->gameWindow);
-	this->gameWindow->setFixedSize(this->game->size());
-}
+GameLauncher::GameLauncher(Game *game, QWidget *parent) : QMainWindow(parent), game(game), gameWindow(new GameWindow{this, this}), menuButtonsLayout(this) {}
 
 GameLauncher *GameLauncher::iterateOverMenuButtons(std::function<void(QPushButton *)> function) {
 	std::vector<QPushButton *>::iterator menuButtonsIterator = this->menuButtons.begin();
