@@ -1,4 +1,4 @@
-#include "sudokuQt.h"
+#include "sudokuGame.h"
 
 SudokuCellQt::~SudokuCellQt() {}
 
@@ -14,7 +14,7 @@ SudokuCellQt::SudokuCellQt(const SudokuCellQt &sudokuCellQt) : SudokuCell(sudoku
 	this->connectTasks();
 }
 
-SudokuCellQt *SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
+SudokuCellQt &SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 	SudokuCell cell{sudokuCell};
 
 	this->position = cell.getPosition();
@@ -26,10 +26,10 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 
 	this->parityCells = cell.getParityCells();
 
-	return this;
+	return *this;
 }
 
-SudokuCellQt *SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
+SudokuCellQt &SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 	this->position = sudokuCellQt.position;
 
 	this->value = sudokuCellQt.value;
@@ -41,7 +41,7 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 
 	this->QLabel::setParent(sudokuCellQt.parentWidget());
 
-	return this;
+	return *this;
 }
 
 void SudokuCellQt::mousePressEvent(QMouseEvent *event) {
@@ -108,6 +108,14 @@ SudokuCellQt *SudokuCellQt::styleLayout() {
 	sizePolicy.setHorizontalPolicy(QSizePolicy::Expanding);
 	sizePolicy.setVerticalPolicy(QSizePolicy::Expanding);
 	this->setSizePolicy(sizePolicy);
+
+	return this;
+}
+
+SudokuCell *SudokuCellQt::setViable(bool viable) {
+	this->SudokuCell::setViable(viable);
+
+	emit valueChanged();
 
 	return this;
 }

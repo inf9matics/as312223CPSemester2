@@ -276,3 +276,30 @@ std::pair<std::pair<int, int>, std::vector<int>> SudokuMatrix::findEmptyPosition
 
 	return std::pair<std::pair<int, int>, std::vector<int>>{emptyPosition, missingValues};
 }
+
+SudokuMatrix *SudokuMatrix::updateViableFromCellPosition(std::pair<int, int> cellPosition) {
+	SudokuCell *currentCell = this->getCellAtPosition(cellPosition);
+	for (int i{0}; i < this->size; i++) {
+		if (i != cellPosition.first) {
+			SudokuCell *workingCell = this->getCellAtPosition({i, currentCell->getPosition().second});
+			if (!workingCell->getViable()) {
+				workingCell->setViable(workingCell->parentMatrix->checkViableAtPosition(workingCell->getPosition()));
+			}
+		}
+		if (i != cellPosition.second) {
+			SudokuCell *workingCell = this->getCellAtPosition({currentCell->getPosition().first, i});
+			if (!workingCell->getViable()) {
+				workingCell->setViable(workingCell->parentMatrix->checkViableAtPosition(workingCell->getPosition()));
+			}
+		}
+	}
+
+	SudokuSubMatrix *currentSubMatrix = this->getSubMatrixAtCellPosition(cellPosition);
+	currentSubMatrix->iterateOverCells([](SudokuCell *sudokuCell) {
+		if (!sudokuCell->getViable()) {
+			sudokuCell->setViable(sudokuCell->getParent()->checkViableAtPosition(sudokuCell->getPosition()));
+		}
+	});
+
+	return this;
+}

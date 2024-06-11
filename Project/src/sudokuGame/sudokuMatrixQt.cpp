@@ -1,15 +1,19 @@
-#include "sudokuQt.h"
+#include "sudokuGame.h"
 
 SudokuMatrixQt::~SudokuMatrixQt() {
 	this->iterateOverCellsQt([](SudokuCellQt *sudokuCellQt) { delete (sudokuCellQt); });
 	this->iterateOverSubMatricesQt([](SudokuSubMatrixQt *sudokuSubMatrixQt) { delete (sudokuSubMatrixQt); });
 }
 
-SudokuMatrixQt::SudokuMatrixQt(QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix() {
+SudokuMatrixQt::SudokuMatrixQt() : gridLayout(this), SudokuMatrix() {
+	this->displayName = "Sudoku";
+
 	this->prepareCellsQt()->prepareSubMatricesQt()->prepareGridLayouts()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 }
 
-SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix, QWidget *parent) : QWidget(parent), gridLayout(this), SudokuMatrix(sudokuMatrix) {
+SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix) : SudokuMatrix(sudokuMatrix) {
+	this->displayName = "Sudoku";
+
 	this->prepareCellsQt()->prepareSubMatricesQt()->prepareGridLayouts()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 }
 
@@ -26,6 +30,8 @@ SudokuMatrixQt *SudokuMatrixQt::iterateOverSubMatricesQt(std::function<void(Sudo
 
 	return this;
 }
+
+void SudokuMatrixQt::showGame() { this->showBoard(); }
 
 SudokuMatrixQt *SudokuMatrixQt::showBoard() {
 	this->showCells()->showSubMatrices()->show();
@@ -76,6 +82,14 @@ SudokuMatrixQt *SudokuMatrixQt::prepareSubMatricesQt() {
 	return this;
 }
 
+SudokuMatrixQt &SudokuMatrixQt::operator=(const SudokuMatrixQt &sudokuMatrixQt) {
+	(SudokuMatrix) *this = (SudokuMatrix)sudokuMatrixQt;
+
+	this->cellsQt = sudokuMatrixQt.cellsQt;
+
+	return *this;
+}
+
 SudokuMatrixQt *SudokuMatrixQt::prepareGridLayouts() {
 	for (int i{0}; i < this->subMatrixSize; i++) {
 		for (int j{0}; j < this->subMatrixSize; j++) {
@@ -89,17 +103,22 @@ SudokuMatrixQt *SudokuMatrixQt::prepareGridLayouts() {
 SudokuMatrixQt *SudokuMatrixQt::styleLayout() {
 	this->setWindowTitle("sudokuBoard");
 
+	this->setFixedSize(this->cellSize * this->SudokuMatrix::size, this->cellSize * this->SudokuMatrix::size);
+
 	this->gridLayout.setSpacing(this->subMatrixSpacing);
 	this->gridLayout.setContentsMargins(this->subMatrixMargins);
 
 	this->iterateOverCellsQt([this](SudokuCellQt *sudokuCellQt) { this->styleCell(*sudokuCellQt); });
 	this->iterateOverSubMatricesQt([this](SudokuSubMatrixQt *sudokuSubMatrixQt) { this->styleSubMatrix(*sudokuSubMatrixQt); });
 
+	this->setFixedSize({this->SudokuMatrix::subMatrixSize * (this->cellSize * this->subMatrixSize), this->SudokuMatrix::subMatrixSize * (this->cellSize * this->subMatrixSize)});
+
 	return this;
 }
 
 SudokuMatrixQt *SudokuMatrixQt::styleCell(SudokuCellQt &sudokuCellQt) {
 	sudokuCellQt.setFrameStyle(this->cellFrameStyle);
+	sudokuCellQt.setLineWidth(this->cellFrameWidth);
 
 	sudokuCellQt.setFixedSize(this->cellSize, this->cellSize);
 
@@ -110,6 +129,7 @@ SudokuMatrixQt *SudokuMatrixQt::styleCell(SudokuCellQt &sudokuCellQt) {
 
 SudokuMatrixQt *SudokuMatrixQt::styleSubMatrix(SudokuSubMatrixQt &sudokuSubMatrixQt) {
 	sudokuSubMatrixQt.setFrameStyle(this->subMatrixFrameStyle);
+	sudokuSubMatrixQt.setLineWidth(this->subMatrixFrameWidth);
 
 	sudokuSubMatrixQt.setFixedSize(this->cellSize * this->subMatrixSize, this->cellSize * this->subMatrixSize);
 

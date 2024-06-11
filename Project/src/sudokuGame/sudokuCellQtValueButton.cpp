@@ -1,4 +1,4 @@
-#include "sudokuQt.h"
+#include "sudokuGame.h"
 
 SudokuCellQtValueButton::SudokuCellQtValueButton(SudokuCellQt &sudokuCellQt, int value, QWidget *parent) : sudokuCellQt(sudokuCellQt), value(value), QPushButton(parent) { this->connectTasks()->styleLayout()->setText(QString::number(this->value)); }
 

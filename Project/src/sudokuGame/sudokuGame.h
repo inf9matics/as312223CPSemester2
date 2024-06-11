@@ -1,5 +1,5 @@
-#ifndef SUDOKU_QT_H
-#define SUDOKU_QT_H
+#ifndef SUDOKU_GAME_H
+#define SUDOKU_GAME_H
 
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -10,6 +10,7 @@
 
 #include <functional>
 
+#include "gameLauncher.h"
 #include "sudoku.h"
 
 class SudokuCellQt;
@@ -20,18 +21,20 @@ class SudokuCellQtValueButton;
 
 class SudokuSubMatrixQt;
 
-class SudokuMatrixQt : public QWidget, public SudokuMatrix {
+class SudokuMatrixQt : public Game, public SudokuMatrix {
 	Q_OBJECT
 
-      private:
+      protected:
 	SudokuMatrixQt *styleLayout();
 
-      private:
-	int cellFrameStyle{3};
-	int cellSize{40};
+      protected:
+	int cellFrameStyle{QFrame::Box};
+	int cellFrameWidth{1};
+	int cellSize{48};
 	Qt::Alignment cellAlignment{Qt::AlignCenter};
 
-	int subMatrixFrameStyle{3};
+	int subMatrixFrameStyle{QFrame::Box};
+	int subMatrixFrameWidth{2};
 	Qt::Alignment subMatrixAlignment{Qt::AlignCenter};
 
 	int subMatrixSpacing{0};
@@ -56,8 +59,10 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	SudokuMatrixQt *iterateOverSubMatricesQt(std::function<void(SudokuSubMatrixQt *)> function);
 
       public:
-	SudokuMatrixQt(QWidget *parent = nullptr);
-	SudokuMatrixQt(SudokuMatrix sudokuMatrix, QWidget *parent = nullptr);
+	SudokuMatrixQt();
+	SudokuMatrixQt(SudokuMatrix sudokuMatrix);
+
+	SudokuMatrixQt &operator=(const SudokuMatrixQt &sudokuMatrixQt);
 
 	SudokuMatrixQt *showCells();
 	SudokuMatrixQt *showSubMatrices();
@@ -66,7 +71,12 @@ class SudokuMatrixQt : public QWidget, public SudokuMatrix {
 	SudokuCell *getCellAtPosition(std::pair<int, int> position);
 	SudokuCellQt *getCellQtAtPosition(std::pair<int, int> position);
 
+	Game *setSize();
+
 	~SudokuMatrixQt();
+
+      public slots:
+	void showGame();
 };
 
 class SudokuSubMatrixQt : public QFrame {
@@ -80,6 +90,8 @@ class SudokuSubMatrixQt : public QFrame {
 
       public:
 	SudokuSubMatrixQt(QWidget *parent = nullptr);
+
+	SudokuSubMatrixQt &operator=(const SudokuSubMatrixQt &sudokuSubMatrixQt);
 
 	SudokuSubMatrixQt *addCellToLayout(SudokuCellQt *sudokuCellQt, std::pair<int, int> position);
 };
@@ -108,10 +120,12 @@ class SudokuCellQt : public QLabel, public SudokuCell {
 	SudokuCellQt(std::pair<int, int> position, SudokuMatrixQt *parent = nullptr);
 	SudokuCellQt(const SudokuCellQt &sudokuCellQt);
 
-	SudokuCellQt *operator=(const SudokuCellQt &sudokuCellQt);
-	SudokuCellQt *operator=(const SudokuCell &sudokuCell);
+	SudokuCellQt &operator=(const SudokuCellQt &sudokuCellQt);
+	SudokuCellQt &operator=(const SudokuCell &sudokuCell);
 
 	SudokuCell *setValue(int value, bool checkParity = true);
+
+	SudokuCell *setViable(bool viable);
 
 	~SudokuCellQt();
 
@@ -192,6 +206,22 @@ class SudokuCellQtValueButton : public QPushButton {
 
       public slots:
 	void setCellQtValue();
+};
+
+class SudokuGame : public GameLauncher {
+	Q_OBJECT
+
+      protected:
+	GameLauncher *prepareButtons();
+
+      public:
+	SudokuGame(QWidget *parent = nullptr);
+	SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent = nullptr);
+
+	~SudokuGame();
+
+      public slots:
+	void regenerateGame();
 };
 
 #endif
