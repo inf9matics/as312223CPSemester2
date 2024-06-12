@@ -53,10 +53,6 @@ GameLauncher *SudokuGame::prepareButtons() {
 	this->gameWindow->menuBarLayout.addWidget(this->gameVarianceSlider, 0, Qt::AlignRight);
 	this->gameVarianceSlider->setFixedWidth(this->gameWindow->menuButtonWidthPerLetter * 12);
 	this->gameVarianceSlider->setFixedHeight(this->gameWindow->menuButtonHeight);
-	QObject::connect(this->gameWindow, SLOT(show()), this->gameVarianceSlider, SLOT(show()));
-	QObject::connect(this->gameWindow, SLOT(hide()), this->gameVarianceSlider, SLOT(hide()));
-
-	// this->gameWindow->addFinalStretch();
 
 	QObject::connect(this->game, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
 
@@ -82,7 +78,7 @@ void SudokuGame::regenerateGame() {
 }
 
 void SudokuGame::setBoardToFile() {
-	std::string outputFilePath = QFileDialog::getSaveFileName(this, "Save to file").toStdString();
+	std::string outputFilePath = QFileDialog::getSaveFileName(this, "Save to file", "", "*.json").toStdString();
 	if (outputFilePath == "") {
 		return;
 	}
@@ -91,7 +87,7 @@ void SudokuGame::setBoardToFile() {
 }
 
 void SudokuGame::getBoardFromFile() {
-	std::string inputFilePath = QFileDialog::getOpenFileName(this, "Save to file").toStdString();
+	std::string inputFilePath = QFileDialog::getOpenFileName(this, "Read from file", "", "*.json").toStdString();
 	if (inputFilePath == "") {
 		return;
 	}
