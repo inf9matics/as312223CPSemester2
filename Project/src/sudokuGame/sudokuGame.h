@@ -1,6 +1,7 @@
 #ifndef SUDOKU_GAME_H
 #define SUDOKU_GAME_H
 
+#include <QFileDialog>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -10,8 +11,10 @@
 
 #include <functional>
 
+#include "fileHandling.h"
 #include "gameLauncher.h"
 #include "sudoku.h"
+#include "backsolver.h"
 
 class SudokuCellQt;
 
@@ -62,6 +65,7 @@ class SudokuMatrixQt : public Game, public SudokuMatrix {
 	SudokuMatrixQt();
 	SudokuMatrixQt(SudokuMatrix sudokuMatrix);
 
+	SudokuMatrixQt &operator=(const SudokuMatrix &sudokuMatrix);
 	SudokuMatrixQt &operator=(const SudokuMatrixQt &sudokuMatrixQt);
 
 	SudokuMatrixQt *showCells();
@@ -77,6 +81,7 @@ class SudokuMatrixQt : public Game, public SudokuMatrix {
 
       public slots:
 	void showGame();
+	void checkIfWon();
 };
 
 class SudokuSubMatrixQt : public QFrame {
@@ -214,6 +219,10 @@ class SudokuGame : public GameLauncher {
       protected:
 	GameLauncher *prepareButtons();
 
+	SudokuMatrixQt *sudokuMatrixQt;
+
+	SudokuFileHandler fileHandler;
+
       public:
 	SudokuGame(QWidget *parent = nullptr);
 	SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent = nullptr);
@@ -222,6 +231,9 @@ class SudokuGame : public GameLauncher {
 
       public slots:
 	void regenerateGame();
+
+	void setBoardToFile();
+	void getBoardFromFile();
 };
 
 #endif

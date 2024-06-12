@@ -7,7 +7,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <functional>
+#include <QLabel>
 #include <string>
+
 
 class GameWindow;
 
@@ -22,6 +24,13 @@ class GameLauncher : public QMainWindow {
       protected:
 	GameWindow *gameWindow;
 	Game *game;
+
+	QWidget *endPopup;
+	QLabel *endPopupLabel;
+
+	std::chrono::steady_clock::time_point gameStartTimePoint;
+	std::chrono::steady_clock::time_point gameEndTimePoint;
+	std::chrono::milliseconds gameDuration;
 
 	QWidget *menuBar;
 	std::vector<QPushButton *> menuButtons;
@@ -49,6 +58,11 @@ class GameLauncher : public QMainWindow {
 	void showGameWindow();
 
 	void showGameLauncher();
+
+	void gameStartTime();
+	void gameEndTime();
+
+	void spawnEndPopup();
 };
 
 class GameWindow : public QWidget {
@@ -130,7 +144,7 @@ class Game : public QWidget {
       public slots:
 	void gameEnd();
 
-	void gameStart();
+	virtual void gameStart();
 };
 
 #endif

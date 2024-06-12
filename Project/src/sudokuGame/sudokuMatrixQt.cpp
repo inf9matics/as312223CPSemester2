@@ -11,7 +11,7 @@ SudokuMatrixQt::SudokuMatrixQt() : gridLayout(this), SudokuMatrix() {
 	this->prepareCellsQt()->prepareSubMatricesQt()->prepareGridLayouts()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
 }
 
-SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix) : SudokuMatrix(sudokuMatrix) {
+SudokuMatrixQt::SudokuMatrixQt(SudokuMatrix sudokuMatrix) : gridLayout(this), SudokuMatrix(sudokuMatrix) {
 	this->displayName = "Sudoku";
 
 	this->prepareCellsQt()->prepareSubMatricesQt()->prepareGridLayouts()->styleLayout()->iterateOverSubMatrices([this](SudokuSubMatrix *sudokuSubMatrix) { sudokuSubMatrix->setParent(this); });
@@ -29,6 +29,18 @@ SudokuMatrixQt *SudokuMatrixQt::iterateOverSubMatricesQt(std::function<void(Sudo
 	}
 
 	return this;
+}
+
+SudokuMatrixQt &SudokuMatrixQt::operator=(const SudokuMatrix &sudokuMatrix) {
+	SudokuMatrix currentMatrix{sudokuMatrix};
+	this->iterateOverCellsQt([this, &currentMatrix](SudokuCellQt *sudokuCellQt) {
+		sudokuCellQt->setValue(currentMatrix.getCellAtPosition(sudokuCellQt->getPosition())->getValue());
+		if (currentMatrix.getCellAtPosition(sudokuCellQt->getPosition())->getLocked()) {
+			sudokuCellQt->lock();
+		}
+	});
+
+	return *this;
 }
 
 void SudokuMatrixQt::showGame() { this->showBoard(); }
@@ -124,6 +136,12 @@ SudokuMatrixQt *SudokuMatrixQt::styleCell(SudokuCellQt &sudokuCellQt) {
 
 	sudokuCellQt.setAlignment(this->cellAlignment);
 
+	if(sudokuCellQt.getLocked()) {
+		QFont font = sudokuCellQt.font();
+		font.setWeight(QFont::Bold);
+		sudokuCellQt.setFont(font);
+	}
+
 	return this;
 }
 
@@ -155,3 +173,9 @@ SudokuMatrixQt *SudokuMatrixQt::iterateOverCellsQt(std::function<void(SudokuCell
 SudokuCell *SudokuMatrixQt::getCellAtPosition(std::pair<int, int> position) { return this->cellsQt.at(position); }
 
 SudokuCellQt *SudokuMatrixQt::getCellQtAtPosition(std::pair<int, int> position) { return this->cellsQt.at(position); }
+
+void SudokuMatrixQt::checkIfWon() {
+	if (this->viable && this->filled) {
+		this->won = true;
+	}
+}

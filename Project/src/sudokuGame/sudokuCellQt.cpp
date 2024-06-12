@@ -26,6 +26,14 @@ SudokuCellQt &SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 
 	this->parityCells = cell.getParityCells();
 
+	this->locked = cell.getLocked();
+
+	if (this->value == 0) {
+		this->setText("");
+	} else {
+		this->setNum(this->value);
+	}
+
 	return *this;
 }
 
@@ -38,6 +46,14 @@ SudokuCellQt &SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 	this->viable = sudokuCellQt.viable;
 
 	this->parityCells = sudokuCellQt.parityCells;
+
+	this->locked = sudokuCellQt.locked;
+
+	if (this->value == 0) {
+		this->setText("");
+	} else {
+		this->setNum(this->value);
+	}
 
 	this->QLabel::setParent(sudokuCellQt.parentWidget());
 
@@ -66,7 +82,11 @@ SudokuCell *SudokuCellQt::setValue(int value, bool checkParity) {
 	if (!this->locked && (value <= this->parentMatrix->getSize())) {
 		this->SudokuCell::setValue(value, false);
 
-		this->setNum(value);
+		if (this->value == 0) {
+			this->setText("");
+		} else {
+			this->setNum(this->value);
+		}
 
 		if (checkParity && !this->parityCells.empty()) {
 			this->calledParity = true;
@@ -97,6 +117,7 @@ void SudokuCellQt::updateViableColor() {
 
 SudokuCellQt *SudokuCellQt::connectTasks() {
 	QObject::connect(this, SIGNAL(valueChanged()), this, SLOT(updateViableColor()));
+	QObject::connect(this, SIGNAL(valueChanged()), this->parentMatrixQt, SLOT(checkIfWon()));
 
 	QObject::connect(this, SIGNAL(clicked()), this->valueDialog, SLOT(showDialog()));
 
