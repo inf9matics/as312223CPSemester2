@@ -31,6 +31,18 @@ SudokuMatrixQt *SudokuMatrixQt::iterateOverSubMatricesQt(std::function<void(Sudo
 	return this;
 }
 
+SudokuMatrixQt &SudokuMatrixQt::operator=(const SudokuMatrix &sudokuMatrix) {
+	SudokuMatrix currentMatrix{sudokuMatrix};
+	this->iterateOverCellsQt([this, &currentMatrix](SudokuCellQt *sudokuCellQt) {
+		sudokuCellQt->setValue(currentMatrix.getCellAtPosition(sudokuCellQt->getPosition())->getValue());
+		if (currentMatrix.getCellAtPosition(sudokuCellQt->getPosition())->getLocked()) {
+			sudokuCellQt->lock();
+		}
+	});
+
+	return *this;
+}
+
 void SudokuMatrixQt::showGame() { this->showBoard(); }
 
 SudokuMatrixQt *SudokuMatrixQt::showBoard() {
@@ -123,6 +135,12 @@ SudokuMatrixQt *SudokuMatrixQt::styleCell(SudokuCellQt &sudokuCellQt) {
 	sudokuCellQt.setFixedSize(this->cellSize, this->cellSize);
 
 	sudokuCellQt.setAlignment(this->cellAlignment);
+
+	if(sudokuCellQt.getLocked()) {
+		QFont font = sudokuCellQt.font();
+		font.setWeight(QFont::Bold);
+		sudokuCellQt.setFont(font);
+	}
 
 	return this;
 }

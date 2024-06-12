@@ -31,6 +31,9 @@ SudokuFileHandler *SudokuFileHandler::setSudokuMatrixToFile(std::string filePath
 			if (this->sudokuMatrix->getCellAtPosition(std::pair<int, int>{i, j})->getLocked()) {
 				outputJson[std::to_string(i) + "," + std::to_string(j) + "_lock"] = true;
 			}
+            else {
+                outputJson[std::to_string(i) + "," + std::to_string(j) + "_lock"] = false;
+            }
 		}
 	}
 

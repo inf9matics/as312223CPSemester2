@@ -26,6 +26,10 @@ SudokuCellQt &SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 
 	this->parityCells = cell.getParityCells();
 
+	this->locked = cell.getLocked();
+
+	this->setNum(value);
+
 	return *this;
 }
 
@@ -38,6 +42,10 @@ SudokuCellQt &SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 	this->viable = sudokuCellQt.viable;
 
 	this->parityCells = sudokuCellQt.parityCells;
+
+	this->locked = sudokuCellQt.locked;
+
+	this->setNum(value);
 
 	this->QLabel::setParent(sudokuCellQt.parentWidget());
 

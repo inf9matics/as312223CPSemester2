@@ -64,6 +64,7 @@ class SudokuMatrixQt : public Game, public SudokuMatrix {
 	SudokuMatrixQt();
 	SudokuMatrixQt(SudokuMatrix sudokuMatrix);
 
+	SudokuMatrixQt &operator=(const SudokuMatrix &sudokuMatrix);
 	SudokuMatrixQt &operator=(const SudokuMatrixQt &sudokuMatrixQt);
 
 	SudokuMatrixQt *showCells();

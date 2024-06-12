@@ -31,16 +31,16 @@ GameLauncher *SudokuGame::prepareButtons() {
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(showGameWindow()));
 	this->generateMenuButton("Read board");
-	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(getBoardFromFile()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this->game, SLOT(gameStart()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(gameStartTime()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(showGameWindow()));
+	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(getBoardFromFile()));
 
 	this->gameWindow->generateMenuButton("Back to menu");
-	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(showGameLauncher()));
-	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(gameEndTime()));
+	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(showGameLauncher()));
+	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(gameEndTime()));
 	this->gameWindow->generateMenuButton("Regenerate board");
-	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
+	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
 	this->gameWindow->generateMenuButton("Write board");
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(setBoardToFile()));
 
@@ -58,7 +58,7 @@ void SudokuGame::regenerateGame() {
 	this->sudokuMatrixQt = sudokuMatrixQt;
 	this->game->setGameLauncher(this);
 
-	this->gameWindow->styleLayout();
+	this->gameWindow->layout()->addWidget(this->game);
 }
 
 void SudokuGame::setBoardToFile() {
@@ -75,13 +75,12 @@ void SudokuGame::getBoardFromFile() {
 	if (inputFilePath == "") {
 		return;
 	}
-	SudokuMatrixQt *sudokuMatrixQt;
-	sudokuMatrixQt = new SudokuMatrixQt{this->fileHandler.getSudokuMatrixFromFile(inputFilePath)};
 
 	delete this->game;
+	SudokuMatrixQt *sudokuMatrixQt = new SudokuMatrixQt{this->fileHandler.getSudokuMatrixFromFile(inputFilePath)};
 	this->game = sudokuMatrixQt;
 	this->sudokuMatrixQt = sudokuMatrixQt;
 	this->game->setGameLauncher(this);
 
-	this->gameWindow->styleLayout();
+	this->gameWindow->layout()->addWidget(this->game);
 }
