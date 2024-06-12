@@ -28,8 +28,6 @@ SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : GameLa
 
 	this->setWindowTitle("Sudoku");
 
-	QObject::connect(this->sudokuMatrixQt, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
-
 	this->gameWindow->styleLayout();
 }
 
