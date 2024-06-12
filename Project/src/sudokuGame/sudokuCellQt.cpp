@@ -97,6 +97,7 @@ void SudokuCellQt::updateViableColor() {
 
 SudokuCellQt *SudokuCellQt::connectTasks() {
 	QObject::connect(this, SIGNAL(valueChanged()), this, SLOT(updateViableColor()));
+	QObject::connect(this, SIGNAL(valueChanged()), this->parentMatrixQt, SLOT(checkIfWon()));
 
 	QObject::connect(this, SIGNAL(clicked()), this->valueDialog, SLOT(showDialog()));
 

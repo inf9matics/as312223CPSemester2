@@ -79,6 +79,7 @@ class SudokuMatrixQt : public Game, public SudokuMatrix {
 
       public slots:
 	void showGame();
+	void checkIfWon();
 };
 
 class SudokuSubMatrixQt : public QFrame {

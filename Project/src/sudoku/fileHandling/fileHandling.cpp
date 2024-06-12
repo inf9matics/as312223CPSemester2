@@ -10,10 +10,14 @@ SudokuMatrix SudokuFileHandler::getSudokuMatrixFromFile(std::string filePath) {
 	for (int i{0}; i < inputMatrix.getSize(); i++) {
 		for (int j{0}; j < inputMatrix.getSize(); j++) {
 			inputMatrix.getCellAtPosition(std::pair<int, int>{i, j})->setValue(inputJson.at(std::to_string(i) + "," + std::to_string(j)));
+
+			if (inputJson.at(std::to_string(i) + "," + std::to_string(j) + "_lock")) {
+				inputMatrix.getCellAtPosition(std::pair<int, int>{i, j})->lock();
+			}
 		}
 	}
 
-    return inputMatrix;
+	return inputMatrix;
 }
 
 SudokuFileHandler *SudokuFileHandler::setSudokuMatrixToFile(std::string filePath) {
@@ -23,13 +27,17 @@ SudokuFileHandler *SudokuFileHandler::setSudokuMatrixToFile(std::string filePath
 	for (int i{0}; i < this->sudokuMatrix->getSize(); i++) {
 		for (int j{0}; j < this->sudokuMatrix->getSize(); j++) {
 			outputJson[std::to_string(i) + "," + std::to_string(j)] = this->sudokuMatrix->getCellAtPosition(std::pair<int, int>{i, j})->getValue();
+
+			if (this->sudokuMatrix->getCellAtPosition(std::pair<int, int>{i, j})->getLocked()) {
+				outputJson[std::to_string(i) + "," + std::to_string(j) + "_lock"] = true;
+			}
 		}
 	}
 
-    std::ofstream outputFile;
-    outputFile.open(filePath);
-    outputFile << outputJson;
-    outputFile.close();
+	std::ofstream outputFile;
+	outputFile.open(filePath);
+	outputFile << outputJson;
+	outputFile.close();
 
 	return this;
 }

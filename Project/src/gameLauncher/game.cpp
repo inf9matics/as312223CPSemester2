@@ -15,6 +15,9 @@ void Game::gameStart() {
 Game *Game::setGameLauncher(GameLauncher *gameLauncher) {
 	this->gameLauncher = gameLauncher;
     this->QWidget::setParent(this->gameLauncher->getGameWindow());
+
+	QObject::connect(this, SIGNAL(gameStarted()), gameLauncher, SLOT(gameStartTime()));
+
 	return this;
 }
 

@@ -6,7 +6,7 @@ GameLauncher::~GameLauncher() {
 	this->iterateOverMenuButtons([](QPushButton *menuButton) { delete menuButton; });
 }
 
-GameLauncher::GameLauncher(QWidget *parent) : QMainWindow(parent), game(new Game{this}), gameWindow(new GameWindow{this}), menuBar(new QWidget{this}) {
+GameLauncher::GameLauncher(QWidget *parent) : QMainWindow(parent), endPopup(new QWidget{this}), game(new Game{this}), gameWindow(new GameWindow{this}), menuBar(new QWidget{this}) {
 	this->menuBar->setLayout(&this->menuButtonsLayout);
 
 	this->prepareButtons();
@@ -26,6 +26,8 @@ GameLauncher *GameLauncher::iterateOverMenuButtons(std::function<void(QPushButto
 }
 
 GameLauncher *GameLauncher::styleLayout() {
+	this->endPopup->hide();
+
 	this->menuButtonsLayout.setSpacing(0);
 	this->menuButtonsLayout.setContentsMargins({0, 0, 0, 0});
 
@@ -75,4 +77,23 @@ GameLauncher *GameLauncher::generateMenuButton(std::string label) {
 	this->menuButtons.back()->setFixedSize({this->menuButtonWidth, this->menuButtonHeight});
 
 	return this;
+}
+
+void GameLauncher::gameStartTime() { this->gameStartTimePoint = std::chrono::steady_clock::now(); }
+
+void GameLauncher::gameEndTime() {
+	this->gameEndTimePoint = std::chrono::steady_clock::now();
+
+	this->gameDuration = std::chrono::duration_cast<std::chrono::milliseconds>(this->gameEndTimePoint - this->gameStartTimePoint);
+}
+
+void GameLauncher::spawnEndPopup() {
+	this->setWindowFlags(Qt::Popup);
+	this->endPopupLabel = new QLabel{this->endPopup};
+
+	std::string resultTime{std::to_string(std::chrono::duration_cast<std::chrono::seconds>(this->gameDuration).count())};
+	this->endPopupLabel->setText(QString::fromStdString("You've completed the board after " + resultTime + " seconds"));
+
+	this->endPopup->move(this->geometry().center());
+	this->endPopup->show();
 }

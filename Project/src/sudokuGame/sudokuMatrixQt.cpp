@@ -155,3 +155,9 @@ SudokuMatrixQt *SudokuMatrixQt::iterateOverCellsQt(std::function<void(SudokuCell
 SudokuCell *SudokuMatrixQt::getCellAtPosition(std::pair<int, int> position) { return this->cellsQt.at(position); }
 
 SudokuCellQt *SudokuMatrixQt::getCellQtAtPosition(std::pair<int, int> position) { return this->cellsQt.at(position); }
+
+void SudokuMatrixQt::checkIfWon() {
+	if (this->viable && this->filled) {
+		this->won = true;
+	}
+}

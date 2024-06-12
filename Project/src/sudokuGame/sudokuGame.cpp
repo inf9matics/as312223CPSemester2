@@ -27,10 +27,13 @@ SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : GameLa
 GameLauncher *SudokuGame::prepareButtons() {
 	this->generateMenuButton("Start game");
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this->game, SLOT(gameStart()));
+	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this->game, SLOT(gameStartTime()));
+	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(showGameWindow()));
 
 	this->gameWindow->generateMenuButton("Back to menu");
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(showGameLauncher()));
+	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(gameEndTime()));
 	this->gameWindow->generateMenuButton("Regenerate board");
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
 	this->gameWindow->generateMenuButton("Read board");
@@ -39,6 +42,8 @@ GameLauncher *SudokuGame::prepareButtons() {
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(setBoardToFile()));
 
 	this->gameWindow->addFinalStretch();
+
+	QObject::connect(this->game, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
 
 	return this;
 }
