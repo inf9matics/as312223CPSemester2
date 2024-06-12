@@ -136,7 +136,7 @@ SudokuMatrixQt *SudokuMatrixQt::styleCell(SudokuCellQt &sudokuCellQt) {
 
 	sudokuCellQt.setAlignment(this->cellAlignment);
 
-	if(sudokuCellQt.getLocked()) {
+	if (sudokuCellQt.getLocked()) {
 		QFont font = sudokuCellQt.font();
 		font.setWeight(QFont::Bold);
 		sudokuCellQt.setFont(font);
@@ -178,7 +178,7 @@ void SudokuMatrixQt::checkIfWon() {
 	if (this->viable && this->filled) {
 		this->won = true;
 
-		emit gameEnded();
+		this->gameEnd();
 	}
 }
 

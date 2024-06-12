@@ -24,13 +24,6 @@ class GameLauncher : public QMainWindow {
 	GameWindow *gameWindow;
 	Game *game;
 
-	QWidget *endPopup;
-	QLabel *endPopupLabel;
-
-	std::chrono::steady_clock::time_point gameStartTimePoint;
-	std::chrono::steady_clock::time_point gameEndTimePoint;
-	std::chrono::milliseconds gameDuration;
-
 	QWidget *menuBar;
 	std::vector<QPushButton *> menuButtons;
 	QVBoxLayout menuButtonsLayout;
@@ -57,11 +50,6 @@ class GameLauncher : public QMainWindow {
 	void showGameWindow();
 
 	void showGameLauncher();
-
-	void gameStartTime();
-	void gameEndTime();
-
-	void spawnEndPopup();
 };
 
 class GameWindow : public QWidget {
@@ -119,6 +107,13 @@ class Game : public QWidget {
       protected:
 	std::string displayName{"Generic Game"};
 
+	QWidget *endPopup;
+	QLabel *endPopupLabel;
+
+	std::chrono::steady_clock::time_point gameStartTimePoint;
+	std::chrono::steady_clock::time_point gameEndTimePoint;
+	std::chrono::milliseconds gameDuration;
+
       protected:
 	GameLauncher *gameLauncher;
 
@@ -139,12 +134,13 @@ class Game : public QWidget {
 
       signals:
 	void gameEnded();
-
 	void gameStarted();
 
       public slots:
 	void gameEnd();
-
+	void spawnEndPopup();
+	void gameStartTime();
+	void gameEndTime();
 	virtual void gameStart();
 };
 
