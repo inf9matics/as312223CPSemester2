@@ -227,6 +227,7 @@ class SudokuGame : public GameLauncher {
 	SudokuFileHandler fileHandler;
 
 	QSlider *gameVarianceSlider;
+	QSlider *gameSizeSlider;
 
       public:
 	SudokuGame(QWidget *parent = nullptr);
@@ -236,7 +237,6 @@ class SudokuGame : public GameLauncher {
 
       public slots:
 	void regenerateGame();
-
 	void setBoardToFile();
 	void getBoardFromFile();
 };

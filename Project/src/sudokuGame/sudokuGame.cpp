@@ -5,7 +5,7 @@
 SudokuGame::~SudokuGame() {}
 
 SudokuGame::SudokuGame(QWidget *parent) : GameLauncher(parent) {
-	SudokuMatrixQt *sudokuMatrixQt = new SudokuMatrixQt{};
+	SudokuMatrixQt *sudokuMatrixQt = new SudokuMatrixQt{3};
 	this->game = sudokuMatrixQt;
 	this->sudokuMatrixQt = sudokuMatrixQt;
 	this->game->setGameLauncher(this);
@@ -34,18 +34,15 @@ SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : GameLa
 GameLauncher *SudokuGame::prepareButtons() {
 	this->generateMenuButton("Start game");
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this->game, SLOT(gameStart()));
-	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(gameStartTime()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(showGameWindow()));
 	this->generateMenuButton("Read board");
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this->game, SLOT(gameStart()));
-	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(gameStartTime()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(showGameWindow()));
 	QObject::connect(this->menuButtons.back(), SIGNAL(clicked()), this, SLOT(getBoardFromFile()));
 
 	this->gameWindow->generateMenuButton("Back to menu");
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(showGameLauncher()));
-	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(gameEndTime()));
 	this->gameWindow->generateMenuButton("Regenerate board");
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
 	this->gameWindow->generateMenuButton("Write board");
@@ -53,26 +50,34 @@ GameLauncher *SudokuGame::prepareButtons() {
 
 	this->gameWindow->addFinalStretch();
 
+	this->gameSizeSlider = new QSlider{Qt::Horizontal, this->gameWindow->menuBar};
+	this->gameSizeSlider->setMinimum(3);
+	this->gameSizeSlider->setMaximum(6);
+	this->gameSizeSlider->setValue(3);
+	this->gameWindow->menuBarLayout.addWidget(this->gameSizeSlider, 0, Qt::AlignRight);
+	this->gameSizeSlider->setFixedWidth(this->gameWindow->menuButtonWidthPerLetter * 6);
+	this->gameSizeSlider->setFixedHeight(this->gameWindow->menuButtonHeight);
+
 	this->gameVarianceSlider = new QSlider{Qt::Horizontal, this->gameWindow->menuBar};
 	this->gameVarianceSlider->setMinimum(0);
-	this->gameVarianceSlider->setMaximum(std::pow(this->sudokuMatrixQt->SudokuMatrix::getSize(), 2));
-	this->gameVarianceSlider->setValue((std::pow(this->sudokuMatrixQt->SudokuMatrix::getSize(), 2) * 3) / 4);
+	this->gameVarianceSlider->setMaximum(100);
+	this->gameVarianceSlider->setValue(75);
 	this->gameWindow->menuBarLayout.addWidget(this->gameVarianceSlider, 0, Qt::AlignRight);
-	this->gameVarianceSlider->setFixedWidth(this->gameWindow->menuButtonWidthPerLetter * 12);
+	this->gameVarianceSlider->setFixedWidth(this->gameWindow->menuButtonWidthPerLetter * 8);
 	this->gameVarianceSlider->setFixedHeight(this->gameWindow->menuButtonHeight);
 
-	QObject::connect(this->game, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
+	QObject::connect(this->game, SIGNAL(gameEnded()), this->game, SLOT(spawnEndPopup()));
 
 	return this;
 }
 
 void SudokuGame::regenerateGame() {
-	SudokuMatrix matrixToSolve;
+	SudokuMatrix matrixToSolve{this->gameSizeSlider->value()};
 
 	SudokuBacksolver backsolver{&matrixToSolve};
 	backsolver.solveMatrix();
 
-	matrixToSolve.removeNumberOfCells(this->gameVarianceSlider->value());
+	matrixToSolve.removeNumberOfCells((double)((double)this->gameVarianceSlider->value() / (double)100) * std::pow(matrixToSolve.getSize(), 2));
 	matrixToSolve.lockFilled();
 
 	delete this->game;
@@ -82,6 +87,9 @@ void SudokuGame::regenerateGame() {
 	this->game->setGameLauncher(this);
 
 	this->gameWindow->layout()->addWidget(this->game);
+
+	this->gameWindow->setSize();
+	this->setFixedSize(this->gameWindow->size());
 }
 
 void SudokuGame::setBoardToFile() {

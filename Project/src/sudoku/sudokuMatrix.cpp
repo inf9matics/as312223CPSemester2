@@ -185,15 +185,15 @@ bool SudokuMatrix::checkFilled() {
 }
 
 SudokuMatrix *SudokuMatrix::removeNumberOfCells(int numberOfCells) {
-	for (int i{0}; i < numberOfCells; i++) {
-		int randX = std::rand() % this->size;
-		int randY = std::rand() % this->size;
+	std::vector<std::pair<int, int>> existingCells;
+	this->iterateOverCells([&existingCells](SudokuCell *sudokuCell) { existingCells.push_back(sudokuCell->getPosition()); });
 
-		if (this->getCellAtPosition({randX, randY})->getValue() == 0) {
-			i--;
-		} else {
-			this->getCellAtPosition({randX, randY})->setValue(0);
-		}
+	for (int i{0}; (i < numberOfCells) && (!existingCells.empty()); i++) {
+		std::vector<std::pair<int, int>>::iterator randIterator = existingCells.begin();
+		std::advance(randIterator, (std::rand() % existingCells.size()));
+		std::pair<int, int> positionToRemove{*randIterator};
+		this->getCellAtPosition(positionToRemove)->setValue(0);
+		existingCells.erase(randIterator);
 	}
 
 	return this;

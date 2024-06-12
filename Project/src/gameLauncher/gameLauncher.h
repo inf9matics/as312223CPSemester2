@@ -67,9 +67,6 @@ class GameWindow : public QWidget {
 
 	GameWindow *prepareButtons();
 
-	friend GameLauncher;
-	GameWindow *setSize();
-
       public:
 	GameWindow(GameLauncher *gameLauncher);
 
@@ -91,6 +88,8 @@ class GameWindow : public QWidget {
 	GameWindow *generateMenuButton(std::string label);
 
 	GameWindow *addFinalStretch();
+
+	GameWindow *setSize();
 
 	void show();
 
