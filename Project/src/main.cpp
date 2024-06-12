@@ -9,6 +9,8 @@
 #include "sudokuGame.h"
 
 int main(int argc, char *argv[]) {
+	srand(time(NULL));
+
 	QApplication qtApp{argc, argv};
 
 	SudokuMatrixQt *sudokuBoard = new SudokuMatrixQt{};

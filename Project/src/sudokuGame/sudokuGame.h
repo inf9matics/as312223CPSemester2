@@ -14,6 +14,7 @@
 #include "fileHandling.h"
 #include "gameLauncher.h"
 #include "sudoku.h"
+#include "backsolver.h"
 
 class SudokuCellQt;
 

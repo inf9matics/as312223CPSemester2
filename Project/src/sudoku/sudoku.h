@@ -5,6 +5,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <random>
 
 class SudokuMatrixMasked;
 
@@ -57,8 +58,10 @@ class SudokuMatrix {
 	bool getViable();
 
 	bool checkFilledAtPosition(std::pair<int, int> position);
-	bool checkFilled();
+	virtual bool checkFilled();
 	bool getFilled();
+
+	SudokuMatrix *removeNoisyNumberOfCells(int numberOfCells);
 
 	SudokuMatrix *iterateOverCells(std::function<void(SudokuCell *)> function);
 	SudokuMatrix *iterateOverSubMatrices(std::function<void(SudokuSubMatrix *)> function);

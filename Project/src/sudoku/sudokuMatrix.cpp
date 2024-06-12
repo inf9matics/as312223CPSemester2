@@ -175,13 +175,33 @@ bool SudokuMatrix::getViable() { return this->viable; }
 bool SudokuMatrix::checkFilled() {
 	bool filled{true};
 	this->iterateOverCells([&filled](SudokuCell *sudokuCell) {
-		if (filled && sudokuCell->getValue() > 0) {
+		if (filled && sudokuCell->getValue() == 0) {
 			filled = false;
 		}
 	});
 
 	this->filled = filled;
 	return this->filled;
+}
+
+SudokuMatrix *SudokuMatrix::removeNoisyNumberOfCells(int numberOfCells) {
+	int variance{this->subMatrixSize};
+
+	int removeNumber = numberOfCells;
+	removeNumber += (std::rand() % (variance * 2)) - variance;
+	for(int i{0}; i < removeNumber; i++) {
+		int randX = std::rand() % this->size;
+		int randY = std::rand() % this->size;
+
+		if(this->getCellAtPosition({randX, randY})->getValue() == 0) {
+			i--;
+		}
+		else {
+			this->getCellAtPosition({randX, randY})->setValue(0);
+		}
+	}
+
+	return this;
 }
 
 bool SudokuMatrix::checkFilledAtPosition(std::pair<int, int> position) {
@@ -248,8 +268,8 @@ std::pair<int, int> SudokuMatrix::findEmptyPosition() {
 		for (int j{0}; j < this->getSize(); j++) {
 			if (this->getCellAtPosition({i, j})->getValue() == 0) {
 				position = {i, j};
-				i = this->getSize();
-				j = this->getSize();
+				
+				return position;
 			}
 		}
 	}

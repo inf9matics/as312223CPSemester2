@@ -39,8 +39,6 @@ SudokuMatrixMasked::SudokuMatrixMasked(SudokuMatrixMasked &&sudokuMatrixMasked) 
 SudokuMatrixMasked::SudokuMatrixMasked(const SudokuMatrixMasked &sudokuMatrixMasked) : SudokuMatrix(*sudokuMatrixMasked.parentMatrix), cells{sudokuMatrixMasked.cells} { *this = sudokuMatrixMasked; }
 
 SudokuMatrixMasked &SudokuMatrixMasked::operator=(const SudokuMatrixMasked &sudokuMatrixMasked) {
-	(*this) = sudokuMatrixMasked;
-
 	this->cells = sudokuMatrixMasked.cells;
 	this->cellsMasked = sudokuMatrixMasked.cellsMasked;
 	this->iterateOverCellsMasked([this](SudokuCell *sudokuCell) { sudokuCell->setParent(this); });
@@ -87,6 +85,18 @@ SudokuCell *SudokuMatrixMasked::setValueAt(std::pair<int, int> position, int val
 	}
 
 	return cell->setValue(value);
+}
+
+bool SudokuMatrixMasked::checkFilled() {
+	bool filled{true};
+	this->iterateOverCellsMasked([&filled](SudokuCell *sudokuCell) {
+		if (filled && sudokuCell->getValue() == 0) {
+			filled = false;
+		}
+	});
+
+	this->filled = filled;
+	return this->filled;
 }
 
 SudokuCell *SudokuMatrixMasked::getCellAtPosition(std::pair<int, int> position) { return this->cellsMasked.at(position); }

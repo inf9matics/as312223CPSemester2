@@ -47,6 +47,8 @@ SudokuCell *SudokuCell::setValue(int value, bool checkParity) {
 		this->setViable(this->parentMatrix->checkViableAtPosition(this->position));
 		this->parentMatrix->checkFilledAtPosition(this->position);
 
+		this->parentMatrix->checkFilled();
+
 		this->parentMatrix->updateViableFromCellPosition(this->position);
 	}
 

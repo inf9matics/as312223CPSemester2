@@ -52,8 +52,15 @@ GameLauncher *SudokuGame::prepareButtons() {
 }
 
 void SudokuGame::regenerateGame() {
+	SudokuMatrix matrixToSolve;
+
+	SudokuBacksolver backsolver{&matrixToSolve};
+	backsolver.solveMatrix();
+
+	matrixToSolve.removeNoisyNumberOfCells(matrixToSolve.getSize() * matrixToSolve.getSubMatrixSize() * 1.5);
+
 	delete this->game;
-	SudokuMatrixQt *sudokuMatrixQt = new SudokuMatrixQt{};
+	SudokuMatrixQt *sudokuMatrixQt = new SudokuMatrixQt{matrixToSolve};
 	this->game = sudokuMatrixQt;
 	this->sudokuMatrixQt = sudokuMatrixQt;
 	this->game->setGameLauncher(this);

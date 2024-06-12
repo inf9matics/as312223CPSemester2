@@ -28,7 +28,11 @@ SudokuCellQt &SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 
 	this->locked = cell.getLocked();
 
-	this->setNum(value);
+	if (this->value == 0) {
+		this->setText("");
+	} else {
+		this->setNum(this->value);
+	}
 
 	return *this;
 }
@@ -45,7 +49,11 @@ SudokuCellQt &SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 
 	this->locked = sudokuCellQt.locked;
 
-	this->setNum(value);
+	if (this->value == 0) {
+		this->setText("");
+	} else {
+		this->setNum(this->value);
+	}
 
 	this->QLabel::setParent(sudokuCellQt.parentWidget());
 
@@ -74,7 +82,11 @@ SudokuCell *SudokuCellQt::setValue(int value, bool checkParity) {
 	if (!this->locked && (value <= this->parentMatrix->getSize())) {
 		this->SudokuCell::setValue(value, false);
 
-		this->setNum(value);
+		if (this->value == 0) {
+			this->setText("");
+		} else {
+			this->setNum(this->value);
+		}
 
 		if (checkParity && !this->parityCells.empty()) {
 			this->calledParity = true;
