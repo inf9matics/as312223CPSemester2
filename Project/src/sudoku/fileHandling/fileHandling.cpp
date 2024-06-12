@@ -6,7 +6,15 @@ SudokuFileHandler::SudokuFileHandler() {}
 
 SudokuMatrix SudokuFileHandler::getSudokuMatrixFromFile(std::string filePath) {
 	std::ifstream inputFile{filePath};
-	nlohmann::json inputJson = nlohmann::json::parse(inputFile);
+	nlohmann::json inputJson;
+	try {
+		inputJson = nlohmann::json::parse(inputFile);
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << "\n";
+		SudokuMatrix sudokuMatrix{};
+
+		return sudokuMatrix;
+	}
 
 	SudokuMatrix inputMatrix{inputJson.at("sudokuSubMatrixSize")};
 	for (int i{0}; i < inputMatrix.getSize(); i++) {
@@ -24,6 +32,17 @@ SudokuMatrix SudokuFileHandler::getSudokuMatrixFromFile(std::string filePath) {
 				}
 			} catch (const std::exception &e) {
 				std::cerr << e.what() << "\n ";
+			}
+
+			try {
+				if (inputJson.at(std::to_string(i) + "," + std::to_string(j) + "_parityCellsPresent")) {
+					int parityCellsAmount = inputJson.at(std::to_string(i) + "," + std::to_string(j) + "_parityCellsAmount");
+					for (int k{0}; k < parityCellsAmount; k++) {
+						inputMatrix.getCellAtPosition(std::pair<int, int>{i, j})->addParityCell(inputJson.at(std::to_string(i) + "," + std::to_string(j) + "_parityCells_" + std::to_string(k)));
+					}
+				}
+			} catch (const std::exception &e) {
+				std::cerr << e.what() << "\n";
 			}
 		}
 	}
@@ -44,12 +63,22 @@ SudokuFileHandler *SudokuFileHandler::setSudokuMatrixToFile(std::string filePath
 			} else {
 				outputJson[std::to_string(i) + "," + std::to_string(j) + "_lock"] = false;
 			}
+
+			if (this->sudokuMatrix->getCellAtPosition(std::pair<int, int>{i, j})->getParityCells().size() > 0) {
+				outputJson[std::to_string(i) + "," + std::to_string(j) + "_parityCellsPresent"] = true;
+				outputJson[std::to_string(i) + "," + std::to_string(j) + "_parityCellsAmount"] = this->sudokuMatrix->getCellAtPosition(std::pair<int, int>{i, j})->getParityCells().size();
+				for (int k{0}; k < this->sudokuMatrix->getCellAtPosition(std::pair<int, int>{i, j})->getParityCells().size(); k++) {
+					outputJson[std::to_string(i) + "," + std::to_string(j) + "_parityCells_" + std::to_string(k)] = this->sudokuMatrix->getCellAtPosition(std::pair<int, int>{i, j})->getParityCells().at(k);
+				}
+			} else {
+				outputJson[std::to_string(i) + "," + std::to_string(j) + "_parityCellsPresent"] = false;
+			}
 		}
 	}
 
 	std::ofstream outputFile;
 	outputFile.open(filePath);
-	outputFile << outputJson;
+	outputFile << std::setw(4) << outputJson;
 	outputFile.close();
 
 	return this;
