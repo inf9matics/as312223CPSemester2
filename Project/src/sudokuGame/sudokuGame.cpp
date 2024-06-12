@@ -21,6 +21,8 @@ SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : GameLa
 	this->prepareButtons();
 	this->setSize();
 
+	QObject::connect(this->sudokuMatrixQt, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
+
 	this->gameWindow->styleLayout();
 }
 
@@ -57,7 +59,9 @@ void SudokuGame::regenerateGame() {
 	SudokuBacksolver backsolver{&matrixToSolve};
 	backsolver.solveMatrix();
 
-	matrixToSolve.removeNoisyNumberOfCells(matrixToSolve.getSize() * matrixToSolve.getSubMatrixSize() * 1.5);
+	matrixToSolve.removeNoisyNumberOfCells(matrixToSolve.getSize() * matrixToSolve.getSubMatrixSize() * 2);
+	// matrixToSolve.removeNoisyNumberOfCells(1);
+	matrixToSolve.lockFilled();
 
 	delete this->game;
 	SudokuMatrixQt *sudokuMatrixQt = new SudokuMatrixQt{matrixToSolve};

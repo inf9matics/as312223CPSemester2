@@ -177,5 +177,19 @@ SudokuCellQt *SudokuMatrixQt::getCellQtAtPosition(std::pair<int, int> position) 
 void SudokuMatrixQt::checkIfWon() {
 	if (this->viable && this->filled) {
 		this->won = true;
+
+		emit gameEnded();
 	}
+}
+
+bool SudokuMatrixQt::checkFilled() {
+	bool filled{true};
+	this->iterateOverCellsQt([&filled](SudokuCellQt *sudokuCellQt) {
+		if (filled && sudokuCellQt->getValue() == 0) {
+			filled = false;
+		}
+	});
+
+	this->filled = filled;
+	return this->filled;
 }
