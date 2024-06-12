@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "fileHandling.h"
 
 SudokuFileHandler::SudokuFileHandler() {}
@@ -9,10 +11,19 @@ SudokuMatrix SudokuFileHandler::getSudokuMatrixFromFile(std::string filePath) {
 	SudokuMatrix inputMatrix{inputJson.at("sudokuSubMatrixSize")};
 	for (int i{0}; i < inputMatrix.getSize(); i++) {
 		for (int j{0}; j < inputMatrix.getSize(); j++) {
-			inputMatrix.getCellAtPosition(std::pair<int, int>{i, j})->setValue(inputJson.at(std::to_string(i) + "," + std::to_string(j)));
+			try {
+				inputMatrix.getCellAtPosition(std::pair<int, int>{i, j})->setValue(inputJson.at(std::to_string(i) + "," + std::to_string(j)));
+			} catch (const std::exception &e) {
+				std::cerr << e.what() << "\n";
+				inputMatrix.getCellAtPosition(std::pair<int, int>{i, j})->setValue(0);
+			}
 
-			if (inputJson.at(std::to_string(i) + "," + std::to_string(j) + "_lock")) {
-				inputMatrix.getCellAtPosition(std::pair<int, int>{i, j})->lock();
+			try {
+				if (inputJson.at(std::to_string(i) + "," + std::to_string(j) + "_lock")) {
+					inputMatrix.getCellAtPosition(std::pair<int, int>{i, j})->lock();
+				}
+			} catch (const std::exception &e) {
+				std::cerr << e.what() << "\n ";
 			}
 		}
 	}
@@ -30,10 +41,9 @@ SudokuFileHandler *SudokuFileHandler::setSudokuMatrixToFile(std::string filePath
 
 			if (this->sudokuMatrix->getCellAtPosition(std::pair<int, int>{i, j})->getLocked()) {
 				outputJson[std::to_string(i) + "," + std::to_string(j) + "_lock"] = true;
+			} else {
+				outputJson[std::to_string(i) + "," + std::to_string(j) + "_lock"] = false;
 			}
-            else {
-                outputJson[std::to_string(i) + "," + std::to_string(j) + "_lock"] = false;
-            }
 		}
 	}
 

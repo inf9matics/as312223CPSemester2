@@ -10,6 +10,8 @@ SudokuGame::SudokuGame(QWidget *parent) : GameLauncher(parent) {
 	this->prepareButtons();
 	this->setSize();
 
+	this->setWindowTitle("Sudoku");
+
 	this->gameWindow->styleLayout();
 }
 
@@ -20,6 +22,8 @@ SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : GameLa
 
 	this->prepareButtons();
 	this->setSize();
+
+	this->setWindowTitle("Sudoku");
 
 	QObject::connect(this->sudokuMatrixQt, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
 
@@ -46,6 +50,8 @@ GameLauncher *SudokuGame::prepareButtons() {
 	this->gameWindow->generateMenuButton("Write board");
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(setBoardToFile()));
 
+	this->gameWindow->addFinalStretch();
+
 	this->gameVarianceSlider = new QSlider{Qt::Horizontal, this->gameWindow->menuBar};
 	this->gameVarianceSlider->setMinimum(0);
 	this->gameVarianceSlider->setMaximum(std::pow(this->sudokuMatrixQt->SudokuMatrix::getSize(), 2));
@@ -53,10 +59,6 @@ GameLauncher *SudokuGame::prepareButtons() {
 	this->gameWindow->menuBarLayout.addWidget(this->gameVarianceSlider, 0, Qt::AlignRight);
 	this->gameVarianceSlider->setFixedWidth(this->gameWindow->menuButtonWidthPerLetter * 12);
 	this->gameVarianceSlider->setFixedHeight(this->gameWindow->menuButtonHeight);
-	QObject::connect(this->gameWindow, SLOT(show()), this->gameVarianceSlider, SLOT(show()));
-	QObject::connect(this->gameWindow, SLOT(hide()), this->gameVarianceSlider, SLOT(hide()));
-
-	// this->gameWindow->addFinalStretch();
 
 	QObject::connect(this->game, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
 
@@ -82,7 +84,7 @@ void SudokuGame::regenerateGame() {
 }
 
 void SudokuGame::setBoardToFile() {
-	std::string outputFilePath = QFileDialog::getSaveFileName(this, "Save to file").toStdString();
+	std::string outputFilePath = QFileDialog::getSaveFileName(this, "Save to file", "", "*.json").toStdString();
 	if (outputFilePath == "") {
 		return;
 	}
@@ -91,7 +93,7 @@ void SudokuGame::setBoardToFile() {
 }
 
 void SudokuGame::getBoardFromFile() {
-	std::string inputFilePath = QFileDialog::getOpenFileName(this, "Save to file").toStdString();
+	std::string inputFilePath = QFileDialog::getOpenFileName(this, "Read from file", "", "*.json").toStdString();
 	if (inputFilePath == "") {
 		return;
 	}
