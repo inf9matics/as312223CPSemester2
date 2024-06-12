@@ -10,6 +10,8 @@ SudokuGame::SudokuGame(QWidget *parent) : GameLauncher(parent) {
 	this->prepareButtons();
 	this->setSize();
 
+	this->setWindowTitle("Sudoku");
+
 	this->gameWindow->styleLayout();
 }
 
@@ -20,6 +22,8 @@ SudokuGame::SudokuGame(SudokuMatrixQt *sudokuMatrixQt, QWidget *parent) : GameLa
 
 	this->prepareButtons();
 	this->setSize();
+
+	this->setWindowTitle("Sudoku");
 
 	QObject::connect(this->sudokuMatrixQt, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
 
@@ -45,6 +49,8 @@ GameLauncher *SudokuGame::prepareButtons() {
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(regenerateGame()));
 	this->gameWindow->generateMenuButton("Write board");
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(setBoardToFile()));
+
+	this->gameWindow->addFinalStretch();
 
 	this->gameVarianceSlider = new QSlider{Qt::Horizontal, this->gameWindow->menuBar};
 	this->gameVarianceSlider->setMinimum(0);
