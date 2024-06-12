@@ -184,12 +184,8 @@ bool SudokuMatrix::checkFilled() {
 	return this->filled;
 }
 
-SudokuMatrix *SudokuMatrix::removeNoisyNumberOfCells(int numberOfCells) {
-	int variance{this->subMatrixSize};
-
-	int removeNumber = numberOfCells;
-	removeNumber += (std::rand() % (variance * 2)) - variance;
-	for (int i{0}; i < removeNumber; i++) {
+SudokuMatrix *SudokuMatrix::removeNumberOfCells(int numberOfCells) {
+	for (int i{0}; i < numberOfCells; i++) {
 		int randX = std::rand() % this->size;
 		int randY = std::rand() % this->size;
 
