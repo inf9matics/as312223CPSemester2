@@ -57,6 +57,8 @@ class SudokuMatrix {
 	bool checkViable();
 	bool getViable();
 
+	SudokuMatrix *lockFilled();
+
 	bool checkFilledAtPosition(std::pair<int, int> position);
 	virtual bool checkFilled();
 	bool getFilled();

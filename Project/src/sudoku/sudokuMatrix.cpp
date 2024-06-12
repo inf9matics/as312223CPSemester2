@@ -189,14 +189,13 @@ SudokuMatrix *SudokuMatrix::removeNoisyNumberOfCells(int numberOfCells) {
 
 	int removeNumber = numberOfCells;
 	removeNumber += (std::rand() % (variance * 2)) - variance;
-	for(int i{0}; i < removeNumber; i++) {
+	for (int i{0}; i < removeNumber; i++) {
 		int randX = std::rand() % this->size;
 		int randY = std::rand() % this->size;
 
-		if(this->getCellAtPosition({randX, randY})->getValue() == 0) {
+		if (this->getCellAtPosition({randX, randY})->getValue() == 0) {
 			i--;
-		}
-		else {
+		} else {
 			this->getCellAtPosition({randX, randY})->setValue(0);
 		}
 	}
@@ -223,6 +222,16 @@ bool SudokuMatrix::checkFilledAtPosition(std::pair<int, int> position) {
 	}
 
 	return this->filled;
+}
+
+SudokuMatrix *SudokuMatrix::lockFilled() {
+	this->iterateOverCells([](SudokuCell *sudokuCell) {
+		if (sudokuCell->getValue() > 0) {
+			sudokuCell->lock();
+		}
+	});
+
+	return this;
 }
 
 bool SudokuMatrix::getFilled() { return this->filled; }
@@ -268,7 +277,7 @@ std::pair<int, int> SudokuMatrix::findEmptyPosition() {
 		for (int j{0}; j < this->getSize(); j++) {
 			if (this->getCellAtPosition({i, j})->getValue() == 0) {
 				position = {i, j};
-				
+
 				return position;
 			}
 		}
