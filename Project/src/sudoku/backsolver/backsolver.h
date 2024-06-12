@@ -34,16 +34,18 @@ class SudokuMatrixMasked : public SudokuMatrix {
 
 	SudokuMatrixMasked *iterateOverCellsMasked(std::function<void(SudokuCell *)> function);
 	SudokuMatrix getSudokuMatrix();
+
+	bool checkFilled();
 };
 
 class SudokuBacksolver {
       protected:
-	SudokuMatrix sudokuMatrix;
+	SudokuMatrix *sudokuMatrix;
 
 	std::pair<bool, SudokuMatrix *> recurseSolveMatrix(SudokuMatrixMasked &sudokuMaskedMatrix);
 
       public:
-	SudokuBacksolver(SudokuMatrix &sudokuMatrix);
+	SudokuBacksolver(SudokuMatrix *sudokuMatrix);
 
 	std::pair<bool, SudokuMatrix> solveMatrix();
 };

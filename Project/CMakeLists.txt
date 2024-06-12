@@ -5,10 +5,14 @@ qt_standard_project_setup()
 
 add_subdirectory(src/gameLauncher)
 add_subdirectory(src/sudoku)
-add_subdirectory(src/sudokuQt)
+add_subdirectory(src/sudokuGame)
 
-qt_add_executable(sudokuGame src/main.cpp)
-target_link_libraries(sudokuGame PRIVATE sudokuQt gameLauncher Qt6::Core Qt6::Widgets)
-target_link_libraries(sudokuGame PRIVATE sudoku sudoku_backsolver)
+set(PROJECT_SOURCES src/main.cpp)
 
-target_include_directories(sudokuGame INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+qt_add_executable(project ${PROJECT_SOURCES})
+target_link_libraries(project PRIVATE Qt6::Core Qt6::Widgets)
+target_link_libraries(project PRIVATE sudoku sudoku_backsolver)
+target_link_libraries(project PRIVATE gameLauncher)
+target_link_libraries(project PRIVATE sudokuGame)
+
+target_include_directories(project PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

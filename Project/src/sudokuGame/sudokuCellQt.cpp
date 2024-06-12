@@ -1,4 +1,4 @@
-#include "sudokuQt.h"
+#include "sudokuGame.h"
 
 SudokuCellQt::~SudokuCellQt() {}
 
@@ -14,7 +14,7 @@ SudokuCellQt::SudokuCellQt(const SudokuCellQt &sudokuCellQt) : SudokuCell(sudoku
 	this->connectTasks();
 }
 
-SudokuCellQt *SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
+SudokuCellQt &SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 	SudokuCell cell{sudokuCell};
 
 	this->position = cell.getPosition();
@@ -26,10 +26,18 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCell &sudokuCell) {
 
 	this->parityCells = cell.getParityCells();
 
-	return this;
+	this->locked = cell.getLocked();
+
+	if (this->value == 0) {
+		this->setText("");
+	} else {
+		this->setNum(this->value);
+	}
+
+	return *this;
 }
 
-SudokuCellQt *SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
+SudokuCellQt &SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 	this->position = sudokuCellQt.position;
 
 	this->value = sudokuCellQt.value;
@@ -39,9 +47,17 @@ SudokuCellQt *SudokuCellQt::operator=(const SudokuCellQt &sudokuCellQt) {
 
 	this->parityCells = sudokuCellQt.parityCells;
 
+	this->locked = sudokuCellQt.locked;
+
+	if (this->value == 0) {
+		this->setText("");
+	} else {
+		this->setNum(this->value);
+	}
+
 	this->QLabel::setParent(sudokuCellQt.parentWidget());
 
-	return this;
+	return *this;
 }
 
 void SudokuCellQt::mousePressEvent(QMouseEvent *event) {
@@ -66,7 +82,11 @@ SudokuCell *SudokuCellQt::setValue(int value, bool checkParity) {
 	if (!this->locked && (value <= this->parentMatrix->getSize())) {
 		this->SudokuCell::setValue(value, false);
 
-		this->setNum(value);
+		if (this->value == 0) {
+			this->setText("");
+		} else {
+			this->setNum(this->value);
+		}
 
 		if (checkParity && !this->parityCells.empty()) {
 			this->calledParity = true;
@@ -97,6 +117,7 @@ void SudokuCellQt::updateViableColor() {
 
 SudokuCellQt *SudokuCellQt::connectTasks() {
 	QObject::connect(this, SIGNAL(valueChanged()), this, SLOT(updateViableColor()));
+	QObject::connect(this, SIGNAL(valueChanged()), this->parentMatrixQt, SLOT(checkIfWon()));
 
 	QObject::connect(this, SIGNAL(clicked()), this->valueDialog, SLOT(showDialog()));
 
@@ -108,6 +129,12 @@ SudokuCellQt *SudokuCellQt::styleLayout() {
 	sizePolicy.setHorizontalPolicy(QSizePolicy::Expanding);
 	sizePolicy.setVerticalPolicy(QSizePolicy::Expanding);
 	this->setSizePolicy(sizePolicy);
+
+	return this;
+}
+
+SudokuCell *SudokuCellQt::setViable(bool viable) {
+	this->SudokuCell::setViable(viable);
 
 	return this;
 }

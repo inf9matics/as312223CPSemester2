@@ -5,6 +5,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <random>
 
 class SudokuMatrixMasked;
 
@@ -56,9 +57,13 @@ class SudokuMatrix {
 	bool checkViable();
 	bool getViable();
 
+	SudokuMatrix *lockFilled();
+
 	bool checkFilledAtPosition(std::pair<int, int> position);
-	bool checkFilled();
+	virtual bool checkFilled();
 	bool getFilled();
+
+	SudokuMatrix *removeNoisyNumberOfCells(int numberOfCells);
 
 	SudokuMatrix *iterateOverCells(std::function<void(SudokuCell *)> function);
 	SudokuMatrix *iterateOverSubMatrices(std::function<void(SudokuSubMatrix *)> function);
@@ -71,6 +76,8 @@ class SudokuMatrix {
 	std::pair<std::pair<int, int>, std::vector<int>> findEmptyPositionWithMissingValues();
 
 	std::pair<int, int> cellPositionInSubMatrix(std::pair<int, int> cellPosition);
+
+	SudokuMatrix *updateViableFromCellPosition(std::pair<int, int> cellPosition);
 };
 
 class SudokuSubMatrix {
@@ -109,6 +116,8 @@ class SudokuSubMatrix {
 	std::vector<int> getValuesFilled();
 
 	std::map<int, int> getExistingValues();
+
+	SudokuSubMatrix *iterateOverCells(std::function<void(SudokuCell *)> function);
 };
 
 class SudokuCell {
@@ -146,17 +155,19 @@ class SudokuCell {
 	int getValue();
 	int getPreviousValue();
 
+	virtual SudokuCell *setViable(bool viable);
+
 	bool getViable();
 
 	std::pair<int, int> getPosition();
 
-	SudokuCell *addParityCell(SudokuCell *parityCell);
+	SudokuCell *addParityCell(std::pair<int, int> parityCellPosition);
 
 	SudokuCell *copyParityFrom(SudokuCell &sudokuCell);
 
 	SudokuCell *copyParityTo(SudokuCell &sudokuCell);
 
-	SudokuCell *iterateOverParity(std::function<void (SudokuCell *)> function);
+	SudokuCell *iterateOverParity(std::function<void(SudokuCell *)> function);
 
 	std::vector<int> getMissingValues();
 

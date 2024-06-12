@@ -1,4 +1,4 @@
-#include "sudokuQt.h"
+#include "sudokuGame.h"
 
 SudokuSubMatrixQt::SudokuSubMatrixQt(QWidget *parent) : QFrame(parent), gridLayout(this) { this->styleLayout(); }
 

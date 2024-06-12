@@ -175,13 +175,32 @@ bool SudokuMatrix::getViable() { return this->viable; }
 bool SudokuMatrix::checkFilled() {
 	bool filled{true};
 	this->iterateOverCells([&filled](SudokuCell *sudokuCell) {
-		if (filled && sudokuCell->getValue() > 0) {
+		if (filled && sudokuCell->getValue() == 0) {
 			filled = false;
 		}
 	});
 
 	this->filled = filled;
 	return this->filled;
+}
+
+SudokuMatrix *SudokuMatrix::removeNoisyNumberOfCells(int numberOfCells) {
+	int variance{this->subMatrixSize};
+
+	int removeNumber = numberOfCells;
+	removeNumber += (std::rand() % (variance * 2)) - variance;
+	for (int i{0}; i < removeNumber; i++) {
+		int randX = std::rand() % this->size;
+		int randY = std::rand() % this->size;
+
+		if (this->getCellAtPosition({randX, randY})->getValue() == 0) {
+			i--;
+		} else {
+			this->getCellAtPosition({randX, randY})->setValue(0);
+		}
+	}
+
+	return this;
 }
 
 bool SudokuMatrix::checkFilledAtPosition(std::pair<int, int> position) {
@@ -203,6 +222,16 @@ bool SudokuMatrix::checkFilledAtPosition(std::pair<int, int> position) {
 	}
 
 	return this->filled;
+}
+
+SudokuMatrix *SudokuMatrix::lockFilled() {
+	this->iterateOverCells([](SudokuCell *sudokuCell) {
+		if (sudokuCell->getValue() > 0) {
+			sudokuCell->lock();
+		}
+	});
+
+	return this;
 }
 
 bool SudokuMatrix::getFilled() { return this->filled; }
@@ -248,8 +277,8 @@ std::pair<int, int> SudokuMatrix::findEmptyPosition() {
 		for (int j{0}; j < this->getSize(); j++) {
 			if (this->getCellAtPosition({i, j})->getValue() == 0) {
 				position = {i, j};
-				i = this->getSize();
-				j = this->getSize();
+
+				return position;
 			}
 		}
 	}
@@ -275,4 +304,31 @@ std::pair<std::pair<int, int>, std::vector<int>> SudokuMatrix::findEmptyPosition
 	}
 
 	return std::pair<std::pair<int, int>, std::vector<int>>{emptyPosition, missingValues};
+}
+
+SudokuMatrix *SudokuMatrix::updateViableFromCellPosition(std::pair<int, int> cellPosition) {
+	SudokuCell *currentCell = this->getCellAtPosition(cellPosition);
+	for (int i{0}; i < this->size; i++) {
+		if (i != cellPosition.first) {
+			SudokuCell *workingCell = this->getCellAtPosition({i, currentCell->getPosition().second});
+			if (!workingCell->getViable()) {
+				workingCell->setViable(workingCell->parentMatrix->checkViableAtPosition(workingCell->getPosition()));
+			}
+		}
+		if (i != cellPosition.second) {
+			SudokuCell *workingCell = this->getCellAtPosition({currentCell->getPosition().first, i});
+			if (!workingCell->getViable()) {
+				workingCell->setViable(workingCell->parentMatrix->checkViableAtPosition(workingCell->getPosition()));
+			}
+		}
+	}
+
+	SudokuSubMatrix *currentSubMatrix = this->getSubMatrixAtCellPosition(cellPosition);
+	currentSubMatrix->iterateOverCells([](SudokuCell *sudokuCell) {
+		if (!sudokuCell->getViable()) {
+			sudokuCell->setViable(sudokuCell->getParent()->checkViableAtPosition(sudokuCell->getPosition()));
+		}
+	});
+
+	return this;
 }

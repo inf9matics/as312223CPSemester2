@@ -1,6 +1,6 @@
-add_library(sudoku_fileHandling SHARED fileHandling.cpp)
+add_library(sudoku_fileHandling STATIC fileHandling.cpp)
+
+target_link_libraries(sudoku_fileHandling PRIVATE sudoku)
+target_include_directories(sudoku_fileHandling PRIVATE sudoku)
 
 target_include_directories(sudoku_fileHandling INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-
-target_link_libraries(sudoku_fileHandling sudoku)
-target_include_directories(sudoku_fileHandling INTERFACE sudoku)
