@@ -70,15 +70,17 @@ int SudokuCell::getPreviousValue() { return this->previousValue; }
 bool SudokuCell::getCalledParity() { return this->calledParity; }
 
 SudokuCell *SudokuCell::addParityCell(std::pair<int, int> parityCellPosition) {
-	this->parityCells.push_back(parityCellPosition);
+	if (std::find(this->parityCells.begin(), this->parityCells.end(), parityCellPosition) == this->parityCells.end()) {
+		this->parityCells.push_back(parityCellPosition);
 
-	SudokuCell *parityCell = this->parentMatrix->getCellAtPosition(parityCellPosition);
-	this->calledParity = true;
-	if (!parityCell->getCalledParity()) {
-		parityCell->addParityCell(this->position);
-		parityCell->setValue(this->value);
+		SudokuCell *parityCell = this->parentMatrix->getCellAtPosition(parityCellPosition);
+		this->calledParity = true;
+		if (!parityCell->getCalledParity()) {
+			parityCell->addParityCell(this->position);
+			parityCell->setValue(this->value);
+		}
+		this->calledParity = false;
 	}
-	this->calledParity = false;
 
 	return this;
 }

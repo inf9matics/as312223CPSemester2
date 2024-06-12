@@ -5,7 +5,10 @@
 SudokuGame::~SudokuGame() {}
 
 SudokuGame::SudokuGame(QWidget *parent) : GameLauncher(parent) {
-	this->regenerateGame();
+	SudokuMatrixQt *sudokuMatrixQt = new SudokuMatrixQt{};
+	this->game = sudokuMatrixQt;
+	this->sudokuMatrixQt = sudokuMatrixQt;
+	this->game->setGameLauncher(this);
 
 	this->prepareButtons();
 	this->setSize();

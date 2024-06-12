@@ -136,5 +136,7 @@ SudokuCellQt *SudokuCellQt::styleLayout() {
 SudokuCell *SudokuCellQt::setViable(bool viable) {
 	this->SudokuCell::setViable(viable);
 
+	this->updateViableColor();
+
 	return this;
 }
