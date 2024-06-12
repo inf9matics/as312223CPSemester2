@@ -8,13 +8,14 @@
 #include <QPushButton>
 #include <QSignalMapper>
 #include <QSizePolicy>
+#include <QSlider>
 
 #include <functional>
 
+#include "backsolver.h"
 #include "fileHandling.h"
 #include "gameLauncher.h"
 #include "sudoku.h"
-#include "backsolver.h"
 
 class SudokuCellQt;
 
@@ -224,6 +225,8 @@ class SudokuGame : public GameLauncher {
 	SudokuMatrixQt *sudokuMatrixQt;
 
 	SudokuFileHandler fileHandler;
+
+	QSlider *gameVarianceSlider;
 
       public:
 	SudokuGame(QWidget *parent = nullptr);

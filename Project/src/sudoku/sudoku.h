@@ -63,7 +63,7 @@ class SudokuMatrix {
 	virtual bool checkFilled();
 	bool getFilled();
 
-	SudokuMatrix *removeNoisyNumberOfCells(int numberOfCells);
+	SudokuMatrix *removeNumberOfCells(int numberOfCells);
 
 	SudokuMatrix *iterateOverCells(std::function<void(SudokuCell *)> function);
 	SudokuMatrix *iterateOverSubMatrices(std::function<void(SudokuSubMatrix *)> function);

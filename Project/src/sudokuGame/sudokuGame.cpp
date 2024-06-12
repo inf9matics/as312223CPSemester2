@@ -46,7 +46,17 @@ GameLauncher *SudokuGame::prepareButtons() {
 	this->gameWindow->generateMenuButton("Write board");
 	QObject::connect(this->gameWindow->getMenuButtonsBack(), SIGNAL(clicked()), this, SLOT(setBoardToFile()));
 
-	this->gameWindow->addFinalStretch();
+	this->gameVarianceSlider = new QSlider{Qt::Horizontal, this->gameWindow->menuBar};
+	this->gameVarianceSlider->setMinimum(0);
+	this->gameVarianceSlider->setMaximum(std::pow(this->sudokuMatrixQt->SudokuMatrix::getSize(), 2));
+	this->gameVarianceSlider->setValue((std::pow(this->sudokuMatrixQt->SudokuMatrix::getSize(), 2) * 3) / 4);
+	this->gameWindow->menuBarLayout.addWidget(this->gameVarianceSlider, 0, Qt::AlignRight);
+	this->gameVarianceSlider->setFixedWidth(this->gameWindow->menuButtonWidthPerLetter * 12);
+	this->gameVarianceSlider->setFixedHeight(this->gameWindow->menuButtonHeight);
+	QObject::connect(this->gameWindow, SLOT(show()), this->gameVarianceSlider, SLOT(show()));
+	QObject::connect(this->gameWindow, SLOT(hide()), this->gameVarianceSlider, SLOT(hide()));
+
+	// this->gameWindow->addFinalStretch();
 
 	QObject::connect(this->game, SIGNAL(gameEnded()), this, SLOT(spawnEndPopup()));
 
@@ -59,8 +69,7 @@ void SudokuGame::regenerateGame() {
 	SudokuBacksolver backsolver{&matrixToSolve};
 	backsolver.solveMatrix();
 
-	matrixToSolve.removeNoisyNumberOfCells(matrixToSolve.getSize() * matrixToSolve.getSubMatrixSize() * 2);
-	// matrixToSolve.removeNoisyNumberOfCells(1);
+	matrixToSolve.removeNumberOfCells(this->gameVarianceSlider->value());
 	matrixToSolve.lockFilled();
 
 	delete this->game;
